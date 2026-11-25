@@ -1,0 +1,1 @@
+{"request_hash": "0908575f979d87946745584db85d91ed713c5d7278742796b0488a9bfdab32ab", "request_id": "seam_c26", "model": "Qwen/Qwen3-8B", "prompt_tokens": 581, "completion_tokens": 35, "response": {"event_a": "Turkish intelligence operation failed in Mongolia", "event_b": "Turkish plane detained in Mongolia over alleged kidnapping attempt", "same_event": false}}

@@ -1,0 +1,66 @@
+% Elsevier Information Processing & Management (IP&M) Submission Template
+% Default: standard single-column double-spaced review preprint.
+% Camera-ready toggle: replace line 4 with line 5 before final production build.
+\documentclass[preprint,12pt,authoryear]{elsarticle}
+% \documentclass[final,5p,times,twocolumn,authoryear]{elsarticle}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+\journal{Information Processing \& Management}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{From Single-Post Fallacy to Mesoscopic Seam Adjudication: Strictly Causal Budgeted Open-Source LLM Clustering for Streaming Social Event Detection}
+
+\author[inst1]{Anonymous Author(s)}
+\affiliation[inst1]{organization={Anonymous Institution},country={Anonymous}}
+
+\begin{abstract}
+Incorporating Large Language Models (LLMs) into streaming Social Event Detection (SED) is constrained by tight operational token budgets: when only $<1\%$ of arriving posts trigger API calls ($\sim 10\text{k}$ billed prompt and completion tokens per daily block), single-post and pairwise active selectors fail to move global clustering partitions. Auditing unsupervised fixed-point 2-dimensional Structural Entropy (2D-SE) partitions on English (\texttt{Event2012}) and French (\texttt{Event2018}) social streams exposes three structural bottlenecks: (1) False Splits outnumber False Merges by $11.6\times$--$44.6\times$; (2) False Merges reside inside unbalanced minority pockets ($10\%$--$25\%$ share) with zero inter-cluster boundary entropy; and (3) naive cosine linking across days collapses longitudinal Event Macro-$B^3$.
+
+We propose \textbf{SUG-Meso} and \textbf{SUG-CrossLLM-v2}, a strictly causal zero-lookahead streaming framework that replaces isolated post queries with \emph{mesoscopic structural seam adjudication}. Within each block, a symmetric router pairs prototype-leveraged inter-cluster \texttt{MERGE\_PAIR} candidates with deterministic farthest-point spherical $k$-means \texttt{SPLIT\_SEAM} pockets regularized by non-entity cut divergence, executing verified edits via a direct split-then-union-find operator backed by an exact full-volume 2D-SE bridge-pruning theorem. Across days, \texttt{SUG-CrossLLM-v2} resolves ambiguous links in $[0.65, 0.85)$ using calibrated extract-then-compare verification. Evaluating \texttt{Qwen/Qwen3-8B} across $27$ unseen held-out blocks ($65{,}856$ tweets) with strict prompt-shown masking (uncontaminated $U_t$, $1.79\%$--$3.78\%$ total exposed posts), \texttt{SUG-Meso} achieves $0.8976$ AMI ($+5.81\text{ pp}$) on \texttt{Event2012} and $0.8349$ AMI ($+7.15\text{ pp}$) on \texttt{Event2018}, significantly outperforming zero-LLM heuristics, \texttt{Cequel-Transitive}, multi-seed \texttt{Random}, and random mesoscopic ordering (Holm-corrected Wilcoxon $p_{\text{Holm}} \le 0.04$), while \texttt{SUG-CrossLLM-v2} surpasses all unsupervised prototype thresholds on both streams. A 27-block entity, hashtag, and year anonymization stress test ($99.7\%$--$100\%$ masking, $0\%$ historical entity reconstruction) retains $98.4\%$ (EN) and $77.9\%$ (FR) of the AMI gain via consistent local co-reference, ruling out pretraining memorization.
+\end{abstract}
+
+\begin{highlights}
+\item Single-post and pairwise queries fail under $<1\%$ causal streaming LLM budgets.
+\item Mesoscopic seam adjudication fixes $11.6\times$--$44.6\times$ false splits and buried pockets.
+\item Exact full-volume 2D-SE bridge pruning guarantees zero false-merge regressions.
+\item Bilingual Qwen3-8B results beat 0-LLM, Cequel-Transitive, and Random-Meso.
+\item Anonymizing $99.7\%$--$100\%$ entities retains $98.4\%$/$77.9\%$ AMI with $0\%$ recall leak.
+\end{highlights}
+
+\begin{keyword}
+Streaming social event detection \sep Budgeted large language models \sep Structural entropy \sep Mesoscopic graph seams \sep Causal token budgeting \sep Entity anonymization audit
+\end{keyword}
+
+\end{frontmatter}
+
+\input{sections/01_intro}
+\input{sections/02_related}
+\input{sections/03_problem_theory}
+\input{sections/04_method}
+\input{sections/05_experiments}
+\input{sections/06_limitations_conclusion}
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
+
+\clearpage
+\appendix
+\input{sections/07_appendix}
+
+\end{document}

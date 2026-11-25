@@ -1,0 +1,2 @@
+{"request_hash": "392dcceae57e82775173366c6fd64d7516e413ec6c7fb8433400c7fdafc4b564", "request_id": "seam_c26", "model": "Qwen/Qwen3-8B", "prompt_tokens": 504, "completion_tokens": 16, "response": {"action": "SPLIT", "confidence": 0.95}}
+{"request_hash": "326ac5809f4158caaf1948eab371e38a621b17fce9b0bd6d5ffb60a7e88e792f", "request_id": "seam_c12", "model": "Qwen/Qwen3-8B", "prompt_tokens": 553, "completion_tokens": 18, "response": {"action": "KEEP_MERGED", "confidence": 0.95}}

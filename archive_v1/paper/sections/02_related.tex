@@ -1,0 +1,36 @@
+\section{Related Work}
+\label{sec:related}
+
+We organize prior literature along three axes directly intersecting our methodology and empirical audits, summarized conceptually in Table~\ref{tab:related_matrix}.
+
+\paragraph{Graph- and Structural-Entropy-Based Streaming SED.}
+Incremental SED pipelines construct heterogeneous message graphs linking shared named entities, hashtags, user mentions, and dense embedding edges over sliding or daily windows~\citep{mcminn2013building,mazoyer2020french}. Supervised neural detectors such as KPGNN~\citep{cao2021kpgnn} learn contrastive heterogeneous GNN embeddings, whereas RPLM-SED~\citep{li2024rplmsed} adapts pre-trained language models via relational prompts. To avoid training labels and cluster-count hyperparameters, HISEvent~\citep{cao2024hisevent} formulates unsupervised SED as hierarchical 2-dimensional Structural Entropy (2D-SE) minimization~\citep{li2016structural}, and HyperSED~\citep{yu2025hypersed} embeds message graphs in hyperbolic manifolds to reflect hierarchical taxonomy. Classic community detection~\citep{blondel2008fast} and spherical density clustering~\citep{banerjee2005clustering,gonzalez1985clustering} offer strong unsupervised primitives, yet on noisy short-text streams they remain vulnerable to $11.6\times$--$44.6\times$ entity fragmentation and small minority pockets hidden inside large topical components. Our Stage~1 baseline extends heterogeneous 2D-SE initialization~\citep{cao2024hisevent} with non-entity TF-IDF divergence matrices and fixed-point local node-move refinement, and we benchmark directly against Louvain~\citep{blondel2008fast}, agglomerative cosine clustering~\citep{pedregosa2011scikit}, Dev-tuned 2D-SE, and zero-LLM mesoscopic heuristics.
+
+\paragraph{LLM-Enhanced SED and Budgeted Active Clustering.}
+Recent methods inject LLMs into event detection and text clustering along three distinct paradigms:
+\begin{itemize}
+    \item \textbf{Broad Preprocessing \& Pseudo-Labeling:} LSED~\citep{qiu2025lsed} deploys an 8B LLM to rewrite and disambiguate noisy posts alongside hyperbolic clustering, while LHG~\citep{qiu2026lhg} generates LLM pseudo-labels and filters them via heterogeneous meta-paths. Both assume high-volume LLM coverage rather than strict $<1\%$ real-token budgets.
+    \item \textbf{RAG-Guided Representative Sampling:} RagSEDE~\citep{liu2026ragsede} selects representative and diverse messages via Maximal Marginal Relevance (MMR)~\citep{carbonell1998mmr} to maintain an evolving event knowledge base using structural entropy keyword modeling. While informative for prototype maintenance, post-level diversity sampling leaves fragmented sub-clusters detached and buried minority pockets unsplit under tight token caps.
+    \item \textbf{Pairwise Constraint Querying:} Cequel~\citep{wang2025cequel} selects informative text pairs or triplets for must-link/cannot-link constrained clustering under fixed query budgets. On streaming SED graphs dominated by false splits, single-pair decisions fail to merge clusters reliably unless coupled with transitive closure---which, as we show empirically via \texttt{Cequel-Transitive}, propagates mislinks that depress Event Macro-$B^3$ below initialization.
+\end{itemize}
+
+\paragraph{Prompt Calibration and Memorization Audits in LLM Clustering.}
+Lightweight 7B--8B open-source models~\citep{yang2025qwen3,grattafiori2024llama3} exhibit strong sensitivity to prompt schema design: chain-of-thought extraction suppresses sycophantic yes-bias on noisy negative pairs~\citep{wang2025cequel}, yet increases token cost and can suppress recall when positive candidates dominate~\citep{yang2025qwen3}. Moreover, evaluating LLMs on standard historical Twitter benchmarks (\texttt{Event2012}, \texttt{Event2018}) raises a valid concern in Information Processing \& Management that gains might reflect parametric pretraining recall of publicized 2012/2018 events rather than genuine textual reasoning. Unlike prior SED evaluations, we explicitly test both cross-base-rate prompt calibration and large-scale entity/hashtag/year anonymization alongside pretraining reconstruction auditing across all $27$ held-out blocks.
+
+\begin{table}[t]
+\centering
+\caption{Conceptual comparison with representative unsupervised and LLM-augmented SED / active clustering frameworks.}
+\label{tab:related_matrix}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Method} & \textbf{Causal Token Cap} & \textbf{Adjudication Unit} & \textbf{Minority Pocket Split} & \textbf{Cross-Day Memory} & \textbf{Anti-Mem. Audit} \\
+\midrule
+HISEvent~\citep{cao2024hisevent} & $0$ tokens (0-LLM) & None & $\times$ & $\times$ & N/A \\
+LHG~\citep{qiu2026lhg} & Broad pseudo-labels & Post / meta-path & $\times$ & $\times$ & $\times$ \\
+RagSEDE~\citep{liu2026ragsede} & Implicit / unconstrained & Single post (MMR) & $\times$ & RAG KB & $\times$ \\
+Cequel~\citep{wang2025cequel} & Query-count cap & Node pair / triplet & $\times$ & Static corpus & $\times$ \\
+\textbf{SUG-Meso + CrossLLM-v2 (Ours)} & \textbf{Zero-lookahead $\le 10\text{k}$ tok/blk} & \textbf{Cluster pair + pocket seam} & \textbf{Deterministic Sph.\ $k$-means} & \textbf{Banded $[0.65, 0.85)$} & \textbf{27-blk Pseudonym vs.\ Blind} \\
+\bottomrule
+\end{tabular}}
+\end{table}

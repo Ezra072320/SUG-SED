@@ -1,0 +1,115 @@
+{
+  "protocol_version": "SUG-SED-v1.0-frozen",
+  "frozen_at_utc": "2026-11-22T10:36:23Z",
+  "llm": {
+    "provider": "siliconflow",
+    "model": "Qwen/Qwen3-8B",
+    "enable_thinking": false,
+    "temperature": 0.0,
+    "max_tokens": 512,
+    "response_format": "json_object",
+    "prompt_style": "Balanced Extract-Then-Compare (event_a, event_b, same_event: bool)"
+  },
+  "datasets": {
+    "Event2012": {
+      "embed_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "warmup_blocks": [
+        0,
+        1
+      ],
+      "dev_blocks": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "heldout_test_blocks": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    "Event2018": {
+      "embed_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "warmup_blocks": [
+        0,
+        1
+      ],
+      "dev_blocks": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "heldout_test_blocks": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    }
+  },
+  "graph_and_solver": {
+    "knn_k": 15,
+    "knn_sim_threshold": 0.35,
+    "attr_alpha": 0.5,
+    "se_solver": "solve_2d_se(refine_moves=True, max_refine_iters=10, max_outer_passes=3)"
+  },
+  "router_and_budget": {
+    "max_queries_per_block": 120,
+    "conf_threshold": 0.6,
+    "sug_meso_only_ratios": {
+      "merge": 0.65,
+      "seam": 0.35,
+      "bridge": 0.0,
+      "seed": 0.0
+    },
+    "sug_router_ratios": {
+      "merge": 0.45,
+      "seam": 0.25,
+      "bridge": 0.15,
+      "seed": 0.15
+    },
+    "within_tokens_per_block": 10000,
+    "cross_tokens_per_block": 3000,
+    "budget_controller": "CumulativeTokenBucket(ema_alpha=0.3, min_scale=0.25, max_scale=2.0)"
+  },
+  "cross_block_memory": {
+    "memory_window_blocks": 14,
+    "min_cross_size": 3,
+    "tau_proto": 0.72,
+    "tau_lo": 0.55,
+    "tau_hi": 0.8
+  },
+  "code_sha256": {
+    "core_shared/data_loader.py": "68de8003f0a099c1162534006a6225730b86e356d6d22560d11eff514563fb2e",
+    "core_shared/graph_builder.py": "cf2b751b73c106366d913715f46d10faec625e1b308616133e4e80c02859ef8f",
+    "core_shared/se_solver.py": "8432c18510b11bebe0e0b77132c8d8f854ee89f19c2f01b747dd440e24020415",
+    "core_shared/metrics_audit.py": "efb6b322270ba19d049a562f4efccfe51d463a00a7506e151448e23ab3b9586a",
+    "core_shared/token_ledger.py": "e7466aa6e190eac1507b5e9bbe31340be941ca9644146d6885ca159edce985f5",
+    "trackA_sug_sed/high_leverage_router.py": "8cc1481276f26ceb89ea82c612a1ecba0473ad7e924c46fa8ba57f729f77c2db",
+    "trackA_sug_sed/topology_surgery.py": "a3258ff67e49ae5b1d363ae259a2866b21a1afe7a36546ac5de566a305c1adf2",
+    "trackA_sug_sed/llm_client.py": "d021b1705d62778ee72ff3e95db1a454798fe04428f52620ff37987eaff2a0c6",
+    "trackA_sug_sed/streaming_sed.py": "4065b8d4eed3b747d053be3f183963293d4287edc22d1df1737a3638c7b1ec30"
+  }
+}

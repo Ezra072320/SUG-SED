@@ -1,0 +1,763 @@
+{
+  "model": "Qwen/Qwen3-8B",
+  "Event2012": {
+    "no_link": {
+      "mode": "no_link",
+      "tau_proto": 0.85,
+      "g_ami": 89.52,
+      "g_mac_b3": 69.53,
+      "g_mic_b3": 75.12,
+      "g_ari": 61.77,
+      "g_tail_b3": 59.12,
+      "n_pred_events": 978,
+      "stats": {
+        "auto_linked": 0,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 978,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.60": {
+      "mode": "proto_only",
+      "tau_proto": 0.6,
+      "g_ami": 86.44,
+      "g_mac_b3": 58.75,
+      "g_mic_b3": 73.25,
+      "g_ari": 56.23,
+      "g_tail_b3": 49.12,
+      "n_pred_events": 609,
+      "stats": {
+        "auto_linked": 426,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 552,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.65": {
+      "mode": "proto_only",
+      "tau_proto": 0.65,
+      "g_ami": 88.25,
+      "g_mac_b3": 63.86,
+      "g_mic_b3": 75.77,
+      "g_ari": 57.5,
+      "g_tail_b3": 51.77,
+      "n_pred_events": 653,
+      "stats": {
+        "auto_linked": 381,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 597,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.72": {
+      "mode": "proto_only",
+      "tau_proto": 0.72,
+      "g_ami": 89.21,
+      "g_mac_b3": 68.1,
+      "g_mic_b3": 77.82,
+      "g_ari": 57.66,
+      "g_tail_b3": 55.54,
+      "n_pred_events": 703,
+      "stats": {
+        "auto_linked": 322,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 656,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.78": {
+      "mode": "proto_only",
+      "tau_proto": 0.78,
+      "g_ami": 89.86,
+      "g_mac_b3": 71.32,
+      "g_mic_b3": 79.15,
+      "g_ari": 58.49,
+      "g_tail_b3": 58.12,
+      "n_pred_events": 741,
+      "stats": {
+        "auto_linked": 269,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 709,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.80": {
+      "mode": "proto_only",
+      "tau_proto": 0.8,
+      "g_ami": 90.28,
+      "g_mac_b3": 72.55,
+      "g_mic_b3": 79.75,
+      "g_ari": 59.31,
+      "g_tail_b3": 58.18,
+      "n_pred_events": 753,
+      "stats": {
+        "auto_linked": 256,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 722,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.82": {
+      "mode": "proto_only",
+      "tau_proto": 0.82,
+      "g_ami": 90.26,
+      "g_mac_b3": 73.04,
+      "g_mic_b3": 79.66,
+      "g_ari": 59.4,
+      "g_tail_b3": 60.24,
+      "n_pred_events": 771,
+      "stats": {
+        "auto_linked": 236,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 742,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.85": {
+      "mode": "proto_only",
+      "tau_proto": 0.85,
+      "g_ami": 90.64,
+      "g_mac_b3": 73.84,
+      "g_mic_b3": 80.18,
+      "g_ari": 60.8,
+      "g_tail_b3": 61.02,
+      "n_pred_events": 792,
+      "stats": {
+        "auto_linked": 208,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 770,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.88": {
+      "mode": "proto_only",
+      "tau_proto": 0.88,
+      "g_ami": 90.7,
+      "g_mac_b3": 73.65,
+      "g_mic_b3": 80.17,
+      "g_ari": 61.66,
+      "g_tail_b3": 61.29,
+      "n_pred_events": 818,
+      "stats": {
+        "auto_linked": 177,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 801,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.90": {
+      "mode": "proto_only",
+      "tau_proto": 0.9,
+      "g_ami": 90.72,
+      "g_mac_b3": 73.81,
+      "g_mic_b3": 79.94,
+      "g_ari": 61.99,
+      "g_tail_b3": 59.49,
+      "n_pred_events": 839,
+      "stats": {
+        "auto_linked": 155,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 823,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.92": {
+      "mode": "proto_only",
+      "tau_proto": 0.92,
+      "g_ami": 90.74,
+      "g_mac_b3": 73.48,
+      "g_mic_b3": 79.74,
+      "g_ari": 62.36,
+      "g_tail_b3": 58.98,
+      "n_pred_events": 870,
+      "stats": {
+        "auto_linked": 122,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 856,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.95": {
+      "mode": "proto_only",
+      "tau_proto": 0.95,
+      "g_ami": 90.8,
+      "g_mac_b3": 73.28,
+      "g_mic_b3": 79.62,
+      "g_ari": 63.52,
+      "g_tail_b3": 59.02,
+      "n_pred_events": 906,
+      "stats": {
+        "auto_linked": 78,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 900,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.80": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.8,
+      "g_ami": 90.22,
+      "g_mac_b3": 71.42,
+      "g_mic_b3": 79.7,
+      "g_ari": 59.9,
+      "g_tail_b3": 57.53,
+      "n_pred_events": 738,
+      "stats": {
+        "auto_linked": 277,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 701,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.85": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.85,
+      "g_ami": 90.34,
+      "g_mac_b3": 73.3,
+      "g_mic_b3": 79.88,
+      "g_ari": 59.59,
+      "g_tail_b3": 60.17,
+      "n_pred_events": 766,
+      "stats": {
+        "auto_linked": 240,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 738,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.90": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.9,
+      "g_ami": 90.7,
+      "g_mac_b3": 73.59,
+      "g_mic_b3": 80.36,
+      "g_ari": 61.46,
+      "g_tail_b3": 61.27,
+      "n_pred_events": 795,
+      "stats": {
+        "auto_linked": 203,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 775,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.95": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.95,
+      "g_ami": 90.75,
+      "g_mac_b3": 74.07,
+      "g_mic_b3": 80.17,
+      "g_ari": 61.94,
+      "g_tail_b3": 58.98,
+      "n_pred_events": 836,
+      "stats": {
+        "auto_linked": 159,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 819,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "sug_cross_star": {
+      "mode": "sug_cross_star",
+      "tau_proto": 0.85,
+      "g_ami": 90.62,
+      "g_mac_b3": 73.77,
+      "g_mic_b3": 80.03,
+      "g_ari": 61.29,
+      "g_tail_b3": 59.76,
+      "n_pred_events": 781,
+      "stats": {
+        "auto_linked": 153,
+        "llm_queried": 181,
+        "llm_linked": 72,
+        "llm_rejected": 109,
+        "spawned_new": 753,
+        "parse_errors": 0,
+        "cross_tokens": 92870,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "oracle_band": {
+      "mode": "oracle_band",
+      "tau_proto": 0.85,
+      "g_ami": 91.7,
+      "g_mac_b3": 76.6,
+      "g_mic_b3": 82.2,
+      "g_ari": 64.45,
+      "g_tail_b3": 59.92,
+      "n_pred_events": 761,
+      "stats": {
+        "auto_linked": 155,
+        "llm_queried": 199,
+        "llm_linked": 82,
+        "llm_rejected": 117,
+        "spawned_new": 741,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    }
+  },
+  "Event2018": {
+    "no_link": {
+      "mode": "no_link",
+      "tau_proto": 0.85,
+      "g_ami": 79.5,
+      "g_mac_b3": 61.7,
+      "g_mic_b3": 57.58,
+      "g_ari": 44.37,
+      "g_tail_b3": 45.03,
+      "n_pred_events": 343,
+      "stats": {
+        "auto_linked": 0,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 343,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.60": {
+      "mode": "proto_only",
+      "tau_proto": 0.6,
+      "g_ami": 82.13,
+      "g_mac_b3": 56.14,
+      "g_mic_b3": 71.56,
+      "g_ari": 66.24,
+      "g_tail_b3": 35.61,
+      "n_pred_events": 145,
+      "stats": {
+        "auto_linked": 255,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 88,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.65": {
+      "mode": "proto_only",
+      "tau_proto": 0.65,
+      "g_ami": 82.84,
+      "g_mac_b3": 58.65,
+      "g_mic_b3": 72.99,
+      "g_ari": 67.4,
+      "g_tail_b3": 35.95,
+      "n_pred_events": 156,
+      "stats": {
+        "auto_linked": 235,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 108,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.72": {
+      "mode": "proto_only",
+      "tau_proto": 0.72,
+      "g_ami": 83.58,
+      "g_mac_b3": 66.06,
+      "g_mic_b3": 74.32,
+      "g_ari": 67.71,
+      "g_tail_b3": 44.6,
+      "n_pred_events": 185,
+      "stats": {
+        "auto_linked": 196,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 147,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.78": {
+      "mode": "proto_only",
+      "tau_proto": 0.78,
+      "g_ami": 83.88,
+      "g_mac_b3": 70.42,
+      "g_mic_b3": 75.13,
+      "g_ari": 65.82,
+      "g_tail_b3": 44.27,
+      "n_pred_events": 211,
+      "stats": {
+        "auto_linked": 162,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 181,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.80": {
+      "mode": "proto_only",
+      "tau_proto": 0.8,
+      "g_ami": 83.4,
+      "g_mac_b3": 70.0,
+      "g_mic_b3": 74.12,
+      "g_ari": 64.7,
+      "g_tail_b3": 43.48,
+      "n_pred_events": 211,
+      "stats": {
+        "auto_linked": 162,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 181,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.82": {
+      "mode": "proto_only",
+      "tau_proto": 0.82,
+      "g_ami": 83.98,
+      "g_mac_b3": 71.39,
+      "g_mic_b3": 74.81,
+      "g_ari": 65.08,
+      "g_tail_b3": 43.48,
+      "n_pred_events": 216,
+      "stats": {
+        "auto_linked": 150,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 193,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.85": {
+      "mode": "proto_only",
+      "tau_proto": 0.85,
+      "g_ami": 83.84,
+      "g_mac_b3": 71.9,
+      "g_mic_b3": 74.17,
+      "g_ari": 64.15,
+      "g_tail_b3": 44.31,
+      "n_pred_events": 226,
+      "stats": {
+        "auto_linked": 136,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 207,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.88": {
+      "mode": "proto_only",
+      "tau_proto": 0.88,
+      "g_ami": 84.35,
+      "g_mac_b3": 71.99,
+      "g_mic_b3": 74.38,
+      "g_ari": 66.18,
+      "g_tail_b3": 44.31,
+      "n_pred_events": 235,
+      "stats": {
+        "auto_linked": 127,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 216,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.90": {
+      "mode": "proto_only",
+      "tau_proto": 0.9,
+      "g_ami": 84.13,
+      "g_mac_b3": 72.28,
+      "g_mic_b3": 74.06,
+      "g_ari": 65.12,
+      "g_tail_b3": 44.31,
+      "n_pred_events": 239,
+      "stats": {
+        "auto_linked": 122,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 221,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.92": {
+      "mode": "proto_only",
+      "tau_proto": 0.92,
+      "g_ami": 84.5,
+      "g_mac_b3": 71.96,
+      "g_mic_b3": 74.24,
+      "g_ari": 66.6,
+      "g_tail_b3": 44.31,
+      "n_pred_events": 246,
+      "stats": {
+        "auto_linked": 111,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 232,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_0.95": {
+      "mode": "proto_only",
+      "tau_proto": 0.95,
+      "g_ami": 82.77,
+      "g_mac_b3": 70.4,
+      "g_mic_b3": 69.3,
+      "g_ari": 53.52,
+      "g_tail_b3": 44.44,
+      "n_pred_events": 270,
+      "stats": {
+        "auto_linked": 80,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 263,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.80": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.8,
+      "g_ami": 83.57,
+      "g_mac_b3": 69.3,
+      "g_mic_b3": 74.6,
+      "g_ari": 65.09,
+      "g_tail_b3": 44.25,
+      "n_pred_events": 207,
+      "stats": {
+        "auto_linked": 165,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 178,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.85": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.85,
+      "g_ami": 84.11,
+      "g_mac_b3": 72.1,
+      "g_mic_b3": 74.93,
+      "g_ari": 65.22,
+      "g_tail_b3": 44.3,
+      "n_pred_events": 223,
+      "stats": {
+        "auto_linked": 142,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 201,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.90": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.9,
+      "g_ami": 84.32,
+      "g_mac_b3": 72.21,
+      "g_mic_b3": 74.55,
+      "g_ari": 65.59,
+      "g_tail_b3": 44.31,
+      "n_pred_events": 231,
+      "stats": {
+        "auto_linked": 131,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 212,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "proto_attr_0.95": {
+      "mode": "proto_attr_only",
+      "tau_proto": 0.95,
+      "g_ami": 84.57,
+      "g_mac_b3": 72.34,
+      "g_mic_b3": 74.37,
+      "g_ari": 66.62,
+      "g_tail_b3": 44.31,
+      "n_pred_events": 241,
+      "stats": {
+        "auto_linked": 117,
+        "llm_queried": 0,
+        "llm_linked": 0,
+        "llm_rejected": 0,
+        "spawned_new": 226,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "sug_cross_star": {
+      "mode": "sug_cross_star",
+      "tau_proto": 0.85,
+      "g_ami": 84.76,
+      "g_mac_b3": 72.72,
+      "g_mic_b3": 75.73,
+      "g_ari": 67.08,
+      "g_tail_b3": 44.24,
+      "n_pred_events": 231,
+      "stats": {
+        "auto_linked": 119,
+        "llm_queried": 91,
+        "llm_linked": 16,
+        "llm_rejected": 75,
+        "spawned_new": 208,
+        "parse_errors": 0,
+        "cross_tokens": 62224,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    },
+    "oracle_band": {
+      "mode": "oracle_band",
+      "tau_proto": 0.85,
+      "g_ami": 85.12,
+      "g_mac_b3": 73.23,
+      "g_mic_b3": 76.26,
+      "g_ari": 68.98,
+      "g_tail_b3": 45.31,
+      "n_pred_events": 221,
+      "stats": {
+        "auto_linked": 119,
+        "llm_queried": 114,
+        "llm_linked": 29,
+        "llm_rejected": 85,
+        "spawned_new": 195,
+        "parse_errors": 0,
+        "cross_tokens": 0,
+        "budget_per_block": 6000,
+        "allow_carryover": true
+      }
+    }
+  }
+}

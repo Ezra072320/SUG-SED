@@ -1,0 +1,193 @@
+{
+  "protocol_version": "SUG-SED-v2.0-frozen",
+  "frozen_at_utc": "2026-11-25T05:25:46Z",
+  "llm": {
+    "provider": "siliconflow",
+    "primary_model": "Qwen/Qwen3-8B",
+    "dev_cross_model": "Qwen/Qwen2.5-7B-Instruct",
+    "enable_thinking": false,
+    "temperature": 0.0,
+    "max_tokens": 384,
+    "response_format": {
+      "type": "json_object"
+    }
+  },
+  "datasets": {
+    "Event2012": {
+      "embed_model": "sentence-transformers/all-MiniLM-L6-v2",
+      "warmup_blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "dev_blocks": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "heldout_test_blocks": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "stratified_anon_blocks": [
+        6,
+        9,
+        14,
+        19
+      ]
+    },
+    "Event2018": {
+      "embed_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "warmup_blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "dev_blocks": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "heldout_test_blocks": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "stratified_anon_blocks": [
+        6,
+        9,
+        12,
+        15
+      ]
+    }
+  },
+  "dev_locked_0tok": {
+    "Event2012": {
+      "eventx_res": 2.0,
+      "sbert_dist": 0.6,
+      "hisevent_tuned": [
+        0.5,
+        0.5
+      ],
+      "hypersed_ar": 0.26,
+      "meso_heur": [
+        0.8,
+        0.99
+      ]
+    },
+    "Event2018": {
+      "eventx_res": 1.5,
+      "sbert_dist": 0.6,
+      "hisevent_tuned": [
+        0.55,
+        1.0
+      ],
+      "hypersed_ar": 0.14,
+      "meso_heur": [
+        0.8,
+        0.99
+      ]
+    }
+  },
+  "pure_star_meso_locked": {
+    "knn_k": 15,
+    "knn_sim_threshold": 0.5,
+    "attr_alpha": 0.5,
+    "refine_moves": true,
+    "tau_auto": 0.85,
+    "tau_lo": 0.55,
+    "tier2_lo": 0.45,
+    "guard_sim": 0.4,
+    "min_cl_votes": 1,
+    "k_nb": 4,
+    "max_star_calls": 24,
+    "max_seam_calls": 3,
+    "min_cluster_size_seam": 8,
+    "min_pocket_size_seam": 3,
+    "min_sem_sep": 0.12,
+    "use_seam_gate": false
+  },
+  "budget_controllers": {
+    "within_block": {
+      "controller": "CausalUniformBucket(tokens_per_block=10000, allow_carryover=False)",
+      "tokens_per_block": 10000,
+      "allow_carryover": false,
+      "preflight_gate": "int((len(sys_msg) + len(user_msg)) / 3.4) + est_completion_tokens",
+      "observed_max_final_call_overrun_pct_at_10k": 0.35
+    },
+    "cross_day": {
+      "controller": "CausalUniformBucket(tokens_per_block=6000, allow_carryover=True, max_carryover_mult=1.5)",
+      "budget_per_block": 6000,
+      "allow_carryover": true,
+      "max_carryover_mult": 1.5,
+      "warmup_blocks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "warmup_partition_source": "0-token Pure 2D-SE Base (M_00..M_05)",
+      "eval_start_block": 6,
+      "window_blocks": 14,
+      "tau_lo": 0.65,
+      "tau_hi": 0.9,
+      "tau_fb": 0.9,
+      "min_cross_size": 3,
+      "top_k_cand": 3
+    }
+  },
+  "code_sha256": {
+    "core_shared/__init__.py": "881502d2eea8eda665beb3499a5e15f11fddc9a515c73257f453885321f2c8f1",
+    "core_shared/data_loader.py": "ce46834480c822b181faccb692d4c8329c55c25aa2bf6088e90d00d90c3cf2d1",
+    "core_shared/graph_builder.py": "cf2b751b73c106366d913715f46d10faec625e1b308616133e4e80c02859ef8f",
+    "core_shared/key_loader.py": "4f2fcc9e7d229fc141411038c9a66e660529eec0bf0a1fb4b86aac3d49327622",
+    "core_shared/metrics_audit.py": "efb6b322270ba19d049a562f4efccfe51d463a00a7506e151448e23ab3b9586a",
+    "core_shared/partition_cache.py": "aa0594e6ba0a76e16e6726adead5e0b7f8a290730799232bd02b1e38df28ee0c",
+    "core_shared/se_solver.py": "8432c18510b11bebe0e0b77132c8d8f854ee89f19c2f01b747dd440e24020415",
+    "core_shared/token_ledger.py": "13eb0b0d901abc0799f10e1e29ca1fe793ab5ba7ae9a18fe89ea67a61ee29ec4",
+    "trackA_sug_sed/__init__.py": "11ef6199b1e7d79fdd942a8cd99d59f4dcce89187255cafb434ead6ed64ef3c8",
+    "trackA_sug_sed/analyze_gate2_mechanisms.py": "7bc4cdb3aa15b91717ee8ec6af81898f60be0deefd43f63697724a59a765522b",
+    "trackA_sug_sed/anonymizer.py": "f537ea3f756c2c6d13143cd348ab534fa1f26413c83eb936afeb39676bbefe11",
+    "trackA_sug_sed/baselines_llm.py": "5c5a22159d0c4859fe290cfdbfe5ecfeba1f0fbda1d91d78d8a8207e3403dd5e",
+    "trackA_sug_sed/baselines_sed.py": "4f561914f351e6783bc5d1b368af72c66f38bae4e0b32b0d1256c13352d73a99",
+    "trackA_sug_sed/cross_day.py": "02e07da8b5448519f1a50573d6425accd612e25870f5edc6d3b848a5ac180160",
+    "trackA_sug_sed/embed_cache.py": "85431e2d46b1e98e3e64daf005f524f698a2181a062747b0a434b390f060727d",
+    "trackA_sug_sed/freeze_protocol_v2.py": "0ba79c86062f02ed2c358cec8aa65f4f9e2f9394432dea098c494798b30df0a5",
+    "trackA_sug_sed/llm_client.py": "b0bde2b208f6c2fd6cd6b6549829c6bcef84ff67c3e7e99b118bef5052111226",
+    "trackA_sug_sed/run_dev_gate1.py": "3cccb45a8d2831a98ae1493d52fc1b8cef137e24034dc5d9af479536e2f146ca",
+    "trackA_sug_sed/run_heldout_gate2.py": "3347f40a95b1639898896a6361cf560fb44dfa1193a9637c20323bcb749c61d5",
+    "trackA_sug_sed/star_meso.py": "8d4a0e2a2bc05d0839d12dbe03c59c1fc5041b310f0e239fee94e702bd39ebc2"
+  }
+}

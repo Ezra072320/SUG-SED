@@ -1,0 +1,1 @@
+{"request_hash": "1845b615df7e470ae629a8e38750ac870f65b94ff1b05d7a9408ac2b1e5f8b67", "request_id": "merge_c1_c23", "model": "Qwen/Qwen3-8B", "prompt_tokens": 631, "completion_tokens": 38, "response": {"event_a": "Benalla's unusual police raid and cleaning", "event_b": "Mali presidential second round between IBK and Cissé", "same_event": false}}

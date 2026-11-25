@@ -1,0 +1,4529 @@
+{
+  "Event2012": {
+    "sbert_emnlp19": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 87.66,
+      "macro_b3": 75.72,
+      "micro_b3": 85.29,
+      "tail_b3": 68.91,
+      "ari": 78.11,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 18.747,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 18.747,
+      "per_block": {
+        "M_06": {
+          "ami": 94.3462,
+          "macro_b3": 75.0246,
+          "micro_b3": 92.6888,
+          "tail_b3": 61.652,
+          "ari": 93.8906,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 58,
+          "false_merge_pairs": 4976,
+          "false_split_pairs": 1656,
+          "stats": {
+            "runtime_sec": 0.358,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_07": {
+          "ami": 68.7575,
+          "macro_b3": 73.9274,
+          "micro_b3": 65.3793,
+          "tail_b3": 60.8055,
+          "ari": 27.9549,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 201,
+          "false_merge_pairs": 16590,
+          "false_split_pairs": 3352897,
+          "stats": {
+            "runtime_sec": 6.242,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_08": {
+          "ami": 93.1435,
+          "macro_b3": 84.7167,
+          "micro_b3": 90.3308,
+          "tail_b3": 88.3373,
+          "ari": 85.3429,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 82,
+          "false_merge_pairs": 11250,
+          "false_split_pairs": 4704,
+          "stats": {
+            "runtime_sec": 0.512,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_09": {
+          "ami": 90.3617,
+          "macro_b3": 82.4635,
+          "micro_b3": 85.3764,
+          "tail_b3": 76.186,
+          "ari": 67.2825,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 66,
+          "false_merge_pairs": 1655,
+          "false_split_pairs": 38452,
+          "stats": {
+            "runtime_sec": 0.379,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_10": {
+          "ami": 93.5797,
+          "macro_b3": 76.0376,
+          "micro_b3": 91.6044,
+          "tail_b3": 63.7911,
+          "ari": 92.5292,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 53,
+          "false_merge_pairs": 6206,
+          "false_split_pairs": 1400,
+          "stats": {
+            "runtime_sec": 0.28,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_11": {
+          "ami": 90.8099,
+          "macro_b3": 73.7655,
+          "micro_b3": 89.6448,
+          "tail_b3": 63.1953,
+          "ari": 91.1564,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 51,
+          "false_merge_pairs": 5745,
+          "false_split_pairs": 10494,
+          "stats": {
+            "runtime_sec": 0.334,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_12": {
+          "ami": 91.8863,
+          "macro_b3": 76.3487,
+          "micro_b3": 87.8734,
+          "tail_b3": 59.8983,
+          "ari": 90.2719,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 113,
+          "false_merge_pairs": 12272,
+          "false_split_pairs": 40179,
+          "stats": {
+            "runtime_sec": 2.319,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_13": {
+          "ami": 86.8675,
+          "macro_b3": 78.5675,
+          "micro_b3": 85.5437,
+          "tail_b3": 71.9503,
+          "ari": 76.7245,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 85,
+          "false_merge_pairs": 11349,
+          "false_split_pairs": 140186,
+          "stats": {
+            "runtime_sec": 0.813,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_14": {
+          "ami": 91.2158,
+          "macro_b3": 79.9612,
+          "micro_b3": 89.8062,
+          "tail_b3": 73.6417,
+          "ari": 92.3263,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 117,
+          "false_merge_pairs": 7439,
+          "false_split_pairs": 51754,
+          "stats": {
+            "runtime_sec": 1.949,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_15": {
+          "ami": 87.7247,
+          "macro_b3": 73.9877,
+          "micro_b3": 88.7379,
+          "tail_b3": 70.4239,
+          "ari": 92.7315,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 101,
+          "false_merge_pairs": 19509,
+          "false_split_pairs": 73750,
+          "stats": {
+            "runtime_sec": 1.333,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_16": {
+          "ami": 93.983,
+          "macro_b3": 77.2659,
+          "micro_b3": 93.3811,
+          "tail_b3": 70.0551,
+          "ari": 94.3621,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 39,
+          "false_merge_pairs": 3852,
+          "false_split_pairs": 1471,
+          "stats": {
+            "runtime_sec": 0.158,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_17": {
+          "ami": 93.2921,
+          "macro_b3": 78.8149,
+          "micro_b3": 92.3733,
+          "tail_b3": 73.8107,
+          "ari": 96.7944,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 88,
+          "false_merge_pairs": 4931,
+          "false_split_pairs": 23111,
+          "stats": {
+            "runtime_sec": 1.55,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_18": {
+          "ami": 85.1789,
+          "macro_b3": 74.6483,
+          "micro_b3": 81.6271,
+          "tail_b3": 70.5086,
+          "ari": 68.12,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 92,
+          "false_merge_pairs": 67804,
+          "false_split_pairs": 39247,
+          "stats": {
+            "runtime_sec": 0.718,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_19": {
+          "ami": 90.8319,
+          "macro_b3": 75.7349,
+          "micro_b3": 89.2631,
+          "tail_b3": 70.5309,
+          "ari": 90.6091,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 62,
+          "false_merge_pairs": 6254,
+          "false_split_pairs": 10821,
+          "stats": {
+            "runtime_sec": 0.379,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_20": {
+          "ami": 79.6142,
+          "macro_b3": 65.5427,
+          "micro_b3": 77.2637,
+          "tail_b3": 61.3973,
+          "ari": 56.8996,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 90,
+          "false_merge_pairs": 13136,
+          "false_split_pairs": 12638,
+          "stats": {
+            "runtime_sec": 0.158,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_21": {
+          "ami": 71.007,
+          "macro_b3": 64.6349,
+          "micro_b3": 63.8211,
+          "tail_b3": 66.3473,
+          "ari": 32.6912,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 138,
+          "false_merge_pairs": 16195,
+          "false_split_pairs": 416992,
+          "stats": {
+            "runtime_sec": 1.265,
+            "distance_threshold": 0.6
+          }
+        }
+      },
+      "cfg": {
+        "distance_threshold": 0.6
+      }
+    },
+    "ctrl_automerge_only": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 88.03,
+      "macro_b3": 75.49,
+      "micro_b3": 83.83,
+      "tail_b3": 62.85,
+      "ari": 73.87,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 0.181,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 0.181,
+      "per_block": {
+        "M_06": {
+          "ami": 93.4706,
+          "macro_b3": 71.2316,
+          "micro_b3": 90.3486,
+          "tail_b3": 54.0058,
+          "ari": 92.2847,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 46,
+          "false_merge_pairs": 2681,
+          "false_split_pairs": 5300,
+          "stats": {
+            "runtime_sec": 0.008,
+            "auto_merge_ops": 2
+          }
+        },
+        "M_07": {
+          "ami": 69.8819,
+          "macro_b3": 70.5383,
+          "micro_b3": 65.4947,
+          "tail_b3": 52.2973,
+          "ari": 22.6542,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 106,
+          "false_merge_pairs": 16034,
+          "false_split_pairs": 3544626,
+          "stats": {
+            "runtime_sec": 0.026,
+            "auto_merge_ops": 1
+          }
+        },
+        "M_08": {
+          "ami": 95.0403,
+          "macro_b3": 79.7991,
+          "micro_b3": 92.0868,
+          "tail_b3": 67.6321,
+          "ari": 92.8491,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 58,
+          "false_merge_pairs": 4316,
+          "false_split_pairs": 3119,
+          "stats": {
+            "runtime_sec": 0.009,
+            "auto_merge_ops": 1
+          }
+        },
+        "M_09": {
+          "ami": 89.8005,
+          "macro_b3": 79.103,
+          "micro_b3": 81.9405,
+          "tail_b3": 66.4917,
+          "ari": 64.5485,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 52,
+          "false_merge_pairs": 990,
+          "false_split_pairs": 41415,
+          "stats": {
+            "runtime_sec": 0.009,
+            "auto_merge_ops": 0
+          }
+        },
+        "M_10": {
+          "ami": 95.8598,
+          "macro_b3": 78.8016,
+          "micro_b3": 94.5457,
+          "tail_b3": 62.319,
+          "ari": 96.5554,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 46,
+          "false_merge_pairs": 2485,
+          "false_split_pairs": 930,
+          "stats": {
+            "runtime_sec": 0.008,
+            "auto_merge_ops": 3
+          }
+        },
+        "M_11": {
+          "ami": 90.8875,
+          "macro_b3": 81.2128,
+          "micro_b3": 87.1759,
+          "tail_b3": 71.1008,
+          "ari": 81.7327,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 40,
+          "false_merge_pairs": 1401,
+          "false_split_pairs": 29151,
+          "stats": {
+            "runtime_sec": 0.007,
+            "auto_merge_ops": 5
+          }
+        },
+        "M_12": {
+          "ami": 92.4802,
+          "macro_b3": 75.7788,
+          "micro_b3": 88.3629,
+          "tail_b3": 55.1524,
+          "ari": 90.2946,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 82,
+          "false_merge_pairs": 23677,
+          "false_split_pairs": 30467,
+          "stats": {
+            "runtime_sec": 0.016,
+            "auto_merge_ops": 3
+          }
+        },
+        "M_13": {
+          "ami": 87.1204,
+          "macro_b3": 78.4814,
+          "micro_b3": 84.1169,
+          "tail_b3": 72.0357,
+          "ari": 75.146,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 68,
+          "false_merge_pairs": 10476,
+          "false_split_pairs": 149979,
+          "stats": {
+            "runtime_sec": 0.012,
+            "auto_merge_ops": 5
+          }
+        },
+        "M_14": {
+          "ami": 91.3715,
+          "macro_b3": 77.5683,
+          "micro_b3": 87.2872,
+          "tail_b3": 67.1811,
+          "ari": 86.6273,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 76,
+          "false_merge_pairs": 7351,
+          "false_split_pairs": 91565,
+          "stats": {
+            "runtime_sec": 0.015,
+            "auto_merge_ops": 4
+          }
+        },
+        "M_15": {
+          "ami": 81.6568,
+          "macro_b3": 71.3053,
+          "micro_b3": 74.0183,
+          "tail_b3": 59.3944,
+          "ari": 54.349,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 71,
+          "false_merge_pairs": 4274,
+          "false_split_pairs": 493709,
+          "stats": {
+            "runtime_sec": 0.013,
+            "auto_merge_ops": 6
+          }
+        },
+        "M_16": {
+          "ami": 91.534,
+          "macro_b3": 71.2935,
+          "micro_b3": 89.2816,
+          "tail_b3": 59.6224,
+          "ari": 86.3612,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 34,
+          "false_merge_pairs": 2325,
+          "false_split_pairs": 9576,
+          "stats": {
+            "runtime_sec": 0.006,
+            "auto_merge_ops": 4
+          }
+        },
+        "M_17": {
+          "ami": 92.4202,
+          "macro_b3": 80.6288,
+          "micro_b3": 90.5188,
+          "tail_b3": 72.5656,
+          "ari": 88.5797,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 65,
+          "false_merge_pairs": 9936,
+          "false_split_pairs": 85329,
+          "stats": {
+            "runtime_sec": 0.013,
+            "auto_merge_ops": 7
+          }
+        },
+        "M_18": {
+          "ami": 89.0662,
+          "macro_b3": 71.7697,
+          "micro_b3": 86.3821,
+          "tail_b3": 43.9055,
+          "ari": 82.3276,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 63,
+          "false_merge_pairs": 5947,
+          "false_split_pairs": 43927,
+          "stats": {
+            "runtime_sec": 0.01,
+            "auto_merge_ops": 3
+          }
+        },
+        "M_19": {
+          "ami": 88.678,
+          "macro_b3": 77.2127,
+          "micro_b3": 83.3837,
+          "tail_b3": 71.8897,
+          "ari": 69.8668,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 45,
+          "false_merge_pairs": 7120,
+          "false_split_pairs": 40766,
+          "stats": {
+            "runtime_sec": 0.008,
+            "auto_merge_ops": 4
+          }
+        },
+        "M_20": {
+          "ami": 83.8927,
+          "macro_b3": 74.8304,
+          "micro_b3": 78.9989,
+          "tail_b3": 64.037,
+          "ari": 62.7059,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 81,
+          "false_merge_pairs": 1665,
+          "false_split_pairs": 16002,
+          "stats": {
+            "runtime_sec": 0.008,
+            "auto_merge_ops": 0
+          }
+        },
+        "M_21": {
+          "ami": 75.2659,
+          "macro_b3": 68.2862,
+          "micro_b3": 67.3406,
+          "tail_b3": 65.9337,
+          "ari": 35.0755,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 85,
+          "false_merge_pairs": 9483,
+          "false_split_pairs": 408911,
+          "stats": {
+            "runtime_sec": 0.013,
+            "auto_merge_ops": 1
+          }
+        }
+      }
+    },
+    "ctrl_meso_heur_pure": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 88.96,
+      "macro_b3": 75.41,
+      "micro_b3": 85.21,
+      "tail_b3": 62.82,
+      "ari": 76.82,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 1.9,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 1.9,
+      "per_block": {
+        "M_06": {
+          "ami": 93.4706,
+          "macro_b3": 71.2316,
+          "micro_b3": 90.3486,
+          "tail_b3": 54.0058,
+          "ari": 92.2847,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 46,
+          "false_merge_pairs": 2681,
+          "false_split_pairs": 5300,
+          "stats": {
+            "runtime_sec": 0.208,
+            "seam_ops": 0,
+            "merge_ops": 2
+          }
+        },
+        "M_07": {
+          "ami": 69.8819,
+          "macro_b3": 70.5383,
+          "micro_b3": 65.4947,
+          "tail_b3": 52.2973,
+          "ari": 22.6542,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 106,
+          "false_merge_pairs": 16034,
+          "false_split_pairs": 3544626,
+          "stats": {
+            "runtime_sec": 0.241,
+            "seam_ops": 0,
+            "merge_ops": 1
+          }
+        },
+        "M_08": {
+          "ami": 95.6518,
+          "macro_b3": 80.1435,
+          "micro_b3": 93.2926,
+          "tail_b3": 67.6263,
+          "ari": 93.1985,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 57,
+          "false_merge_pairs": 5396,
+          "false_split_pairs": 1823,
+          "stats": {
+            "runtime_sec": 0.089,
+            "seam_ops": 0,
+            "merge_ops": 2
+          }
+        },
+        "M_09": {
+          "ami": 89.8005,
+          "macro_b3": 79.103,
+          "micro_b3": 81.9405,
+          "tail_b3": 66.4917,
+          "ari": 64.5485,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 52,
+          "false_merge_pairs": 990,
+          "false_split_pairs": 41415,
+          "stats": {
+            "runtime_sec": 0.082,
+            "seam_ops": 0,
+            "merge_ops": 0
+          }
+        },
+        "M_10": {
+          "ami": 95.8598,
+          "macro_b3": 78.8016,
+          "micro_b3": 94.5457,
+          "tail_b3": 62.319,
+          "ari": 96.5554,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 46,
+          "false_merge_pairs": 2485,
+          "false_split_pairs": 930,
+          "stats": {
+            "runtime_sec": 0.065,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_11": {
+          "ami": 92.9545,
+          "macro_b3": 80.1086,
+          "micro_b3": 90.5837,
+          "tail_b3": 71.1008,
+          "ari": 93.5074,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 38,
+          "false_merge_pairs": 3169,
+          "false_split_pairs": 8716,
+          "stats": {
+            "runtime_sec": 0.079,
+            "seam_ops": 0,
+            "merge_ops": 7
+          }
+        },
+        "M_12": {
+          "ami": 92.4802,
+          "macro_b3": 75.7788,
+          "micro_b3": 88.3629,
+          "tail_b3": 55.1524,
+          "ari": 90.2946,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 82,
+          "false_merge_pairs": 23677,
+          "false_split_pairs": 30467,
+          "stats": {
+            "runtime_sec": 0.172,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_13": {
+          "ami": 89.2497,
+          "macro_b3": 78.8287,
+          "micro_b3": 86.6969,
+          "tail_b3": 72.0357,
+          "ari": 79.5838,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 66,
+          "false_merge_pairs": 10476,
+          "false_split_pairs": 124040,
+          "stats": {
+            "runtime_sec": 0.107,
+            "seam_ops": 0,
+            "merge_ops": 7
+          }
+        },
+        "M_14": {
+          "ami": 91.3715,
+          "macro_b3": 77.5683,
+          "micro_b3": 87.2872,
+          "tail_b3": 67.1811,
+          "ari": 86.6273,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 76,
+          "false_merge_pairs": 7351,
+          "false_split_pairs": 91565,
+          "stats": {
+            "runtime_sec": 0.15,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_15": {
+          "ami": 84.9324,
+          "macro_b3": 70.8472,
+          "micro_b3": 78.9429,
+          "tail_b3": 59.3944,
+          "ari": 65.0356,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 67,
+          "false_merge_pairs": 14976,
+          "false_split_pairs": 384889,
+          "stats": {
+            "runtime_sec": 0.135,
+            "seam_ops": 0,
+            "merge_ops": 10
+          }
+        },
+        "M_16": {
+          "ami": 93.7304,
+          "macro_b3": 71.9828,
+          "micro_b3": 92.6351,
+          "tail_b3": 59.6224,
+          "ari": 92.4036,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 33,
+          "false_merge_pairs": 2969,
+          "false_split_pairs": 4010,
+          "stats": {
+            "runtime_sec": 0.054,
+            "seam_ops": 0,
+            "merge_ops": 5
+          }
+        },
+        "M_17": {
+          "ami": 95.5205,
+          "macro_b3": 81.2518,
+          "micro_b3": 94.9185,
+          "tail_b3": 72.5656,
+          "ari": 97.8088,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 63,
+          "false_merge_pairs": 9936,
+          "false_split_pairs": 9522,
+          "stats": {
+            "runtime_sec": 0.12,
+            "seam_ops": 0,
+            "merge_ops": 9
+          }
+        },
+        "M_18": {
+          "ami": 89.9607,
+          "macro_b3": 72.1373,
+          "micro_b3": 87.3828,
+          "tail_b3": 43.9055,
+          "ari": 84.3812,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 62,
+          "false_merge_pairs": 5947,
+          "false_split_pairs": 38779,
+          "stats": {
+            "runtime_sec": 0.088,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_19": {
+          "ami": 88.678,
+          "macro_b3": 77.2127,
+          "micro_b3": 83.3837,
+          "tail_b3": 71.8897,
+          "ari": 69.8668,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 45,
+          "false_merge_pairs": 7120,
+          "false_split_pairs": 40766,
+          "stats": {
+            "runtime_sec": 0.084,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_20": {
+          "ami": 82.9731,
+          "macro_b3": 72.4703,
+          "micro_b3": 78.6724,
+          "tail_b3": 63.547,
+          "ari": 60.4266,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 80,
+          "false_merge_pairs": 3583,
+          "false_split_pairs": 15850,
+          "stats": {
+            "runtime_sec": 0.084,
+            "seam_ops": 0,
+            "merge_ops": 1
+          }
+        },
+        "M_21": {
+          "ami": 76.8619,
+          "macro_b3": 68.5045,
+          "micro_b3": 68.9035,
+          "tail_b3": 65.9291,
+          "ari": 39.9353,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 83,
+          "false_merge_pairs": 10209,
+          "false_split_pairs": 385769,
+          "stats": {
+            "runtime_sec": 0.142,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        }
+      },
+      "cfg": {
+        "tau_merge": 0.8,
+        "min_seam_sep": 0.99
+      }
+    },
+    "ctrl_meso_heur_def": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 88.9,
+      "macro_b3": 66.92,
+      "micro_b3": 85.1,
+      "tail_b3": 40.85,
+      "ari": 76.98,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 1.645,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 1.645,
+      "per_block": {
+        "M_06": {
+          "ami": 92.2377,
+          "macro_b3": 60.2863,
+          "micro_b3": 88.7356,
+          "tail_b3": 32.2847,
+          "ari": 91.5114,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 32,
+          "false_merge_pairs": 3669,
+          "false_split_pairs": 5192,
+          "stats": {
+            "runtime_sec": 0.073,
+            "seam_ops": 0,
+            "merge_ops": 2
+          }
+        },
+        "M_07": {
+          "ami": 69.9443,
+          "macro_b3": 58.0304,
+          "micro_b3": 65.7852,
+          "tail_b3": 24.1999,
+          "ari": 23.267,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 60,
+          "false_merge_pairs": 20925,
+          "false_split_pairs": 3520129,
+          "stats": {
+            "runtime_sec": 0.236,
+            "seam_ops": 0,
+            "merge_ops": 2
+          }
+        },
+        "M_08": {
+          "ami": 94.9466,
+          "macro_b3": 67.5089,
+          "micro_b3": 92.6065,
+          "tail_b3": 38.4834,
+          "ari": 92.0985,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 37,
+          "false_merge_pairs": 7792,
+          "false_split_pairs": 838,
+          "stats": {
+            "runtime_sec": 0.084,
+            "seam_ops": 0,
+            "merge_ops": 2
+          }
+        },
+        "M_09": {
+          "ami": 89.6095,
+          "macro_b3": 72.1286,
+          "micro_b3": 81.8786,
+          "tail_b3": 47.0236,
+          "ari": 64.5882,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 39,
+          "false_merge_pairs": 1430,
+          "false_split_pairs": 41136,
+          "stats": {
+            "runtime_sec": 0.077,
+            "seam_ops": 0,
+            "merge_ops": 0
+          }
+        },
+        "M_10": {
+          "ami": 96.1931,
+          "macro_b3": 76.4729,
+          "micro_b3": 94.4768,
+          "tail_b3": 58.4218,
+          "ari": 96.4981,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 2911,
+          "false_split_pairs": 583,
+          "stats": {
+            "runtime_sec": 0.061,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_11": {
+          "ami": 92.6631,
+          "macro_b3": 69.0143,
+          "micro_b3": 90.2864,
+          "tail_b3": 31.7886,
+          "ari": 93.3308,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 4089,
+          "false_split_pairs": 8188,
+          "stats": {
+            "runtime_sec": 0.073,
+            "seam_ops": 0,
+            "merge_ops": 7
+          }
+        },
+        "M_12": {
+          "ami": 92.2866,
+          "macro_b3": 69.6149,
+          "micro_b3": 88.0174,
+          "tail_b3": 30.9465,
+          "ari": 90.221,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 47,
+          "false_merge_pairs": 27045,
+          "false_split_pairs": 28014,
+          "stats": {
+            "runtime_sec": 0.161,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_13": {
+          "ami": 88.5636,
+          "macro_b3": 64.9527,
+          "micro_b3": 85.8302,
+          "tail_b3": 47.3416,
+          "ari": 80.5108,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 36,
+          "false_merge_pairs": 11519,
+          "false_split_pairs": 117633,
+          "stats": {
+            "runtime_sec": 0.107,
+            "seam_ops": 0,
+            "merge_ops": 7
+          }
+        },
+        "M_14": {
+          "ami": 90.4858,
+          "macro_b3": 64.0816,
+          "micro_b3": 86.0314,
+          "tail_b3": 36.9801,
+          "ari": 85.6474,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 45,
+          "false_merge_pairs": 13814,
+          "false_split_pairs": 92931,
+          "stats": {
+            "runtime_sec": 0.141,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_15": {
+          "ami": 84.5111,
+          "macro_b3": 61.9018,
+          "micro_b3": 78.85,
+          "tail_b3": 38.8649,
+          "ari": 65.0609,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 40,
+          "false_merge_pairs": 17966,
+          "false_split_pairs": 382448,
+          "stats": {
+            "runtime_sec": 0.134,
+            "seam_ops": 0,
+            "merge_ops": 9
+          }
+        },
+        "M_16": {
+          "ami": 93.8027,
+          "macro_b3": 69.4399,
+          "micro_b3": 92.7402,
+          "tail_b3": 55.8595,
+          "ari": 91.9089,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 22,
+          "false_merge_pairs": 3783,
+          "false_split_pairs": 3717,
+          "stats": {
+            "runtime_sec": 0.055,
+            "seam_ops": 0,
+            "merge_ops": 5
+          }
+        },
+        "M_17": {
+          "ami": 94.8489,
+          "macro_b3": 69.4501,
+          "micro_b3": 94.1825,
+          "tail_b3": 43.8397,
+          "ari": 97.4838,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 16709,
+          "false_split_pairs": 5822,
+          "stats": {
+            "runtime_sec": 0.119,
+            "seam_ops": 0,
+            "merge_ops": 8
+          }
+        },
+        "M_18": {
+          "ami": 89.5191,
+          "macro_b3": 66.1037,
+          "micro_b3": 87.3079,
+          "tail_b3": 26.6817,
+          "ari": 83.8355,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 35,
+          "false_merge_pairs": 7438,
+          "false_split_pairs": 39014,
+          "stats": {
+            "runtime_sec": 0.085,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_19": {
+          "ami": 89.3664,
+          "macro_b3": 69.9303,
+          "micro_b3": 84.4879,
+          "tail_b3": 42.8727,
+          "ari": 70.1396,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 28,
+          "false_merge_pairs": 8238,
+          "false_split_pairs": 39723,
+          "stats": {
+            "runtime_sec": 0.072,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_20": {
+          "ami": 85.3315,
+          "macro_b3": 69.6187,
+          "micro_b3": 80.1594,
+          "tail_b3": 51.7406,
+          "ari": 63.4446,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 41,
+          "false_merge_pairs": 3710,
+          "false_split_pairs": 14648,
+          "stats": {
+            "runtime_sec": 0.057,
+            "seam_ops": 0,
+            "merge_ops": 0
+          }
+        },
+        "M_21": {
+          "ami": 78.1669,
+          "macro_b3": 62.124,
+          "micro_b3": 70.1916,
+          "tail_b3": 46.1988,
+          "ari": 42.2107,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 36,
+          "false_merge_pairs": 13161,
+          "false_split_pairs": 373337,
+          "stats": {
+            "runtime_sec": 0.11,
+            "seam_ops": 0,
+            "merge_ops": 2
+          }
+        }
+      }
+    },
+    "structural_fs_fm_audit": {
+      "pure_2dse_fm": 96059,
+      "pure_2dse_fs": 6096628,
+      "pure_fs_over_fm": 63.47,
+      "hisevent_def_fm": 134707,
+      "hisevent_def_fs": 6013959,
+      "def_fs_over_fm": 44.64
+    },
+    "hisevent_default": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 83.95,
+      "macro_b3": 65.67,
+      "micro_b3": 77.08,
+      "tail_b3": 41.03,
+      "ari": 58.62,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 16.272,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 16.272,
+      "per_block": {
+        "M_06": {
+          "ami": 89.0087,
+          "macro_b3": 59.18,
+          "micro_b3": 82.7096,
+          "tail_b3": 32.2847,
+          "ari": 72.5799,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 34,
+          "false_merge_pairs": 3669,
+          "false_split_pairs": 21182,
+          "stats": {
+            "runtime_sec": 0.383,
+            "router_cpu_sec": 0.383,
+            "total_wall_sec": 0.383
+          }
+        },
+        "M_07": {
+          "ami": 68.0557,
+          "macro_b3": 57.9056,
+          "micro_b3": 63.6976,
+          "tail_b3": 24.2099,
+          "ari": 18.1046,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 62,
+          "false_merge_pairs": 19698,
+          "false_split_pairs": 3702293,
+          "stats": {
+            "runtime_sec": 4.892,
+            "router_cpu_sec": 4.892,
+            "total_wall_sec": 4.892
+          }
+        },
+        "M_08": {
+          "ami": 93.2944,
+          "macro_b3": 67.0419,
+          "micro_b3": 89.0418,
+          "tail_b3": 39.3411,
+          "ari": 86.1335,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 39,
+          "false_merge_pairs": 4624,
+          "false_split_pairs": 9079,
+          "stats": {
+            "runtime_sec": 0.633,
+            "router_cpu_sec": 0.633,
+            "total_wall_sec": 0.633
+          }
+        },
+        "M_09": {
+          "ami": 89.6095,
+          "macro_b3": 72.1286,
+          "micro_b3": 81.8786,
+          "tail_b3": 47.0236,
+          "ari": 64.5882,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 39,
+          "false_merge_pairs": 1430,
+          "false_split_pairs": 41136,
+          "stats": {
+            "runtime_sec": 0.515,
+            "router_cpu_sec": 0.515,
+            "total_wall_sec": 0.515
+          }
+        },
+        "M_10": {
+          "ami": 91.7951,
+          "macro_b3": 74.5865,
+          "micro_b3": 86.817,
+          "tail_b3": 58.432,
+          "ari": 80.4602,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 30,
+          "false_merge_pairs": 2806,
+          "false_split_pairs": 14449,
+          "stats": {
+            "runtime_sec": 0.343,
+            "router_cpu_sec": 0.343,
+            "total_wall_sec": 0.343
+          }
+        },
+        "M_11": {
+          "ami": 82.5267,
+          "macro_b3": 67.211,
+          "micro_b3": 72.7524,
+          "tail_b3": 31.7886,
+          "ari": 44.2253,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 34,
+          "false_merge_pairs": 1657,
+          "false_split_pairs": 73943,
+          "stats": {
+            "runtime_sec": 0.408,
+            "router_cpu_sec": 0.408,
+            "total_wall_sec": 0.408
+          }
+        },
+        "M_12": {
+          "ami": 91.1534,
+          "macro_b3": 69.1928,
+          "micro_b3": 86.2752,
+          "tail_b3": 30.9465,
+          "ari": 86.4004,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 50,
+          "false_merge_pairs": 26923,
+          "false_split_pairs": 47308,
+          "stats": {
+            "runtime_sec": 1.514,
+            "router_cpu_sec": 1.514,
+            "total_wall_sec": 1.514
+          }
+        },
+        "M_13": {
+          "ami": 75.6326,
+          "macro_b3": 63.2019,
+          "micro_b3": 66.4739,
+          "tail_b3": 47.9185,
+          "ari": 32.9068,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 43,
+          "false_merge_pairs": 11133,
+          "false_split_pairs": 352630,
+          "stats": {
+            "runtime_sec": 1.097,
+            "router_cpu_sec": 1.097,
+            "total_wall_sec": 1.097
+          }
+        },
+        "M_14": {
+          "ami": 87.7436,
+          "macro_b3": 63.4309,
+          "micro_b3": 80.9326,
+          "tail_b3": 37.0368,
+          "ari": 74.0607,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 48,
+          "false_merge_pairs": 12104,
+          "false_split_pairs": 165512,
+          "stats": {
+            "runtime_sec": 1.337,
+            "router_cpu_sec": 1.337,
+            "total_wall_sec": 1.337
+          }
+        },
+        "M_15": {
+          "ami": 72.4891,
+          "macro_b3": 61.3761,
+          "micro_b3": 62.1375,
+          "tail_b3": 38.8669,
+          "ari": 25.0988,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 6220,
+          "false_split_pairs": 732493,
+          "stats": {
+            "runtime_sec": 1.405,
+            "router_cpu_sec": 1.405,
+            "total_wall_sec": 1.405
+          }
+        },
+        "M_16": {
+          "ami": 84.6014,
+          "macro_b3": 65.9552,
+          "micro_b3": 78.7825,
+          "tail_b3": 56.0991,
+          "ari": 67.3354,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 1776,
+          "false_split_pairs": 23270,
+          "stats": {
+            "runtime_sec": 0.239,
+            "router_cpu_sec": 0.239,
+            "total_wall_sec": 0.239
+          }
+        },
+        "M_17": {
+          "ami": 83.281,
+          "macro_b3": 66.5731,
+          "micro_b3": 75.0857,
+          "tail_b3": 44.1841,
+          "ari": 54.4673,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 35,
+          "false_merge_pairs": 12918,
+          "false_split_pairs": 298849,
+          "stats": {
+            "runtime_sec": 1.207,
+            "router_cpu_sec": 1.207,
+            "total_wall_sec": 1.207
+          }
+        },
+        "M_18": {
+          "ami": 85.6975,
+          "macro_b3": 64.4405,
+          "micro_b3": 79.957,
+          "tail_b3": 27.3312,
+          "ari": 69.306,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 39,
+          "false_merge_pairs": 5922,
+          "false_split_pairs": 73408,
+          "stats": {
+            "runtime_sec": 0.714,
+            "router_cpu_sec": 0.714,
+            "total_wall_sec": 0.714
+          }
+        },
+        "M_19": {
+          "ami": 86.2843,
+          "macro_b3": 67.5549,
+          "micro_b3": 78.6796,
+          "tail_b3": 42.8797,
+          "ari": 60.4244,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 32,
+          "false_merge_pairs": 8019,
+          "false_split_pairs": 51733,
+          "stats": {
+            "runtime_sec": 0.384,
+            "router_cpu_sec": 0.384,
+            "total_wall_sec": 0.384
+          }
+        },
+        "M_20": {
+          "ami": 85.3315,
+          "macro_b3": 69.6187,
+          "micro_b3": 80.1594,
+          "tail_b3": 51.7406,
+          "ari": 63.4446,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 41,
+          "false_merge_pairs": 3710,
+          "false_split_pairs": 14648,
+          "stats": {
+            "runtime_sec": 0.186,
+            "router_cpu_sec": 0.186,
+            "total_wall_sec": 0.186
+          }
+        },
+        "M_21": {
+          "ami": 76.771,
+          "macro_b3": 61.3719,
+          "micro_b3": 67.9002,
+          "tail_b3": 46.3791,
+          "ari": 38.4464,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 38,
+          "false_merge_pairs": 12098,
+          "false_split_pairs": 392026,
+          "stats": {
+            "runtime_sec": 1.015,
+            "router_cpu_sec": 1.015,
+            "total_wall_sec": 1.015
+          }
+        }
+      }
+    },
+    "hisevent_dev_tuned": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 83.98,
+      "macro_b3": 74.26,
+      "micro_b3": 76.71,
+      "tail_b3": 62.91,
+      "ari": 57.79,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 13.198,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 13.198,
+      "per_block": {
+        "M_06": {
+          "ami": 90.2038,
+          "macro_b3": 70.1253,
+          "micro_b3": 84.0366,
+          "tail_b3": 54.0058,
+          "ari": 73.2728,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 48,
+          "false_merge_pairs": 2681,
+          "false_split_pairs": 21290,
+          "stats": {
+            "runtime_sec": 0.344,
+            "router_cpu_sec": 0.344,
+            "total_wall_sec": 0.344
+          }
+        },
+        "M_07": {
+          "ami": 68.4856,
+          "macro_b3": 70.4388,
+          "micro_b3": 63.7014,
+          "tail_b3": 52.3202,
+          "ari": 18.3085,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 107,
+          "false_merge_pairs": 14424,
+          "false_split_pairs": 3697996,
+          "stats": {
+            "runtime_sec": 3.139,
+            "router_cpu_sec": 3.139,
+            "total_wall_sec": 3.139
+          }
+        },
+        "M_08": {
+          "ami": 93.9556,
+          "macro_b3": 79.4665,
+          "micro_b3": 89.5891,
+          "tail_b3": 68.043,
+          "ari": 86.2227,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 59,
+          "false_merge_pairs": 3236,
+          "false_split_pairs": 10079,
+          "stats": {
+            "runtime_sec": 0.34,
+            "router_cpu_sec": 0.34,
+            "total_wall_sec": 0.34
+          }
+        },
+        "M_09": {
+          "ami": 89.8005,
+          "macro_b3": 79.103,
+          "micro_b3": 81.9405,
+          "tail_b3": 66.4917,
+          "ari": 64.5485,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 52,
+          "false_merge_pairs": 990,
+          "false_split_pairs": 41415,
+          "stats": {
+            "runtime_sec": 0.304,
+            "router_cpu_sec": 0.304,
+            "total_wall_sec": 0.304
+          }
+        },
+        "M_10": {
+          "ami": 91.4425,
+          "macro_b3": 76.909,
+          "micro_b3": 86.5297,
+          "tail_b3": 62.3207,
+          "ari": 80.3534,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 2438,
+          "false_split_pairs": 14796,
+          "stats": {
+            "runtime_sec": 0.276,
+            "router_cpu_sec": 0.276,
+            "total_wall_sec": 0.276
+          }
+        },
+        "M_11": {
+          "ami": 82.7275,
+          "macro_b3": 78.1468,
+          "micro_b3": 72.3205,
+          "tail_b3": 71.1008,
+          "ari": 43.9614,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 45,
+          "false_merge_pairs": 1207,
+          "false_split_pairs": 74392,
+          "stats": {
+            "runtime_sec": 0.3,
+            "router_cpu_sec": 0.3,
+            "total_wall_sec": 0.3
+          }
+        },
+        "M_12": {
+          "ami": 91.3438,
+          "macro_b3": 75.3556,
+          "micro_b3": 86.564,
+          "tail_b3": 55.1524,
+          "ari": 86.43,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 85,
+          "false_merge_pairs": 23616,
+          "false_split_pairs": 49761,
+          "stats": {
+            "runtime_sec": 1.179,
+            "router_cpu_sec": 1.179,
+            "total_wall_sec": 1.179
+          }
+        },
+        "M_13": {
+          "ami": 78.0766,
+          "macro_b3": 77.7667,
+          "micro_b3": 67.663,
+          "tail_b3": 72.0676,
+          "ari": 34.874,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 73,
+          "false_merge_pairs": 2592,
+          "false_split_pairs": 348901,
+          "stats": {
+            "runtime_sec": 0.949,
+            "router_cpu_sec": 0.949,
+            "total_wall_sec": 0.949
+          }
+        },
+        "M_14": {
+          "ami": 87.6313,
+          "macro_b3": 76.6329,
+          "micro_b3": 80.6021,
+          "tail_b3": 67.1811,
+          "ari": 71.2473,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 80,
+          "false_merge_pairs": 7351,
+          "false_split_pairs": 184181,
+          "stats": {
+            "runtime_sec": 1.236,
+            "router_cpu_sec": 1.236,
+            "total_wall_sec": 1.236
+          }
+        },
+        "M_15": {
+          "ami": 72.6142,
+          "macro_b3": 70.4744,
+          "micro_b3": 61.8954,
+          "tail_b3": 59.3944,
+          "ari": 24.4774,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 77,
+          "false_merge_pairs": 4184,
+          "false_split_pairs": 738106,
+          "stats": {
+            "runtime_sec": 1.215,
+            "router_cpu_sec": 1.215,
+            "total_wall_sec": 1.215
+          }
+        },
+        "M_16": {
+          "ami": 84.5748,
+          "macro_b3": 68.331,
+          "micro_b3": 78.1925,
+          "tail_b3": 59.6224,
+          "ari": 67.0385,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 38,
+          "false_merge_pairs": 1456,
+          "false_split_pairs": 23647,
+          "stats": {
+            "runtime_sec": 0.236,
+            "router_cpu_sec": 0.236,
+            "total_wall_sec": 0.236
+          }
+        },
+        "M_17": {
+          "ami": 82.2792,
+          "macro_b3": 77.6918,
+          "micro_b3": 72.1669,
+          "tail_b3": 72.5656,
+          "ari": 46.6658,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 72,
+          "false_merge_pairs": 8878,
+          "false_split_pairs": 339417,
+          "stats": {
+            "runtime_sec": 1.211,
+            "router_cpu_sec": 1.211,
+            "total_wall_sec": 1.211
+          }
+        },
+        "M_18": {
+          "ami": 86.1209,
+          "macro_b3": 70.4123,
+          "micro_b3": 79.9081,
+          "tail_b3": 44.4123,
+          "ari": 69.9056,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 66,
+          "false_merge_pairs": 4831,
+          "false_split_pairs": 72826,
+          "stats": {
+            "runtime_sec": 0.616,
+            "router_cpu_sec": 0.616,
+            "total_wall_sec": 0.616
+          }
+        },
+        "M_19": {
+          "ami": 85.6001,
+          "macro_b3": 74.8276,
+          "micro_b3": 77.2836,
+          "tail_b3": 71.8897,
+          "ari": 59.9655,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 7027,
+          "false_split_pairs": 52776,
+          "stats": {
+            "runtime_sec": 0.501,
+            "router_cpu_sec": 0.501,
+            "total_wall_sec": 0.501
+          }
+        },
+        "M_20": {
+          "ami": 83.8927,
+          "macro_b3": 74.8304,
+          "micro_b3": 78.9989,
+          "tail_b3": 64.037,
+          "ari": 62.7059,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 81,
+          "false_merge_pairs": 1665,
+          "false_split_pairs": 16002,
+          "stats": {
+            "runtime_sec": 0.185,
+            "router_cpu_sec": 0.185,
+            "total_wall_sec": 0.185
+          }
+        },
+        "M_21": {
+          "ami": 74.8658,
+          "macro_b3": 67.6085,
+          "micro_b3": 66.0171,
+          "tail_b3": 65.9337,
+          "ari": 34.6103,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 86,
+          "false_merge_pairs": 9483,
+          "false_split_pairs": 411043,
+          "stats": {
+            "runtime_sec": 1.167,
+            "router_cpu_sec": 1.167,
+            "total_wall_sec": 1.167
+          }
+        }
+      },
+      "cfg": {
+        "tau_sim": 0.5,
+        "attr_alpha": 0.5
+      }
+    },
+    "ctrl_pure_2dse_0tok": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 83.98,
+      "macro_b3": 74.26,
+      "micro_b3": 76.71,
+      "tail_b3": 62.91,
+      "ari": 57.79,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 13.198,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 13.198,
+      "per_block": {
+        "M_06": {
+          "ami": 90.2038,
+          "macro_b3": 70.1253,
+          "micro_b3": 84.0366,
+          "tail_b3": 54.0058,
+          "ari": 73.2728,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 48,
+          "false_merge_pairs": 2681,
+          "false_split_pairs": 21290,
+          "stats": {
+            "runtime_sec": 0.344,
+            "router_cpu_sec": 0.344,
+            "total_wall_sec": 0.344
+          }
+        },
+        "M_07": {
+          "ami": 68.4856,
+          "macro_b3": 70.4388,
+          "micro_b3": 63.7014,
+          "tail_b3": 52.3202,
+          "ari": 18.3085,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 107,
+          "false_merge_pairs": 14424,
+          "false_split_pairs": 3697996,
+          "stats": {
+            "runtime_sec": 3.139,
+            "router_cpu_sec": 3.139,
+            "total_wall_sec": 3.139
+          }
+        },
+        "M_08": {
+          "ami": 93.9556,
+          "macro_b3": 79.4665,
+          "micro_b3": 89.5891,
+          "tail_b3": 68.043,
+          "ari": 86.2227,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 59,
+          "false_merge_pairs": 3236,
+          "false_split_pairs": 10079,
+          "stats": {
+            "runtime_sec": 0.34,
+            "router_cpu_sec": 0.34,
+            "total_wall_sec": 0.34
+          }
+        },
+        "M_09": {
+          "ami": 89.8005,
+          "macro_b3": 79.103,
+          "micro_b3": 81.9405,
+          "tail_b3": 66.4917,
+          "ari": 64.5485,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 52,
+          "false_merge_pairs": 990,
+          "false_split_pairs": 41415,
+          "stats": {
+            "runtime_sec": 0.304,
+            "router_cpu_sec": 0.304,
+            "total_wall_sec": 0.304
+          }
+        },
+        "M_10": {
+          "ami": 91.4425,
+          "macro_b3": 76.909,
+          "micro_b3": 86.5297,
+          "tail_b3": 62.3207,
+          "ari": 80.3534,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 2438,
+          "false_split_pairs": 14796,
+          "stats": {
+            "runtime_sec": 0.276,
+            "router_cpu_sec": 0.276,
+            "total_wall_sec": 0.276
+          }
+        },
+        "M_11": {
+          "ami": 82.7275,
+          "macro_b3": 78.1468,
+          "micro_b3": 72.3205,
+          "tail_b3": 71.1008,
+          "ari": 43.9614,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 45,
+          "false_merge_pairs": 1207,
+          "false_split_pairs": 74392,
+          "stats": {
+            "runtime_sec": 0.3,
+            "router_cpu_sec": 0.3,
+            "total_wall_sec": 0.3
+          }
+        },
+        "M_12": {
+          "ami": 91.3438,
+          "macro_b3": 75.3556,
+          "micro_b3": 86.564,
+          "tail_b3": 55.1524,
+          "ari": 86.43,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 85,
+          "false_merge_pairs": 23616,
+          "false_split_pairs": 49761,
+          "stats": {
+            "runtime_sec": 1.179,
+            "router_cpu_sec": 1.179,
+            "total_wall_sec": 1.179
+          }
+        },
+        "M_13": {
+          "ami": 78.0766,
+          "macro_b3": 77.7667,
+          "micro_b3": 67.663,
+          "tail_b3": 72.0676,
+          "ari": 34.874,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 73,
+          "false_merge_pairs": 2592,
+          "false_split_pairs": 348901,
+          "stats": {
+            "runtime_sec": 0.949,
+            "router_cpu_sec": 0.949,
+            "total_wall_sec": 0.949
+          }
+        },
+        "M_14": {
+          "ami": 87.6313,
+          "macro_b3": 76.6329,
+          "micro_b3": 80.6021,
+          "tail_b3": 67.1811,
+          "ari": 71.2473,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 80,
+          "false_merge_pairs": 7351,
+          "false_split_pairs": 184181,
+          "stats": {
+            "runtime_sec": 1.236,
+            "router_cpu_sec": 1.236,
+            "total_wall_sec": 1.236
+          }
+        },
+        "M_15": {
+          "ami": 72.6142,
+          "macro_b3": 70.4744,
+          "micro_b3": 61.8954,
+          "tail_b3": 59.3944,
+          "ari": 24.4774,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 77,
+          "false_merge_pairs": 4184,
+          "false_split_pairs": 738106,
+          "stats": {
+            "runtime_sec": 1.215,
+            "router_cpu_sec": 1.215,
+            "total_wall_sec": 1.215
+          }
+        },
+        "M_16": {
+          "ami": 84.5748,
+          "macro_b3": 68.331,
+          "micro_b3": 78.1925,
+          "tail_b3": 59.6224,
+          "ari": 67.0385,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 38,
+          "false_merge_pairs": 1456,
+          "false_split_pairs": 23647,
+          "stats": {
+            "runtime_sec": 0.236,
+            "router_cpu_sec": 0.236,
+            "total_wall_sec": 0.236
+          }
+        },
+        "M_17": {
+          "ami": 82.2792,
+          "macro_b3": 77.6918,
+          "micro_b3": 72.1669,
+          "tail_b3": 72.5656,
+          "ari": 46.6658,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 72,
+          "false_merge_pairs": 8878,
+          "false_split_pairs": 339417,
+          "stats": {
+            "runtime_sec": 1.211,
+            "router_cpu_sec": 1.211,
+            "total_wall_sec": 1.211
+          }
+        },
+        "M_18": {
+          "ami": 86.1209,
+          "macro_b3": 70.4123,
+          "micro_b3": 79.9081,
+          "tail_b3": 44.4123,
+          "ari": 69.9056,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 66,
+          "false_merge_pairs": 4831,
+          "false_split_pairs": 72826,
+          "stats": {
+            "runtime_sec": 0.616,
+            "router_cpu_sec": 0.616,
+            "total_wall_sec": 0.616
+          }
+        },
+        "M_19": {
+          "ami": 85.6001,
+          "macro_b3": 74.8276,
+          "micro_b3": 77.2836,
+          "tail_b3": 71.8897,
+          "ari": 59.9655,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 7027,
+          "false_split_pairs": 52776,
+          "stats": {
+            "runtime_sec": 0.501,
+            "router_cpu_sec": 0.501,
+            "total_wall_sec": 0.501
+          }
+        },
+        "M_20": {
+          "ami": 83.8927,
+          "macro_b3": 74.8304,
+          "micro_b3": 78.9989,
+          "tail_b3": 64.037,
+          "ari": 62.7059,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 81,
+          "false_merge_pairs": 1665,
+          "false_split_pairs": 16002,
+          "stats": {
+            "runtime_sec": 0.185,
+            "router_cpu_sec": 0.185,
+            "total_wall_sec": 0.185
+          }
+        },
+        "M_21": {
+          "ami": 74.8658,
+          "macro_b3": 67.6085,
+          "micro_b3": 66.0171,
+          "tail_b3": 65.9337,
+          "ari": 34.6103,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 86,
+          "false_merge_pairs": 9483,
+          "false_split_pairs": 411043,
+          "stats": {
+            "runtime_sec": 1.167,
+            "router_cpu_sec": 1.167,
+            "total_wall_sec": 1.167
+          }
+        }
+      }
+    },
+    "eventx_tkdd20": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 81.59,
+      "macro_b3": 55.3,
+      "micro_b3": 76.85,
+      "tail_b3": 23.54,
+      "ari": 62.42,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 20.338,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 20.338,
+      "per_block": {
+        "M_06": {
+          "ami": 92.7345,
+          "macro_b3": 57.4565,
+          "micro_b3": 88.6923,
+          "tail_b3": 23.6065,
+          "ari": 84.0752,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 3727,
+          "false_split_pairs": 11975,
+          "stats": {
+            "runtime_sec": 0.617,
+            "resolution": 2.0
+          }
+        },
+        "M_07": {
+          "ami": 65.5104,
+          "macro_b3": 43.1574,
+          "micro_b3": 63.0692,
+          "tail_b3": 10.9882,
+          "ari": 20.4567,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 48,
+          "false_merge_pairs": 96346,
+          "false_split_pairs": 3579321,
+          "stats": {
+            "runtime_sec": 4.413,
+            "resolution": 2.0
+          }
+        },
+        "M_08": {
+          "ami": 91.4868,
+          "macro_b3": 56.3999,
+          "micro_b3": 86.4226,
+          "tail_b3": 23.9751,
+          "ari": 83.5964,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 29,
+          "false_merge_pairs": 17044,
+          "false_split_pairs": 2071,
+          "stats": {
+            "runtime_sec": 0.581,
+            "resolution": 2.0
+          }
+        },
+        "M_09": {
+          "ami": 92.127,
+          "macro_b3": 58.0735,
+          "micro_b3": 88.4149,
+          "tail_b3": 14.181,
+          "ari": 84.7846,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 22,
+          "false_merge_pairs": 5068,
+          "false_split_pairs": 16718,
+          "stats": {
+            "runtime_sec": 0.832,
+            "resolution": 2.0
+          }
+        },
+        "M_10": {
+          "ami": 85.7001,
+          "macro_b3": 61.829,
+          "micro_b3": 77.2243,
+          "tail_b3": 37.8933,
+          "ari": 62.7998,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 4039,
+          "false_split_pairs": 25740,
+          "stats": {
+            "runtime_sec": 0.441,
+            "resolution": 2.0
+          }
+        },
+        "M_11": {
+          "ami": 86.0338,
+          "macro_b3": 62.6645,
+          "micro_b3": 78.6885,
+          "tail_b3": 27.0026,
+          "ari": 67.7769,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 22,
+          "false_merge_pairs": 8390,
+          "false_split_pairs": 43756,
+          "stats": {
+            "runtime_sec": 0.46,
+            "resolution": 2.0
+          }
+        },
+        "M_12": {
+          "ami": 88.7748,
+          "macro_b3": 55.9939,
+          "micro_b3": 84.1822,
+          "tail_b3": 9.4338,
+          "ari": 85.0277,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 57062,
+          "false_split_pairs": 30843,
+          "stats": {
+            "runtime_sec": 2.091,
+            "resolution": 2.0
+          }
+        },
+        "M_13": {
+          "ami": 75.846,
+          "macro_b3": 52.9804,
+          "micro_b3": 68.6307,
+          "tail_b3": 28.0164,
+          "ari": 38.5644,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 33,
+          "false_merge_pairs": 16609,
+          "false_split_pairs": 326440,
+          "stats": {
+            "runtime_sec": 1.312,
+            "resolution": 2.0
+          }
+        },
+        "M_14": {
+          "ami": 78.9657,
+          "macro_b3": 48.6713,
+          "micro_b3": 75.6171,
+          "tail_b3": 21.8464,
+          "ari": 71.0381,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 57,
+          "false_merge_pairs": 54247,
+          "false_split_pairs": 155956,
+          "stats": {
+            "runtime_sec": 2.803,
+            "resolution": 2.0
+          }
+        },
+        "M_15": {
+          "ami": 61.6207,
+          "macro_b3": 51.345,
+          "micro_b3": 61.4623,
+          "tail_b3": 25.7097,
+          "ari": 21.0269,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 144,
+          "false_merge_pairs": 21505,
+          "false_split_pairs": 754887,
+          "stats": {
+            "runtime_sec": 1.178,
+            "resolution": 2.0
+          }
+        },
+        "M_16": {
+          "ami": 85.1308,
+          "macro_b3": 55.6298,
+          "micro_b3": 77.9391,
+          "tail_b3": 37.5003,
+          "ari": 69.9393,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 20,
+          "false_merge_pairs": 2165,
+          "false_split_pairs": 21391,
+          "stats": {
+            "runtime_sec": 0.327,
+            "resolution": 2.0
+          }
+        },
+        "M_17": {
+          "ami": 78.9303,
+          "macro_b3": 60.5396,
+          "micro_b3": 76.7164,
+          "tail_b3": 40.0186,
+          "ari": 63.4957,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 67,
+          "false_merge_pairs": 32605,
+          "false_split_pairs": 238170,
+          "stats": {
+            "runtime_sec": 1.454,
+            "resolution": 2.0
+          }
+        },
+        "M_18": {
+          "ami": 78.6717,
+          "macro_b3": 54.9632,
+          "micro_b3": 73.3833,
+          "tail_b3": 12.172,
+          "ari": 64.9326,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 27908,
+          "false_split_pairs": 69919,
+          "stats": {
+            "runtime_sec": 0.883,
+            "resolution": 2.0
+          }
+        },
+        "M_19": {
+          "ami": 88.1379,
+          "macro_b3": 61.9643,
+          "micro_b3": 83.7728,
+          "tail_b3": 22.5549,
+          "ari": 75.7134,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 21,
+          "false_merge_pairs": 11518,
+          "false_split_pairs": 29982,
+          "stats": {
+            "runtime_sec": 0.5,
+            "resolution": 2.0
+          }
+        },
+        "M_20": {
+          "ami": 83.1224,
+          "macro_b3": 55.1469,
+          "micro_b3": 77.5256,
+          "tail_b3": 19.7252,
+          "ari": 68.8184,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 21,
+          "false_merge_pairs": 5718,
+          "false_split_pairs": 11332,
+          "stats": {
+            "runtime_sec": 0.321,
+            "resolution": 2.0
+          }
+        },
+        "M_21": {
+          "ami": 72.7096,
+          "macro_b3": 47.9442,
+          "micro_b3": 67.8209,
+          "tail_b3": 22.0754,
+          "ari": 36.6626,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 25,
+          "false_merge_pairs": 49270,
+          "false_split_pairs": 384246,
+          "stats": {
+            "runtime_sec": 2.125,
+            "resolution": 2.0
+          }
+        }
+      },
+      "cfg": {
+        "resolution": 2.0
+      }
+    },
+    "hypersed_aaai25": {
+      "n_blocks": 16,
+      "n_posts": 32695,
+      "ami": 85.35,
+      "macro_b3": 69.03,
+      "micro_b3": 79.96,
+      "tail_b3": 53.6,
+      "ari": 65.26,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 19.324,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 19.324,
+      "per_block": {
+        "M_06": {
+          "ami": 92.159,
+          "macro_b3": 67.5726,
+          "micro_b3": 87.9369,
+          "tail_b3": 47.3692,
+          "ari": 88.8512,
+          "n_posts": 1276,
+          "n_true_events": 44,
+          "n_pred_clusters": 42,
+          "false_merge_pairs": 2967,
+          "false_split_pairs": 8305,
+          "stats": {
+            "runtime_sec": 3.829,
+            "n_anchors": 332,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_07": {
+          "ami": 67.3013,
+          "macro_b3": 52.584,
+          "micro_b3": 58.9706,
+          "tail_b3": 31.7709,
+          "ari": 17.6471,
+          "n_posts": 5278,
+          "n_true_events": 57,
+          "n_pred_clusters": 67,
+          "false_merge_pairs": 39688,
+          "false_split_pairs": 3707682,
+          "stats": {
+            "runtime_sec": 1.848,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_08": {
+          "ami": 93.8649,
+          "macro_b3": 73.8618,
+          "micro_b3": 89.9394,
+          "tail_b3": 57.6493,
+          "ari": 85.2182,
+          "n_posts": 1560,
+          "n_true_events": 53,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 6106,
+          "false_split_pairs": 8746,
+          "stats": {
+            "runtime_sec": 0.921,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_09": {
+          "ami": 88.6932,
+          "macro_b3": 76.4548,
+          "micro_b3": 82.7849,
+          "tail_b3": 56.3605,
+          "ari": 59.3342,
+          "n_posts": 1363,
+          "n_true_events": 38,
+          "n_pred_clusters": 46,
+          "false_merge_pairs": 1425,
+          "false_split_pairs": 45876,
+          "stats": {
+            "runtime_sec": 1.234,
+            "n_anchors": 354,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_10": {
+          "ami": 94.5586,
+          "macro_b3": 79.369,
+          "micro_b3": 92.1185,
+          "tail_b3": 64.9825,
+          "ari": 92.0423,
+          "n_posts": 1096,
+          "n_true_events": 33,
+          "n_pred_clusters": 39,
+          "false_merge_pairs": 3056,
+          "false_split_pairs": 4629,
+          "stats": {
+            "runtime_sec": 0.911,
+            "n_anchors": 285,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_11": {
+          "ami": 84.8001,
+          "macro_b3": 76.5153,
+          "micro_b3": 78.0096,
+          "tail_b3": 67.1617,
+          "ari": 49.507,
+          "n_posts": 1232,
+          "n_true_events": 30,
+          "n_pred_clusters": 36,
+          "false_merge_pairs": 1856,
+          "false_split_pairs": 68583,
+          "stats": {
+            "runtime_sec": 0.865,
+            "n_anchors": 320,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_12": {
+          "ami": 93.6627,
+          "macro_b3": 74.9049,
+          "micro_b3": 90.1875,
+          "tail_b3": 55.8045,
+          "ari": 92.5051,
+          "n_posts": 3237,
+          "n_true_events": 42,
+          "n_pred_clusters": 63,
+          "false_merge_pairs": 15765,
+          "false_split_pairs": 25830,
+          "stats": {
+            "runtime_sec": 1.154,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_13": {
+          "ami": 81.5554,
+          "macro_b3": 69.7364,
+          "micro_b3": 76.3217,
+          "tail_b3": 58.3095,
+          "ari": 49.4487,
+          "n_posts": 1972,
+          "n_true_events": 40,
+          "n_pred_clusters": 58,
+          "false_merge_pairs": 8387,
+          "false_split_pairs": 283000,
+          "stats": {
+            "runtime_sec": 1.059,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_14": {
+          "ami": 88.5347,
+          "macro_b3": 71.814,
+          "micro_b3": 82.5316,
+          "tail_b3": 57.5187,
+          "ari": 81.0828,
+          "n_posts": 2956,
+          "n_true_events": 43,
+          "n_pred_clusters": 68,
+          "false_merge_pairs": 10083,
+          "false_split_pairs": 125202,
+          "stats": {
+            "runtime_sec": 1.37,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_15": {
+          "ami": 79.2518,
+          "macro_b3": 70.8023,
+          "micro_b3": 72.7212,
+          "tail_b3": 60.9984,
+          "ari": 52.5793,
+          "n_posts": 2549,
+          "n_true_events": 42,
+          "n_pred_clusters": 61,
+          "false_merge_pairs": 5423,
+          "false_split_pairs": 508920,
+          "stats": {
+            "runtime_sec": 1.178,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_16": {
+          "ami": 86.348,
+          "macro_b3": 65.3773,
+          "micro_b3": 81.5615,
+          "tail_b3": 56.2682,
+          "ari": 76.6184,
+          "n_posts": 910,
+          "n_true_events": 27,
+          "n_pred_clusters": 34,
+          "false_merge_pairs": 2811,
+          "false_split_pairs": 16477,
+          "stats": {
+            "runtime_sec": 0.673,
+            "n_anchors": 237,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_17": {
+          "ami": 85.888,
+          "macro_b3": 74.8762,
+          "micro_b3": 78.3322,
+          "tail_b3": 65.7383,
+          "ari": 61.5599,
+          "n_posts": 2676,
+          "n_true_events": 35,
+          "n_pred_clusters": 58,
+          "false_merge_pairs": 7903,
+          "false_split_pairs": 263561,
+          "stats": {
+            "runtime_sec": 1.025,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_18": {
+          "ami": 88.1169,
+          "macro_b3": 66.1832,
+          "micro_b3": 83.1562,
+          "tail_b3": 37.3782,
+          "ari": 79.1993,
+          "n_posts": 1887,
+          "n_true_events": 32,
+          "n_pred_clusters": 53,
+          "false_merge_pairs": 6480,
+          "false_split_pairs": 51109,
+          "stats": {
+            "runtime_sec": 0.824,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_19": {
+          "ami": 86.541,
+          "macro_b3": 71.9649,
+          "micro_b3": 80.9678,
+          "tail_b3": 61.3883,
+          "ari": 65.8306,
+          "n_posts": 1399,
+          "n_true_events": 28,
+          "n_pred_clusters": 40,
+          "false_merge_pairs": 7109,
+          "false_split_pairs": 45826,
+          "stats": {
+            "runtime_sec": 0.763,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_20": {
+          "ami": 80.131,
+          "macro_b3": 56.5312,
+          "micro_b3": 77.5242,
+          "tail_b3": 37.9683,
+          "ari": 59.9082,
+          "n_posts": 893,
+          "n_true_events": 34,
+          "n_pred_clusters": 61,
+          "false_merge_pairs": 10590,
+          "false_split_pairs": 12557,
+          "stats": {
+            "runtime_sec": 0.688,
+            "n_anchors": 232,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        },
+        "M_21": {
+          "ami": 74.1914,
+          "macro_b3": 55.8661,
+          "micro_b3": 66.2223,
+          "tail_b3": 40.9391,
+          "ari": 32.8571,
+          "n_posts": 2411,
+          "n_true_events": 33,
+          "n_pred_clusters": 59,
+          "false_merge_pairs": 17826,
+          "false_split_pairs": 415567,
+          "stats": {
+            "runtime_sec": 0.982,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.26
+          }
+        }
+      },
+      "cfg": {
+        "anchor_ratio": 0.26
+      }
+    }
+  },
+  "Event2018": {
+    "eventx_tkdd20": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 79.12,
+      "macro_b3": 66.11,
+      "micro_b3": 77.66,
+      "tail_b3": 27.79,
+      "ari": 65.72,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 25.354,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 25.354,
+      "per_block": {
+        "M_06": {
+          "ami": 77.9401,
+          "macro_b3": 74.2206,
+          "micro_b3": 76.4615,
+          "tail_b3": 29.773,
+          "ari": 62.7702,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 58,
+          "false_merge_pairs": 78341,
+          "false_split_pairs": 679464,
+          "stats": {
+            "runtime_sec": 3.003,
+            "resolution": 1.5
+          }
+        },
+        "M_07": {
+          "ami": 76.8313,
+          "macro_b3": 63.6919,
+          "micro_b3": 76.8264,
+          "tail_b3": 23.5867,
+          "ari": 60.9057,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 45,
+          "false_merge_pairs": 89166,
+          "false_split_pairs": 536446,
+          "stats": {
+            "runtime_sec": 2.486,
+            "resolution": 1.5
+          }
+        },
+        "M_08": {
+          "ami": 89.9921,
+          "macro_b3": 75.5853,
+          "micro_b3": 89.9478,
+          "tail_b3": 39.5861,
+          "ari": 90.4486,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 24797,
+          "false_split_pairs": 20169,
+          "stats": {
+            "runtime_sec": 1.431,
+            "resolution": 1.5
+          }
+        },
+        "M_09": {
+          "ami": 68.3558,
+          "macro_b3": 59.338,
+          "micro_b3": 64.9167,
+          "tail_b3": 16.7457,
+          "ari": 45.957,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 35,
+          "false_merge_pairs": 121151,
+          "false_split_pairs": 735185,
+          "stats": {
+            "runtime_sec": 3.195,
+            "resolution": 1.5
+          }
+        },
+        "M_10": {
+          "ami": 77.9017,
+          "macro_b3": 56.7648,
+          "micro_b3": 73.1357,
+          "tail_b3": 14.4037,
+          "ari": 61.6046,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 39837,
+          "false_split_pairs": 154198,
+          "stats": {
+            "runtime_sec": 1.803,
+            "resolution": 1.5
+          }
+        },
+        "M_11": {
+          "ami": 80.8535,
+          "macro_b3": 62.17,
+          "micro_b3": 77.8931,
+          "tail_b3": 21.2435,
+          "ari": 55.9868,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 28,
+          "false_merge_pairs": 31998,
+          "false_split_pairs": 364937,
+          "stats": {
+            "runtime_sec": 1.877,
+            "resolution": 1.5
+          }
+        },
+        "M_12": {
+          "ami": 89.0683,
+          "macro_b3": 69.9161,
+          "micro_b3": 88.2222,
+          "tail_b3": 43.5945,
+          "ari": 88.0905,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 34,
+          "false_merge_pairs": 27463,
+          "false_split_pairs": 57151,
+          "stats": {
+            "runtime_sec": 2.188,
+            "resolution": 1.5
+          }
+        },
+        "M_13": {
+          "ami": 73.9935,
+          "macro_b3": 59.9033,
+          "micro_b3": 73.8261,
+          "tail_b3": 11.7357,
+          "ari": 67.9124,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 51,
+          "false_merge_pairs": 222060,
+          "false_split_pairs": 591773,
+          "stats": {
+            "runtime_sec": 4.955,
+            "resolution": 1.5
+          }
+        },
+        "M_14": {
+          "ami": 82.3775,
+          "macro_b3": 69.2125,
+          "micro_b3": 80.1092,
+          "tail_b3": 5.9181,
+          "ari": 73.903,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 37,
+          "false_merge_pairs": 52039,
+          "false_split_pairs": 140629,
+          "stats": {
+            "runtime_sec": 2.068,
+            "resolution": 1.5
+          }
+        },
+        "M_15": {
+          "ami": 83.2863,
+          "macro_b3": 55.5506,
+          "micro_b3": 83.4027,
+          "tail_b3": 29.6839,
+          "ari": 79.0447,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 22,
+          "false_merge_pairs": 24496,
+          "false_split_pairs": 110433,
+          "stats": {
+            "runtime_sec": 1.763,
+            "resolution": 1.5
+          }
+        },
+        "M_16": {
+          "ami": 69.7023,
+          "macro_b3": 80.8581,
+          "micro_b3": 69.4944,
+          "tail_b3": 69.3889,
+          "ari": 36.3227,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 2982,
+          "false_split_pairs": 146466,
+          "stats": {
+            "runtime_sec": 0.585,
+            "resolution": 1.5
+          }
+        }
+      },
+      "cfg": {
+        "resolution": 1.5
+      }
+    },
+    "sbert_emnlp19": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 73.47,
+      "macro_b3": 67.27,
+      "micro_b3": 71.8,
+      "tail_b3": 60.21,
+      "ari": 62.59,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 24.795,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 24.795,
+      "per_block": {
+        "M_06": {
+          "ami": 76.7524,
+          "macro_b3": 74.2375,
+          "micro_b3": 76.812,
+          "tail_b3": 63.7807,
+          "ari": 77.6442,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 104,
+          "false_merge_pairs": 58882,
+          "false_split_pairs": 430478,
+          "stats": {
+            "runtime_sec": 4.096,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_07": {
+          "ami": 69.7647,
+          "macro_b3": 60.0987,
+          "micro_b3": 68.3223,
+          "tail_b3": 53.9484,
+          "ari": 51.8317,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 102,
+          "false_merge_pairs": 83393,
+          "false_split_pairs": 651839,
+          "stats": {
+            "runtime_sec": 2.714,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_08": {
+          "ami": 77.0944,
+          "macro_b3": 69.717,
+          "micro_b3": 71.4338,
+          "tail_b3": 80.4315,
+          "ari": 60.4315,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 77,
+          "false_merge_pairs": 31613,
+          "false_split_pairs": 124094,
+          "stats": {
+            "runtime_sec": 1.037,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_09": {
+          "ami": 70.7248,
+          "macro_b3": 66.0129,
+          "micro_b3": 69.5811,
+          "tail_b3": 62.9466,
+          "ari": 59.3647,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 93,
+          "false_merge_pairs": 94240,
+          "false_split_pairs": 582457,
+          "stats": {
+            "runtime_sec": 3.023,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_10": {
+          "ami": 73.5137,
+          "macro_b3": 65.6929,
+          "micro_b3": 71.0889,
+          "tail_b3": 50.4708,
+          "ari": 57.0979,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 97,
+          "false_merge_pairs": 34520,
+          "false_split_pairs": 174046,
+          "stats": {
+            "runtime_sec": 1.232,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_11": {
+          "ami": 75.7585,
+          "macro_b3": 77.0156,
+          "micro_b3": 75.8731,
+          "tail_b3": 58.5978,
+          "ari": 64.9382,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 93,
+          "false_merge_pairs": 27107,
+          "false_split_pairs": 302352,
+          "stats": {
+            "runtime_sec": 1.725,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_12": {
+          "ami": 79.8427,
+          "macro_b3": 71.2258,
+          "micro_b3": 74.2494,
+          "tail_b3": 65.0819,
+          "ari": 69.6516,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 98,
+          "false_merge_pairs": 10721,
+          "false_split_pairs": 172424,
+          "stats": {
+            "runtime_sec": 1.833,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_13": {
+          "ami": 63.6266,
+          "macro_b3": 62.2477,
+          "micro_b3": 62.1624,
+          "tail_b3": 77.7193,
+          "ari": 53.6582,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 122,
+          "false_merge_pairs": 556948,
+          "false_split_pairs": 696144,
+          "stats": {
+            "runtime_sec": 5.606,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_14": {
+          "ami": 74.7405,
+          "macro_b3": 63.0626,
+          "micro_b3": 72.0085,
+          "tail_b3": 48.8177,
+          "ari": 72.5206,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 78,
+          "false_merge_pairs": 111961,
+          "false_split_pairs": 110860,
+          "stats": {
+            "runtime_sec": 2.024,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_15": {
+          "ami": 83.0229,
+          "macro_b3": 60.5173,
+          "micro_b3": 82.786,
+          "tail_b3": 38.28,
+          "ari": 84.1513,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 68,
+          "false_merge_pairs": 12225,
+          "false_split_pairs": 90674,
+          "stats": {
+            "runtime_sec": 1.263,
+            "distance_threshold": 0.6
+          }
+        },
+        "M_16": {
+          "ami": 63.3678,
+          "macro_b3": 70.0972,
+          "micro_b3": 65.5115,
+          "tail_b3": 62.2215,
+          "ari": 37.1543,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 64,
+          "false_merge_pairs": 1542,
+          "false_split_pairs": 145806,
+          "stats": {
+            "runtime_sec": 0.242,
+            "distance_threshold": 0.6
+          }
+        }
+      },
+      "cfg": {
+        "distance_threshold": 0.6
+      }
+    },
+    "hypersed_aaai25": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 75.17,
+      "macro_b3": 58.08,
+      "micro_b3": 70.77,
+      "tail_b3": 24.06,
+      "ari": 56.6,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 12.259,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 12.259,
+      "per_block": {
+        "M_06": {
+          "ami": 78.1914,
+          "macro_b3": 57.2915,
+          "micro_b3": 76.1899,
+          "tail_b3": 8.1869,
+          "ari": 70.8585,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 77606,
+          "false_split_pairs": 542173,
+          "stats": {
+            "runtime_sec": 1.263,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_07": {
+          "ami": 72.2291,
+          "macro_b3": 48.6433,
+          "micro_b3": 69.1076,
+          "tail_b3": 13.8672,
+          "ari": 47.5345,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 23,
+          "false_merge_pairs": 87534,
+          "false_split_pairs": 699398,
+          "stats": {
+            "runtime_sec": 1.151,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_08": {
+          "ami": 81.6829,
+          "macro_b3": 72.0006,
+          "micro_b3": 77.8792,
+          "tail_b3": 31.855,
+          "ari": 69.3851,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 21760,
+          "false_split_pairs": 101755,
+          "stats": {
+            "runtime_sec": 1.04,
+            "n_anchors": 316,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_09": {
+          "ami": 69.1312,
+          "macro_b3": 52.5884,
+          "micro_b3": 60.953,
+          "tail_b3": 19.7884,
+          "ari": 40.869,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 80312,
+          "false_split_pairs": 811997,
+          "stats": {
+            "runtime_sec": 1.209,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_10": {
+          "ami": 75.0911,
+          "macro_b3": 54.1069,
+          "micro_b3": 68.5226,
+          "tail_b3": 23.7723,
+          "ari": 51.4372,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 29492,
+          "false_split_pairs": 196429,
+          "stats": {
+            "runtime_sec": 1.028,
+            "n_anchors": 334,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_11": {
+          "ami": 76.4683,
+          "macro_b3": 60.6013,
+          "micro_b3": 72.8,
+          "tail_b3": 36.665,
+          "ari": 49.622,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 32,
+          "false_merge_pairs": 41860,
+          "false_split_pairs": 403127,
+          "stats": {
+            "runtime_sec": 1.221,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_12": {
+          "ami": 82.7437,
+          "macro_b3": 64.6532,
+          "micro_b3": 77.8923,
+          "tail_b3": 34.7107,
+          "ari": 72.4441,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 33,
+          "false_merge_pairs": 20019,
+          "false_split_pairs": 152746,
+          "stats": {
+            "runtime_sec": 1.062,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_13": {
+          "ami": 69.1476,
+          "macro_b3": 58.7036,
+          "micro_b3": 65.4215,
+          "tail_b3": 33.1198,
+          "ari": 56.7949,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 267429,
+          "false_split_pairs": 782635,
+          "stats": {
+            "runtime_sec": 1.464,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_14": {
+          "ami": 76.9204,
+          "macro_b3": 65.4964,
+          "micro_b3": 70.2185,
+          "tail_b3": 7.0893,
+          "ari": 69.0409,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 70444,
+          "false_split_pairs": 158303,
+          "stats": {
+            "runtime_sec": 1.12,
+            "n_anchors": 360,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_15": {
+          "ami": 81.1692,
+          "macro_b3": 50.0302,
+          "micro_b3": 76.7458,
+          "tail_b3": 16.4987,
+          "ari": 67.9389,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 25,
+          "false_merge_pairs": 19348,
+          "false_split_pairs": 171797,
+          "stats": {
+            "runtime_sec": 0.999,
+            "n_anchors": 338,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        },
+        "M_16": {
+          "ami": 64.1087,
+          "macro_b3": 54.7962,
+          "micro_b3": 62.7274,
+          "tail_b3": 39.1439,
+          "ari": 26.6547,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 13,
+          "false_merge_pairs": 7284,
+          "false_split_pairs": 162297,
+          "stats": {
+            "runtime_sec": 0.702,
+            "n_anchors": 155,
+            "device": "cuda",
+            "anchor_ratio": 0.14
+          }
+        }
+      },
+      "cfg": {
+        "anchor_ratio": 0.14
+      }
+    },
+    "ctrl_automerge_only": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 78.06,
+      "macro_b3": 72.93,
+      "micro_b3": 73.56,
+      "tail_b3": 53.7,
+      "ari": 59.74,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 0.193,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 0.193,
+      "per_block": {
+        "M_06": {
+          "ami": 81.1014,
+          "macro_b3": 75.3179,
+          "micro_b3": 79.657,
+          "tail_b3": 59.2011,
+          "ari": 77.067,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 38,
+          "false_merge_pairs": 63847,
+          "false_split_pairs": 437789,
+          "stats": {
+            "runtime_sec": 0.023,
+            "auto_merge_ops": 3
+          }
+        },
+        "M_07": {
+          "ami": 74.5149,
+          "macro_b3": 76.098,
+          "micro_b3": 66.6012,
+          "tail_b3": 64.8461,
+          "ari": 44.5707,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 41,
+          "false_merge_pairs": 24008,
+          "false_split_pairs": 764054,
+          "stats": {
+            "runtime_sec": 0.02,
+            "auto_merge_ops": 0
+          }
+        },
+        "M_08": {
+          "ami": 83.9807,
+          "macro_b3": 84.3571,
+          "micro_b3": 79.151,
+          "tail_b3": 86.4192,
+          "ari": 69.8406,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 32,
+          "false_merge_pairs": 15438,
+          "false_split_pairs": 104148,
+          "stats": {
+            "runtime_sec": 0.014,
+            "auto_merge_ops": 1
+          }
+        },
+        "M_09": {
+          "ami": 75.4225,
+          "macro_b3": 70.6629,
+          "micro_b3": 73.903,
+          "tail_b3": 42.3471,
+          "ari": 62.8011,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 38,
+          "false_merge_pairs": 60123,
+          "false_split_pairs": 557227,
+          "stats": {
+            "runtime_sec": 0.023,
+            "auto_merge_ops": 3
+          }
+        },
+        "M_10": {
+          "ami": 80.4247,
+          "macro_b3": 69.8328,
+          "micro_b3": 75.0969,
+          "tail_b3": 43.6481,
+          "ari": 62.4942,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 39,
+          "false_merge_pairs": 20300,
+          "false_split_pairs": 161541,
+          "stats": {
+            "runtime_sec": 0.015,
+            "auto_merge_ops": 1
+          }
+        },
+        "M_11": {
+          "ami": 77.5122,
+          "macro_b3": 79.5318,
+          "micro_b3": 72.7195,
+          "tail_b3": 62.4788,
+          "ari": 46.7776,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 43,
+          "false_merge_pairs": 30931,
+          "false_split_pairs": 427034,
+          "stats": {
+            "runtime_sec": 0.017,
+            "auto_merge_ops": 3
+          }
+        },
+        "M_12": {
+          "ami": 84.8857,
+          "macro_b3": 78.9503,
+          "micro_b3": 80.3517,
+          "tail_b3": 80.9847,
+          "ari": 76.3366,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 43,
+          "false_merge_pairs": 13299,
+          "false_split_pairs": 136826,
+          "stats": {
+            "runtime_sec": 0.016,
+            "auto_merge_ops": 1
+          }
+        },
+        "M_13": {
+          "ami": 68.7687,
+          "macro_b3": 63.0836,
+          "micro_b3": 61.6123,
+          "tail_b3": 55.2147,
+          "ari": 49.306,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 40,
+          "false_merge_pairs": 411009,
+          "false_split_pairs": 849401,
+          "stats": {
+            "runtime_sec": 0.028,
+            "auto_merge_ops": 9
+          }
+        },
+        "M_14": {
+          "ami": 80.4792,
+          "macro_b3": 67.7837,
+          "micro_b3": 76.2097,
+          "tail_b3": 5.8142,
+          "ari": 70.2657,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 160750,
+          "false_split_pairs": 95736,
+          "stats": {
+            "runtime_sec": 0.016,
+            "auto_merge_ops": 4
+          }
+        },
+        "M_15": {
+          "ami": 83.7813,
+          "macro_b3": 59.5468,
+          "micro_b3": 80.0033,
+          "tail_b3": 24.0634,
+          "ari": 70.3202,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 27,
+          "false_merge_pairs": 16078,
+          "false_split_pairs": 162214,
+          "stats": {
+            "runtime_sec": 0.014,
+            "auto_merge_ops": 5
+          }
+        },
+        "M_16": {
+          "ami": 67.7748,
+          "macro_b3": 77.0102,
+          "micro_b3": 63.8125,
+          "tail_b3": 65.668,
+          "ari": 27.386,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 2359,
+          "false_split_pairs": 164062,
+          "stats": {
+            "runtime_sec": 0.007,
+            "auto_merge_ops": 0
+          }
+        }
+      }
+    },
+    "ctrl_meso_heur_pure": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 79.76,
+      "macro_b3": 73.11,
+      "micro_b3": 77.36,
+      "tail_b3": 53.51,
+      "ari": 64.81,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 1.828,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 1.828,
+      "per_block": {
+        "M_06": {
+          "ami": 81.6704,
+          "macro_b3": 75.9392,
+          "micro_b3": 80.5019,
+          "tail_b3": 57.3725,
+          "ari": 78.0682,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 35,
+          "false_merge_pairs": 69595,
+          "false_split_pairs": 414411,
+          "stats": {
+            "runtime_sec": 0.204,
+            "seam_ops": 0,
+            "merge_ops": 6
+          }
+        },
+        "M_07": {
+          "ami": 77.076,
+          "macro_b3": 76.2776,
+          "micro_b3": 73.3302,
+          "tail_b3": 64.8461,
+          "ari": 51.6682,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 37,
+          "false_merge_pairs": 74408,
+          "false_split_pairs": 658661,
+          "stats": {
+            "runtime_sec": 0.194,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_08": {
+          "ami": 86.2846,
+          "macro_b3": 85.5123,
+          "micro_b3": 83.3344,
+          "tail_b3": 86.4192,
+          "ari": 77.4931,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 29,
+          "false_merge_pairs": 23644,
+          "false_split_pairs": 72700,
+          "stats": {
+            "runtime_sec": 0.152,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_09": {
+          "ami": 73.561,
+          "macro_b3": 70.6003,
+          "micro_b3": 70.547,
+          "tail_b3": 42.2765,
+          "ari": 45.8204,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 31,
+          "false_merge_pairs": 854435,
+          "false_split_pairs": 381893,
+          "stats": {
+            "runtime_sec": 0.207,
+            "seam_ops": 0,
+            "merge_ops": 10
+          }
+        },
+        "M_10": {
+          "ami": 82.5161,
+          "macro_b3": 69.4903,
+          "micro_b3": 80.6658,
+          "tail_b3": 44.1055,
+          "ari": 78.9485,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 37,
+          "false_merge_pairs": 32811,
+          "false_split_pairs": 83767,
+          "stats": {
+            "runtime_sec": 0.145,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_11": {
+          "ami": 86.1432,
+          "macro_b3": 81.1114,
+          "micro_b3": 86.7245,
+          "tail_b3": 62.4732,
+          "ari": 84.3543,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 37,
+          "false_merge_pairs": 83421,
+          "false_split_pairs": 91027,
+          "stats": {
+            "runtime_sec": 0.172,
+            "seam_ops": 0,
+            "merge_ops": 9
+          }
+        },
+        "M_12": {
+          "ami": 84.8857,
+          "macro_b3": 78.9503,
+          "micro_b3": 80.3517,
+          "tail_b3": 80.9847,
+          "ari": 76.3366,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 43,
+          "false_merge_pairs": 13299,
+          "false_split_pairs": 136826,
+          "stats": {
+            "runtime_sec": 0.166,
+            "seam_ops": 0,
+            "merge_ops": 1
+          }
+        },
+        "M_13": {
+          "ami": 72.5573,
+          "macro_b3": 64.021,
+          "micro_b3": 72.5169,
+          "tail_b3": 54.7002,
+          "ari": 48.612,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 33,
+          "false_merge_pairs": 1856161,
+          "false_split_pairs": 203431,
+          "stats": {
+            "runtime_sec": 0.259,
+            "seam_ops": 0,
+            "merge_ops": 16
+          }
+        },
+        "M_14": {
+          "ami": 78.562,
+          "macro_b3": 64.692,
+          "micro_b3": 74.552,
+          "tail_b3": 5.7251,
+          "ari": 63.1793,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 25,
+          "false_merge_pairs": 256605,
+          "false_split_pairs": 90987,
+          "stats": {
+            "runtime_sec": 0.142,
+            "seam_ops": 0,
+            "merge_ops": 6
+          }
+        },
+        "M_15": {
+          "ami": 86.3138,
+          "macro_b3": 60.6127,
+          "micro_b3": 84.627,
+          "tail_b3": 24.0634,
+          "ari": 81.0614,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 16800,
+          "false_split_pairs": 104856,
+          "stats": {
+            "runtime_sec": 0.124,
+            "seam_ops": 0,
+            "merge_ops": 6
+          }
+        },
+        "M_16": {
+          "ami": 67.7748,
+          "macro_b3": 77.0102,
+          "micro_b3": 63.8125,
+          "tail_b3": 65.668,
+          "ari": 27.386,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 2359,
+          "false_split_pairs": 164062,
+          "stats": {
+            "runtime_sec": 0.063,
+            "seam_ops": 0,
+            "merge_ops": 0
+          }
+        }
+      },
+      "cfg": {
+        "tau_merge": 0.8,
+        "min_seam_sep": 0.99
+      }
+    },
+    "ctrl_meso_heur_def": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 79.66,
+      "macro_b3": 69.05,
+      "micro_b3": 77.04,
+      "tail_b3": 34.14,
+      "ari": 64.75,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 1.636,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 1.636,
+      "per_block": {
+        "M_06": {
+          "ami": 81.3355,
+          "macro_b3": 72.4798,
+          "micro_b3": 80.1071,
+          "tail_b3": 41.1076,
+          "ari": 77.7047,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 31,
+          "false_merge_pairs": 70278,
+          "false_split_pairs": 420887,
+          "stats": {
+            "runtime_sec": 0.182,
+            "seam_ops": 0,
+            "merge_ops": 5
+          }
+        },
+        "M_07": {
+          "ami": 75.8926,
+          "macro_b3": 66.2458,
+          "micro_b3": 70.5279,
+          "tail_b3": 27.9942,
+          "ari": 49.3721,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 30,
+          "false_merge_pairs": 62357,
+          "false_split_pairs": 691637,
+          "stats": {
+            "runtime_sec": 0.155,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_08": {
+          "ami": 88.1137,
+          "macro_b3": 84.6397,
+          "micro_b3": 85.7271,
+          "tail_b3": 55.5937,
+          "ari": 80.7608,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 19637,
+          "false_split_pairs": 63512,
+          "stats": {
+            "runtime_sec": 0.115,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_09": {
+          "ami": 73.3457,
+          "macro_b3": 64.4382,
+          "micro_b3": 70.2496,
+          "tail_b3": 18.2942,
+          "ari": 48.0743,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 28,
+          "false_merge_pairs": 667183,
+          "false_split_pairs": 436959,
+          "stats": {
+            "runtime_sec": 0.176,
+            "seam_ops": 0,
+            "merge_ops": 9
+          }
+        },
+        "M_10": {
+          "ami": 85.0003,
+          "macro_b3": 68.0461,
+          "micro_b3": 84.471,
+          "tail_b3": 33.0222,
+          "ari": 84.178,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 40006,
+          "false_split_pairs": 52285,
+          "stats": {
+            "runtime_sec": 0.114,
+            "seam_ops": 0,
+            "merge_ops": 3
+          }
+        },
+        "M_11": {
+          "ami": 80.9877,
+          "macro_b3": 70.7999,
+          "micro_b3": 79.638,
+          "tail_b3": 33.9346,
+          "ari": 68.5633,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 31,
+          "false_merge_pairs": 44204,
+          "false_split_pairs": 262849,
+          "stats": {
+            "runtime_sec": 0.153,
+            "seam_ops": 0,
+            "merge_ops": 4
+          }
+        },
+        "M_12": {
+          "ami": 84.4949,
+          "macro_b3": 71.8728,
+          "micro_b3": 79.7025,
+          "tail_b3": 53.7044,
+          "ari": 76.0451,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 34,
+          "false_merge_pairs": 12906,
+          "false_split_pairs": 138640,
+          "stats": {
+            "runtime_sec": 0.154,
+            "seam_ops": 0,
+            "merge_ops": 1
+          }
+        },
+        "M_13": {
+          "ami": 72.0492,
+          "macro_b3": 55.3902,
+          "micro_b3": 72.0951,
+          "tail_b3": 5.0561,
+          "ari": 51.1184,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 32,
+          "false_merge_pairs": 1576891,
+          "false_split_pairs": 262060,
+          "stats": {
+            "runtime_sec": 0.253,
+            "seam_ops": 0,
+            "merge_ops": 14
+          }
+        },
+        "M_14": {
+          "ami": 78.5873,
+          "macro_b3": 64.3035,
+          "micro_b3": 74.6004,
+          "tail_b3": 4.0272,
+          "ari": 63.1766,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 23,
+          "false_merge_pairs": 259048,
+          "false_split_pairs": 89686,
+          "stats": {
+            "runtime_sec": 0.149,
+            "seam_ops": 0,
+            "merge_ops": 6
+          }
+        },
+        "M_15": {
+          "ami": 85.4924,
+          "macro_b3": 59.421,
+          "micro_b3": 83.8074,
+          "tail_b3": 24.1743,
+          "ari": 80.4524,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 20,
+          "false_merge_pairs": 19383,
+          "false_split_pairs": 106339,
+          "stats": {
+            "runtime_sec": 0.123,
+            "seam_ops": 0,
+            "merge_ops": 6
+          }
+        },
+        "M_16": {
+          "ami": 70.9962,
+          "macro_b3": 81.8618,
+          "micro_b3": 66.5384,
+          "tail_b3": 78.6468,
+          "ari": 32.7864,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 20,
+          "false_merge_pairs": 1782,
+          "false_split_pairs": 154158,
+          "stats": {
+            "runtime_sec": 0.062,
+            "seam_ops": 0,
+            "merge_ops": 0
+          }
+        }
+      }
+    },
+    "structural_fs_fm_audit": {
+      "pure_2dse_fm": 421974,
+      "pure_2dse_fs": 5161372,
+      "pure_fs_over_fm": 12.23,
+      "hisevent_def_fm": 439690,
+      "hisevent_def_fs": 5093928,
+      "def_fs_over_fm": 11.59
+    },
+    "hisevent_default": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 76.34,
+      "macro_b3": 67.9,
+      "micro_b3": 68.74,
+      "tail_b3": 35.0,
+      "ari": 51.6,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 36.154,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 36.154,
+      "per_block": {
+        "M_06": {
+          "ami": 75.5199,
+          "macro_b3": 69.7244,
+          "micro_b3": 66.6168,
+          "tail_b3": 42.9362,
+          "ari": 51.4996,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 36,
+          "false_merge_pairs": 50092,
+          "false_split_pairs": 867106,
+          "stats": {
+            "runtime_sec": 4.683,
+            "router_cpu_sec": 4.683,
+            "total_wall_sec": 4.683
+          }
+        },
+        "M_07": {
+          "ami": 74.6643,
+          "macro_b3": 66.8279,
+          "micro_b3": 67.2922,
+          "tail_b3": 27.9957,
+          "ari": 45.2816,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 33,
+          "false_merge_pairs": 26755,
+          "false_split_pairs": 755103,
+          "stats": {
+            "runtime_sec": 3.16,
+            "router_cpu_sec": 3.16,
+            "total_wall_sec": 3.16
+          }
+        },
+        "M_08": {
+          "ami": 85.6652,
+          "macro_b3": 83.3352,
+          "micro_b3": 81.2448,
+          "tail_b3": 55.5937,
+          "ari": 72.1014,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 29,
+          "false_merge_pairs": 18763,
+          "false_split_pairs": 94695,
+          "stats": {
+            "runtime_sec": 1.463,
+            "router_cpu_sec": 1.463,
+            "total_wall_sec": 1.463
+          }
+        },
+        "M_09": {
+          "ami": 70.3917,
+          "macro_b3": 62.9638,
+          "micro_b3": 61.1245,
+          "tail_b3": 18.4194,
+          "ari": 36.0866,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 37,
+          "false_merge_pairs": 37564,
+          "false_split_pairs": 881052,
+          "stats": {
+            "runtime_sec": 4.704,
+            "router_cpu_sec": 4.704,
+            "total_wall_sec": 4.704
+          }
+        },
+        "M_10": {
+          "ami": 81.5693,
+          "macro_b3": 67.9238,
+          "micro_b3": 76.9873,
+          "tail_b3": 33.5559,
+          "ari": 65.0301,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 29,
+          "false_merge_pairs": 22973,
+          "false_split_pairs": 150291,
+          "stats": {
+            "runtime_sec": 1.508,
+            "router_cpu_sec": 1.508,
+            "total_wall_sec": 1.508
+          }
+        },
+        "M_11": {
+          "ami": 75.9664,
+          "macro_b3": 68.969,
+          "micro_b3": 70.1836,
+          "tail_b3": 33.9346,
+          "ari": 43.7229,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 35,
+          "false_merge_pairs": 24879,
+          "false_split_pairs": 449030,
+          "stats": {
+            "runtime_sec": 3.369,
+            "router_cpu_sec": 3.369,
+            "total_wall_sec": 3.369
+          }
+        },
+        "M_12": {
+          "ami": 83.3631,
+          "macro_b3": 70.7496,
+          "micro_b3": 76.4481,
+          "tail_b3": 53.7044,
+          "ari": 71.7319,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 35,
+          "false_merge_pairs": 12906,
+          "false_split_pairs": 160840,
+          "stats": {
+            "runtime_sec": 2.128,
+            "router_cpu_sec": 2.128,
+            "total_wall_sec": 2.128
+          }
+        },
+        "M_13": {
+          "ami": 66.8865,
+          "macro_b3": 54.2338,
+          "micro_b3": 54.3651,
+          "tail_b3": 11.6618,
+          "ari": 39.3599,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 46,
+          "false_merge_pairs": 135244,
+          "false_split_pairs": 1127891,
+          "stats": {
+            "runtime_sec": 7.746,
+            "router_cpu_sec": 7.746,
+            "total_wall_sec": 7.746
+          }
+        },
+        "M_14": {
+          "ami": 77.0534,
+          "macro_b3": 65.6796,
+          "micro_b3": 68.8223,
+          "tail_b3": 4.4025,
+          "ari": 56.9076,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 29,
+          "false_merge_pairs": 95918,
+          "false_split_pairs": 212471,
+          "stats": {
+            "runtime_sec": 4.485,
+            "router_cpu_sec": 4.485,
+            "total_wall_sec": 4.485
+          }
+        },
+        "M_15": {
+          "ami": 77.6515,
+          "macro_b3": 54.6298,
+          "micro_b3": 66.5269,
+          "tail_b3": 24.1857,
+          "ari": 53.0882,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 12814,
+          "false_split_pairs": 241291,
+          "stats": {
+            "runtime_sec": 2.197,
+            "router_cpu_sec": 2.197,
+            "total_wall_sec": 2.197
+          }
+        },
+        "M_16": {
+          "ami": 70.9962,
+          "macro_b3": 81.8618,
+          "micro_b3": 66.5384,
+          "tail_b3": 78.6468,
+          "ari": 32.7864,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 20,
+          "false_merge_pairs": 1782,
+          "false_split_pairs": 154158,
+          "stats": {
+            "runtime_sec": 0.711,
+            "router_cpu_sec": 0.711,
+            "total_wall_sec": 0.711
+          }
+        }
+      }
+    },
+    "ctrl_pure_2dse_0tok": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 75.68,
+      "macro_b3": 71.74,
+      "micro_b3": 67.99,
+      "tail_b3": 53.85,
+      "ari": 50.02,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 31.82,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 31.82,
+      "per_block": {
+        "M_06": {
+          "ami": 75.5307,
+          "macro_b3": 73.1345,
+          "micro_b3": 66.8377,
+          "tail_b3": 59.2011,
+          "ari": 51.4201,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 41,
+          "false_merge_pairs": 49024,
+          "false_split_pairs": 868785,
+          "stats": {
+            "runtime_sec": 5.022,
+            "router_cpu_sec": 5.022,
+            "total_wall_sec": 5.022
+          }
+        },
+        "M_07": {
+          "ami": 74.5149,
+          "macro_b3": 76.098,
+          "micro_b3": 66.6012,
+          "tail_b3": 64.8461,
+          "ari": 44.5707,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 41,
+          "false_merge_pairs": 24008,
+          "false_split_pairs": 764054,
+          "stats": {
+            "runtime_sec": 3.301,
+            "router_cpu_sec": 3.301,
+            "total_wall_sec": 3.301
+          }
+        },
+        "M_08": {
+          "ami": 83.4563,
+          "macro_b3": 84.1011,
+          "micro_b3": 78.4213,
+          "tail_b3": 86.4192,
+          "ari": 68.3863,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 33,
+          "false_merge_pairs": 15312,
+          "false_split_pairs": 108831,
+          "stats": {
+            "runtime_sec": 1.508,
+            "router_cpu_sec": 1.508,
+            "total_wall_sec": 1.508
+          }
+        },
+        "M_09": {
+          "ami": 70.4531,
+          "macro_b3": 69.0288,
+          "micro_b3": 60.9296,
+          "tail_b3": 42.4521,
+          "ari": 35.8676,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 41,
+          "false_merge_pairs": 37789,
+          "false_split_pairs": 883188,
+          "stats": {
+            "runtime_sec": 5.268,
+            "router_cpu_sec": 5.268,
+            "total_wall_sec": 5.268
+          }
+        },
+        "M_10": {
+          "ami": 79.5222,
+          "macro_b3": 69.1672,
+          "micro_b3": 73.3513,
+          "tail_b3": 43.1168,
+          "ari": 59.7395,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 40,
+          "false_merge_pairs": 18447,
+          "false_split_pairs": 172738,
+          "stats": {
+            "runtime_sec": 1.522,
+            "router_cpu_sec": 1.522,
+            "total_wall_sec": 1.522
+          }
+        },
+        "M_11": {
+          "ami": 75.3083,
+          "macro_b3": 78.4387,
+          "micro_b3": 69.3613,
+          "tail_b3": 62.5194,
+          "ari": 40.1471,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 46,
+          "false_merge_pairs": 23959,
+          "false_split_pairs": 471062,
+          "stats": {
+            "runtime_sec": 2.439,
+            "router_cpu_sec": 2.439,
+            "total_wall_sec": 2.439
+          }
+        },
+        "M_12": {
+          "ami": 83.7728,
+          "macro_b3": 77.8326,
+          "micro_b3": 77.2547,
+          "tail_b3": 80.9847,
+          "ari": 72.2503,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 44,
+          "false_merge_pairs": 13299,
+          "false_split_pairs": 157990,
+          "stats": {
+            "runtime_sec": 1.683,
+            "router_cpu_sec": 1.683,
+            "total_wall_sec": 1.683
+          }
+        },
+        "M_13": {
+          "ami": 66.7197,
+          "macro_b3": 62.2643,
+          "micro_b3": 55.2466,
+          "tail_b3": 56.6539,
+          "ari": 40.2513,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 130346,
+          "false_split_pairs": 1116879,
+          "stats": {
+            "runtime_sec": 6.456,
+            "router_cpu_sec": 6.456,
+            "total_wall_sec": 6.456
+          }
+        },
+        "M_14": {
+          "ami": 77.0823,
+          "macro_b3": 66.1004,
+          "micro_b3": 68.8299,
+          "tail_b3": 6.0919,
+          "ari": 56.6856,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 31,
+          "false_merge_pairs": 95781,
+          "false_split_pairs": 213713,
+          "stats": {
+            "runtime_sec": 2.704,
+            "router_cpu_sec": 2.704,
+            "total_wall_sec": 2.704
+          }
+        },
+        "M_15": {
+          "ami": 78.3381,
+          "macro_b3": 55.9179,
+          "micro_b3": 67.285,
+          "tail_b3": 24.3818,
+          "ari": 53.5321,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 32,
+          "false_merge_pairs": 11650,
+          "false_split_pairs": 240070,
+          "stats": {
+            "runtime_sec": 1.311,
+            "router_cpu_sec": 1.311,
+            "total_wall_sec": 1.311
+          }
+        },
+        "M_16": {
+          "ami": 67.7748,
+          "macro_b3": 77.0102,
+          "micro_b3": 63.8125,
+          "tail_b3": 65.668,
+          "ari": 27.386,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 26,
+          "false_merge_pairs": 2359,
+          "false_split_pairs": 164062,
+          "stats": {
+            "runtime_sec": 0.606,
+            "router_cpu_sec": 0.606,
+            "total_wall_sec": 0.606
+          }
+        }
+      }
+    },
+    "hisevent_dev_tuned": {
+      "n_blocks": 11,
+      "n_posts": 33161,
+      "ami": 76.06,
+      "macro_b3": 75.52,
+      "micro_b3": 67.67,
+      "tail_b3": 65.64,
+      "ari": 49.97,
+      "total_calls": 0,
+      "total_tokens": 0,
+      "tok_per_post": 0.0,
+      "shown_posts": 0,
+      "shown_pct": 0.0,
+      "parse_errors": 0,
+      "anon_leak_queries": 0,
+      "anon_leak_terms": 0,
+      "router_cpu_sec": 33.107,
+      "llm_api_sec": 0.0,
+      "total_wall_sec": 33.107,
+      "per_block": {
+        "M_06": {
+          "ami": 75.6519,
+          "macro_b3": 75.9942,
+          "micro_b3": 66.0692,
+          "tail_b3": 63.221,
+          "ari": 50.4664,
+          "n_posts": 4200,
+          "n_true_events": 26,
+          "n_pred_clusters": 53,
+          "false_merge_pairs": 38199,
+          "false_split_pairs": 887757,
+          "stats": {
+            "runtime_sec": 5.538,
+            "router_cpu_sec": 5.538,
+            "total_wall_sec": 5.538
+          }
+        },
+        "M_07": {
+          "ami": 73.9655,
+          "macro_b3": 77.1761,
+          "micro_b3": 65.7546,
+          "tail_b3": 67.0523,
+          "ari": 43.0919,
+          "n_posts": 3454,
+          "n_true_events": 23,
+          "n_pred_clusters": 56,
+          "false_merge_pairs": 18493,
+          "false_split_pairs": 782336,
+          "stats": {
+            "runtime_sec": 3.56,
+            "router_cpu_sec": 3.56,
+            "total_wall_sec": 3.56
+          }
+        },
+        "M_08": {
+          "ami": 82.9498,
+          "macro_b3": 84.5061,
+          "micro_b3": 75.5298,
+          "tail_b3": 80.7909,
+          "ari": 61.3241,
+          "n_posts": 2257,
+          "n_true_events": 25,
+          "n_pred_clusters": 49,
+          "false_merge_pairs": 11021,
+          "false_split_pairs": 132309,
+          "stats": {
+            "runtime_sec": 1.249,
+            "router_cpu_sec": 1.249,
+            "total_wall_sec": 1.249
+          }
+        },
+        "M_09": {
+          "ami": 71.2478,
+          "macro_b3": 71.4886,
+          "micro_b3": 61.0212,
+          "tail_b3": 47.8116,
+          "ari": 35.0275,
+          "n_posts": 3669,
+          "n_true_events": 31,
+          "n_pred_clusters": 48,
+          "false_merge_pairs": 36560,
+          "false_split_pairs": 892208,
+          "stats": {
+            "runtime_sec": 3.748,
+            "router_cpu_sec": 3.748,
+            "total_wall_sec": 3.748
+          }
+        },
+        "M_10": {
+          "ami": 81.3362,
+          "macro_b3": 77.4112,
+          "micro_b3": 75.3341,
+          "tail_b3": 60.5416,
+          "ari": 61.5883,
+          "n_posts": 2385,
+          "n_true_events": 32,
+          "n_pred_clusters": 60,
+          "false_merge_pairs": 12806,
+          "false_split_pairs": 169032,
+          "stats": {
+            "runtime_sec": 1.377,
+            "router_cpu_sec": 1.377,
+            "total_wall_sec": 1.377
+          }
+        },
+        "M_11": {
+          "ami": 78.2495,
+          "macro_b3": 79.1419,
+          "micro_b3": 73.0491,
+          "tail_b3": 61.2424,
+          "ari": 47.1779,
+          "n_posts": 2802,
+          "n_true_events": 31,
+          "n_pred_clusters": 54,
+          "false_merge_pairs": 17435,
+          "false_split_pairs": 431032,
+          "stats": {
+            "runtime_sec": 2.641,
+            "router_cpu_sec": 2.641,
+            "total_wall_sec": 2.641
+          }
+        },
+        "M_12": {
+          "ami": 82.4114,
+          "macro_b3": 76.6631,
+          "micro_b3": 74.6057,
+          "tail_b3": 80.6443,
+          "ari": 69.7813,
+          "n_posts": 2927,
+          "n_true_events": 29,
+          "n_pred_clusters": 51,
+          "false_merge_pairs": 10908,
+          "false_split_pairs": 171682,
+          "stats": {
+            "runtime_sec": 1.726,
+            "router_cpu_sec": 1.726,
+            "total_wall_sec": 1.726
+          }
+        },
+        "M_13": {
+          "ami": 67.7618,
+          "macro_b3": 67.1221,
+          "micro_b3": 57.0836,
+          "tail_b3": 77.8788,
+          "ari": 46.4499,
+          "n_posts": 4884,
+          "n_true_events": 28,
+          "n_pred_clusters": 61,
+          "false_merge_pairs": 130818,
+          "false_split_pairs": 1023560,
+          "stats": {
+            "runtime_sec": 7.796,
+            "router_cpu_sec": 7.796,
+            "total_wall_sec": 7.796
+          }
+        },
+        "M_14": {
+          "ami": 77.7145,
+          "macro_b3": 70.3551,
+          "micro_b3": 67.7101,
+          "tail_b3": 38.7409,
+          "ari": 56.1078,
+          "n_posts": 3065,
+          "n_true_events": 26,
+          "n_pred_clusters": 44,
+          "false_merge_pairs": 61414,
+          "false_split_pairs": 233110,
+          "stats": {
+            "runtime_sec": 2.886,
+            "router_cpu_sec": 2.886,
+            "total_wall_sec": 2.886
+          }
+        },
+        "M_15": {
+          "ami": 78.2672,
+          "macro_b3": 68.6373,
+          "micro_b3": 66.1825,
+          "tail_b3": 57.3341,
+          "ari": 52.5235,
+          "n_posts": 2411,
+          "n_true_events": 25,
+          "n_pred_clusters": 55,
+          "false_merge_pairs": 5859,
+          "false_split_pairs": 246995,
+          "stats": {
+            "runtime_sec": 1.978,
+            "router_cpu_sec": 1.978,
+            "total_wall_sec": 1.978
+          }
+        },
+        "M_16": {
+          "ami": 67.1353,
+          "macro_b3": 82.2249,
+          "micro_b3": 62.0791,
+          "tail_b3": 86.7308,
+          "ari": 26.1117,
+          "n_posts": 1107,
+          "n_true_events": 14,
+          "n_pred_clusters": 40,
+          "false_merge_pairs": 853,
+          "false_split_pairs": 167405,
+          "stats": {
+            "runtime_sec": 0.608,
+            "router_cpu_sec": 0.608,
+            "total_wall_sec": 0.608
+          }
+        }
+      },
+      "cfg": {
+        "tau_sim": 0.55,
+        "attr_alpha": 1.0
+      }
+    }
+  }
+}

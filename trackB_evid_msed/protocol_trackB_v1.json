@@ -1,0 +1,56 @@
+{
+  "protocol_version": "Evid-MSED-v1.0-frozen",
+  "frozen_at_utc": "2026-11-22T15:30:01Z",
+  "llm": {
+    "provider": "siliconflow",
+    "model": "Qwen/Qwen3-VL-8B-Instruct",
+    "temperature": 0.0,
+    "max_tokens": 320,
+    "response_format": "json_object",
+    "max_side_px": 384,
+    "jpeg_quality": 82,
+    "prompt_style": "Extract-Then-Compare Multimodal Cluster Seam + Explicit Conflict/Discriminability Gate"
+  },
+  "stage1": {
+    "evidence_scorer": "visual_idf",
+    "lam_v": 0.65,
+    "tau_imp": 0.55,
+    "gamma_imp": 0.7,
+    "k_v": 10,
+    "vis_sim_thresh": 0.72,
+    "block_size": 1024,
+    "use_soft_imputation": true
+  },
+  "stage2_router": {
+    "merge_ratio": 0.7,
+    "conf_threshold": 0.6,
+    "min_text_sim": 0.42,
+    "vis_rescue_sim": 0.68,
+    "vis_rescue_min_txt": 0.18,
+    "vis_rescue_min_vidf": 0.5,
+    "max_pairs_per_cluster": 3,
+    "primary_policy": "evid_self_gate_clean_fallback"
+  },
+  "holdout": {
+    "split": "holdout",
+    "n_events": 24,
+    "n_posts": 11955,
+    "budget_queries": 180,
+    "prefix_steps": [
+      60,
+      120,
+      180
+    ]
+  },
+  "code_sha256": {
+    "core_shared/graph_builder.py": "cf2b751b73c106366d913715f46d10faec625e1b308616133e4e80c02859ef8f",
+    "core_shared/se_solver.py": "8432c18510b11bebe0e0b77132c8d8f854ee89f19c2f01b747dd440e24020415",
+    "core_shared/metrics_audit.py": "efb6b322270ba19d049a562f4efccfe51d463a00a7506e151448e23ab3b9586a",
+    "core_shared/token_ledger.py": "e7466aa6e190eac1507b5e9bbe31340be941ca9644146d6885ca159edce985f5",
+    "trackB_evid_msed/ned_loader.py": "abab70892b16761edaf65c2a219301b1cc0662782054a4a6aeb205a3bde546dd",
+    "trackB_evid_msed/mv_2dse_pipeline.py": "c5bde61e330fa8d07aeaeb3d3f757a1dcf17ca77d5e58335d866351eba4d8088",
+    "trackB_evid_msed/vlm_client.py": "be2c06e5e6b37716825b4a38737d581974af32b9cc9622012b7847f336a7d448",
+    "trackB_evid_msed/mm_seam_adjudicator.py": "8b1ab236613b4316cf435446360a12dd1b19b69198a45adff7c6357dec6264a7",
+    "trackB_evid_msed/run_phase2_ned.py": "b09a3d227c4a2e25a2ee522e19b78fc96ad0bd30dbdee8d39675e811944868c8"
+  }
+}

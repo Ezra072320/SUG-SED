@@ -1,0 +1,5218 @@
+{
+  "split": "holdout",
+  "n_posts": 11955,
+  "n_events": 24,
+  "protocol_used": "trackB_evid_msed/protocol_trackB_v1.json",
+  "holdout_stress30_end_to_end": {
+    "n_corrupted_images": 2793,
+    "stage1": {
+      "text_only_2dse": {
+        "ami": 0.5466,
+        "nmi": 0.5697,
+        "ari": 0.3633,
+        "macro_b3": 0.3485,
+        "micro_b3": 0.383,
+        "n_clusters": 288
+      },
+      "naive_mv_2dse": {
+        "ami": 0.5153,
+        "delta_ami": -0.0313,
+        "nmi": 0.5407,
+        "ari": 0.3714,
+        "macro_b3": 0.3355,
+        "delta_macro_b3": -0.013,
+        "micro_b3": 0.3775,
+        "delta_micro_b3": -0.0054,
+        "n_clusters": 262,
+        "net_fm_red": -127534,
+        "net_fs_red": 68910,
+        "imputed_count": 2590
+      },
+      "visual_idf_mv_2dse": {
+        "ami": 0.5599,
+        "delta_ami": 0.0133,
+        "nmi": 0.5802,
+        "ari": 0.4171,
+        "macro_b3": 0.3773,
+        "delta_macro_b3": 0.0288,
+        "micro_b3": 0.422,
+        "delta_micro_b3": 0.0391,
+        "n_clusters": 225,
+        "net_fm_red": -56272,
+        "net_fs_red": 235019,
+        "imputed_count": 2430
+      }
+    },
+    "routing_k60": {
+      "n_routed": 60,
+      "n_merge": 42,
+      "n_seam": 18,
+      "n_vis_rescue_pairs": 0,
+      "n_corrupt_reps": 7
+    },
+    "vlm_health": {
+      "status_text_only": {
+        "OK": 60
+      },
+      "status_multimodal": {
+        "OK": 59,
+        "HTTP_ERROR:HTTPError": 1
+      },
+      "ledger": {
+        "total_calls": 120,
+        "cached_calls": 0,
+        "prompt_tokens": 81639,
+        "completion_tokens": 9901,
+        "total_tokens": 91540,
+        "estimated_cost_cny": 0.060622
+      }
+    },
+    "stage2_policies_k60": {
+      "text_only_vlm": {
+        "n_queries": 60,
+        "ami": 0.5574,
+        "delta_ami_vs_stage1": -0.0025,
+        "nmi": 0.5787,
+        "ari": 0.4159,
+        "macro_b3": 0.3595,
+        "delta_macro_b3_vs_stage1": -0.0178,
+        "micro_b3": 0.4262,
+        "delta_micro_b3_vs_stage1": 0.0042,
+        "n_clusters": 238,
+        "net_fm_red": -85907,
+        "net_fs_red": 23060,
+        "unqueried_improved_posts": 811,
+        "unqueried_degraded_posts": 644,
+        "unqueried_net_improved_posts": 167,
+        "unqueried_posts_fixed_per_query": 2.78,
+        "merge_acc": 0.7857,
+        "merge_total": 42,
+        "seam_acc": 0.8333,
+        "seam_total": 18,
+        "overall_seam_acc": 0.8,
+        "gate_reject_rate": 0.0,
+        "conflict_flag_rate": 0.1667,
+        "real_tokens_spent": 29641
+      },
+      "naive_vlm": {
+        "n_queries": 60,
+        "ami": 0.5601,
+        "delta_ami_vs_stage1": 0.0002,
+        "nmi": 0.5817,
+        "ari": 0.4171,
+        "macro_b3": 0.3777,
+        "delta_macro_b3_vs_stage1": 0.0004,
+        "micro_b3": 0.4225,
+        "delta_micro_b3_vs_stage1": 0.0005,
+        "n_clusters": 243,
+        "net_fm_red": 3579,
+        "net_fs_red": -1310,
+        "unqueried_improved_posts": 175,
+        "unqueried_degraded_posts": 342,
+        "unqueried_net_improved_posts": -167,
+        "unqueried_posts_fixed_per_query": -2.78,
+        "merge_acc": 0.7381,
+        "merge_total": 42,
+        "seam_acc": 0.8333,
+        "seam_total": 18,
+        "overall_seam_acc": 0.7667,
+        "gate_reject_rate": 0.0,
+        "conflict_flag_rate": 0.1667,
+        "real_tokens_spent": 61899
+      },
+      "evid_self_gate_inline": {
+        "n_queries": 60,
+        "ami": 0.5605,
+        "delta_ami_vs_stage1": 0.0006,
+        "nmi": 0.582,
+        "ari": 0.4174,
+        "macro_b3": 0.3778,
+        "delta_macro_b3_vs_stage1": 0.0005,
+        "micro_b3": 0.4227,
+        "delta_micro_b3_vs_stage1": 0.0007,
+        "n_clusters": 242,
+        "net_fm_red": 3409,
+        "net_fs_red": -8,
+        "unqueried_improved_posts": 245,
+        "unqueried_degraded_posts": 346,
+        "unqueried_net_improved_posts": -101,
+        "unqueried_posts_fixed_per_query": -1.68,
+        "merge_acc": 0.7619,
+        "merge_total": 42,
+        "seam_acc": 0.8333,
+        "seam_total": 18,
+        "overall_seam_acc": 0.7833,
+        "gate_reject_rate": 0.2,
+        "conflict_flag_rate": 0.1667,
+        "real_tokens_spent": 61899
+      },
+      "evid_self_gate_clean_fallback": {
+        "n_queries": 60,
+        "ami": 0.5593,
+        "delta_ami_vs_stage1": -0.0006,
+        "nmi": 0.5808,
+        "ari": 0.4167,
+        "macro_b3": 0.3746,
+        "delta_macro_b3_vs_stage1": -0.0027,
+        "micro_b3": 0.4235,
+        "delta_micro_b3_vs_stage1": 0.0015,
+        "n_clusters": 241,
+        "net_fm_red": -12917,
+        "net_fs_red": 2428,
+        "unqueried_improved_posts": 334,
+        "unqueried_degraded_posts": 530,
+        "unqueried_net_improved_posts": -196,
+        "unqueried_posts_fixed_per_query": -3.27,
+        "merge_acc": 0.7619,
+        "merge_total": 42,
+        "seam_acc": 0.8333,
+        "seam_total": 18,
+        "overall_seam_acc": 0.7833,
+        "gate_reject_rate": 0.2,
+        "conflict_flag_rate": 0.1667,
+        "real_tokens_spent": 67880
+      },
+      "evid_comp_gate_clean_fallback": {
+        "n_queries": 60,
+        "ami": 0.5593,
+        "delta_ami_vs_stage1": -0.0006,
+        "nmi": 0.5808,
+        "ari": 0.4167,
+        "macro_b3": 0.3746,
+        "delta_macro_b3_vs_stage1": -0.0027,
+        "micro_b3": 0.4235,
+        "delta_micro_b3_vs_stage1": 0.0015,
+        "n_clusters": 241,
+        "net_fm_red": -12917,
+        "net_fs_red": 2428,
+        "unqueried_improved_posts": 334,
+        "unqueried_degraded_posts": 530,
+        "unqueried_net_improved_posts": -196,
+        "unqueried_posts_fixed_per_query": -3.27,
+        "merge_acc": 0.7619,
+        "merge_total": 42,
+        "seam_acc": 0.8333,
+        "seam_total": 18,
+        "overall_seam_acc": 0.7833,
+        "gate_reject_rate": 0.2,
+        "conflict_flag_rate": 0.1667,
+        "real_tokens_spent": 67880
+      }
+    },
+    "stage2_prefix_curves": {
+      "text_only_vlm": [
+        {
+          "k": 20,
+          "n_queries": 20,
+          "ami": 0.5599,
+          "delta_ami_vs_stage1": -0.0,
+          "nmi": 0.5806,
+          "ari": 0.4171,
+          "macro_b3": 0.3773,
+          "delta_macro_b3_vs_stage1": -0.0001,
+          "micro_b3": 0.4221,
+          "delta_micro_b3_vs_stage1": 0.0001,
+          "n_clusters": 231,
+          "net_fm_red": 2020,
+          "net_fs_red": -847,
+          "unqueried_improved_posts": 70,
+          "unqueried_degraded_posts": 130,
+          "unqueried_net_improved_posts": -60,
+          "unqueried_posts_fixed_per_query": -3.0,
+          "merge_acc": 0.7143,
+          "merge_total": 14,
+          "seam_acc": 0.8333,
+          "seam_total": 6,
+          "overall_seam_acc": 0.75,
+          "gate_reject_rate": 0.0,
+          "conflict_flag_rate": 0.1,
+          "real_tokens_spent": 10072
+        },
+        {
+          "k": 40,
+          "n_queries": 40,
+          "ami": 0.5601,
+          "delta_ami_vs_stage1": 0.0001,
+          "nmi": 0.5812,
+          "ari": 0.4171,
+          "macro_b3": 0.3776,
+          "delta_macro_b3_vs_stage1": 0.0003,
+          "micro_b3": 0.4224,
+          "delta_micro_b3_vs_stage1": 0.0003,
+          "n_clusters": 237,
+          "net_fm_red": 2696,
+          "net_fs_red": -988,
+          "unqueried_improved_posts": 123,
+          "unqueried_degraded_posts": 190,
+          "unqueried_net_improved_posts": -67,
+          "unqueried_posts_fixed_per_query": -1.68,
+          "merge_acc": 0.8214,
+          "merge_total": 28,
+          "seam_acc": 0.8333,
+          "seam_total": 12,
+          "overall_seam_acc": 0.825,
+          "gate_reject_rate": 0.0,
+          "conflict_flag_rate": 0.125,
+          "real_tokens_spent": 20085
+        },
+        {
+          "k": 60,
+          "n_queries": 60,
+          "ami": 0.5574,
+          "delta_ami_vs_stage1": -0.0025,
+          "nmi": 0.5787,
+          "ari": 0.4159,
+          "macro_b3": 0.3595,
+          "delta_macro_b3_vs_stage1": -0.0178,
+          "micro_b3": 0.4262,
+          "delta_micro_b3_vs_stage1": 0.0042,
+          "n_clusters": 238,
+          "net_fm_red": -85907,
+          "net_fs_red": 23060,
+          "unqueried_improved_posts": 811,
+          "unqueried_degraded_posts": 644,
+          "unqueried_net_improved_posts": 167,
+          "unqueried_posts_fixed_per_query": 2.78,
+          "merge_acc": 0.7857,
+          "merge_total": 42,
+          "seam_acc": 0.8333,
+          "seam_total": 18,
+          "overall_seam_acc": 0.8,
+          "gate_reject_rate": 0.0,
+          "conflict_flag_rate": 0.1667,
+          "real_tokens_spent": 29641
+        }
+      ],
+      "naive_vlm": [
+        {
+          "k": 20,
+          "n_queries": 20,
+          "ami": 0.5599,
+          "delta_ami_vs_stage1": -0.0,
+          "nmi": 0.5806,
+          "ari": 0.4171,
+          "macro_b3": 0.3773,
+          "delta_macro_b3_vs_stage1": -0.0001,
+          "micro_b3": 0.4221,
+          "delta_micro_b3_vs_stage1": 0.0001,
+          "n_clusters": 231,
+          "net_fm_red": 2020,
+          "net_fs_red": -847,
+          "unqueried_improved_posts": 70,
+          "unqueried_degraded_posts": 130,
+          "unqueried_net_improved_posts": -60,
+          "unqueried_posts_fixed_per_query": -3.0,
+          "merge_acc": 0.7143,
+          "merge_total": 14,
+          "seam_acc": 0.8333,
+          "seam_total": 6,
+          "overall_seam_acc": 0.75,
+          "gate_reject_rate": 0.0,
+          "conflict_flag_rate": 0.1,
+          "real_tokens_spent": 21141
+        },
+        {
+          "k": 40,
+          "n_queries": 40,
+          "ami": 0.5601,
+          "delta_ami_vs_stage1": 0.0001,
+          "nmi": 0.5812,
+          "ari": 0.4171,
+          "macro_b3": 0.3776,
+          "delta_macro_b3_vs_stage1": 0.0003,
+          "micro_b3": 0.4224,
+          "delta_micro_b3_vs_stage1": 0.0003,
+          "n_clusters": 237,
+          "net_fm_red": 2696,
+          "net_fs_red": -988,
+          "unqueried_improved_posts": 123,
+          "unqueried_degraded_posts": 190,
+          "unqueried_net_improved_posts": -67,
+          "unqueried_posts_fixed_per_query": -1.68,
+          "merge_acc": 0.7857,
+          "merge_total": 28,
+          "seam_acc": 0.8333,
+          "seam_total": 12,
+          "overall_seam_acc": 0.8,
+          "gate_reject_rate": 0.0,
+          "conflict_flag_rate": 0.125,
+          "real_tokens_spent": 40842
+        },
+        {
+          "k": 60,
+          "n_queries": 60,
+          "ami": 0.5601,
+          "delta_ami_vs_stage1": 0.0002,
+          "nmi": 0.5817,
+          "ari": 0.4171,
+          "macro_b3": 0.3777,
+          "delta_macro_b3_vs_stage1": 0.0004,
+          "micro_b3": 0.4225,
+          "delta_micro_b3_vs_stage1": 0.0005,
+          "n_clusters": 243,
+          "net_fm_red": 3579,
+          "net_fs_red": -1310,
+          "unqueried_improved_posts": 175,
+          "unqueried_degraded_posts": 342,
+          "unqueried_net_improved_posts": -167,
+          "unqueried_posts_fixed_per_query": -2.78,
+          "merge_acc": 0.7381,
+          "merge_total": 42,
+          "seam_acc": 0.8333,
+          "seam_total": 18,
+          "overall_seam_acc": 0.7667,
+          "gate_reject_rate": 0.0,
+          "conflict_flag_rate": 0.1667,
+          "real_tokens_spent": 61899
+        }
+      ],
+      "evid_self_gate_inline": [
+        {
+          "k": 20,
+          "n_queries": 20,
+          "ami": 0.5599,
+          "delta_ami_vs_stage1": -0.0,
+          "nmi": 0.5806,
+          "ari": 0.4171,
+          "macro_b3": 0.3773,
+          "delta_macro_b3_vs_stage1": -0.0001,
+          "micro_b3": 0.4221,
+          "delta_micro_b3_vs_stage1": 0.0001,
+          "n_clusters": 231,
+          "net_fm_red": 2020,
+          "net_fs_red": -847,
+          "unqueried_improved_posts": 70,
+          "unqueried_degraded_posts": 130,
+          "unqueried_net_improved_posts": -60,
+          "unqueried_posts_fixed_per_query": -3.0,
+          "merge_acc": 0.7143,
+          "merge_total": 14,
+          "seam_acc": 0.8333,
+          "seam_total": 6,
+          "overall_seam_acc": 0.75,
+          "gate_reject_rate": 0.1,
+          "conflict_flag_rate": 0.1,
+          "real_tokens_spent": 21141
+        },
+        {
+          "k": 40,
+          "n_queries": 40,
+          "ami": 0.5601,
+          "delta_ami_vs_stage1": 0.0001,
+          "nmi": 0.5812,
+          "ari": 0.4171,
+          "macro_b3": 0.3776,
+          "delta_macro_b3_vs_stage1": 0.0003,
+          "micro_b3": 0.4224,
+          "delta_micro_b3_vs_stage1": 0.0003,
+          "n_clusters": 237,
+          "net_fm_red": 2696,
+          "net_fs_red": -988,
+          "unqueried_improved_posts": 123,
+          "unqueried_degraded_posts": 190,
+          "unqueried_net_improved_posts": -67,
+          "unqueried_posts_fixed_per_query": -1.68,
+          "merge_acc": 0.7857,
+          "merge_total": 28,
+          "seam_acc": 0.8333,
+          "seam_total": 12,
+          "overall_seam_acc": 0.8,
+          "gate_reject_rate": 0.175,
+          "conflict_flag_rate": 0.125,
+          "real_tokens_spent": 40842
+        },
+        {
+          "k": 60,
+          "n_queries": 60,
+          "ami": 0.5605,
+          "delta_ami_vs_stage1": 0.0006,
+          "nmi": 0.582,
+          "ari": 0.4174,
+          "macro_b3": 0.3778,
+          "delta_macro_b3_vs_stage1": 0.0005,
+          "micro_b3": 0.4227,
+          "delta_micro_b3_vs_stage1": 0.0007,
+          "n_clusters": 242,
+          "net_fm_red": 3409,
+          "net_fs_red": -8,
+          "unqueried_improved_posts": 245,
+          "unqueried_degraded_posts": 346,
+          "unqueried_net_improved_posts": -101,
+          "unqueried_posts_fixed_per_query": -1.68,
+          "merge_acc": 0.7619,
+          "merge_total": 42,
+          "seam_acc": 0.8333,
+          "seam_total": 18,
+          "overall_seam_acc": 0.7833,
+          "gate_reject_rate": 0.2,
+          "conflict_flag_rate": 0.1667,
+          "real_tokens_spent": 61899
+        }
+      ],
+      "evid_self_gate_clean_fallback": [
+        {
+          "k": 20,
+          "n_queries": 20,
+          "ami": 0.5599,
+          "delta_ami_vs_stage1": -0.0,
+          "nmi": 0.5806,
+          "ari": 0.4171,
+          "macro_b3": 0.3773,
+          "delta_macro_b3_vs_stage1": -0.0001,
+          "micro_b3": 0.4221,
+          "delta_micro_b3_vs_stage1": 0.0001,
+          "n_clusters": 231,
+          "net_fm_red": 2020,
+          "net_fs_red": -847,
+          "unqueried_improved_posts": 70,
+          "unqueried_degraded_posts": 130,
+          "unqueried_net_improved_posts": -60,
+          "unqueried_posts_fixed_per_query": -3.0,
+          "merge_acc": 0.7143,
+          "merge_total": 14,
+          "seam_acc": 0.8333,
+          "seam_total": 6,
+          "overall_seam_acc": 0.75,
+          "gate_reject_rate": 0.1,
+          "conflict_flag_rate": 0.1,
+          "real_tokens_spent": 22245
+        },
+        {
+          "k": 40,
+          "n_queries": 40,
+          "ami": 0.5601,
+          "delta_ami_vs_stage1": 0.0001,
+          "nmi": 0.5812,
+          "ari": 0.4171,
+          "macro_b3": 0.3776,
+          "delta_macro_b3_vs_stage1": 0.0003,
+          "micro_b3": 0.4224,
+          "delta_micro_b3_vs_stage1": 0.0003,
+          "n_clusters": 237,
+          "net_fm_red": 2696,
+          "net_fs_red": -988,
+          "unqueried_improved_posts": 123,
+          "unqueried_degraded_posts": 190,
+          "unqueried_net_improved_posts": -67,
+          "unqueried_posts_fixed_per_query": -1.68,
+          "merge_acc": 0.8214,
+          "merge_total": 28,
+          "seam_acc": 0.8333,
+          "seam_total": 12,
+          "overall_seam_acc": 0.825,
+          "gate_reject_rate": 0.175,
+          "conflict_flag_rate": 0.125,
+          "real_tokens_spent": 44544
+        },
+        {
+          "k": 60,
+          "n_queries": 60,
+          "ami": 0.5593,
+          "delta_ami_vs_stage1": -0.0006,
+          "nmi": 0.5808,
+          "ari": 0.4167,
+          "macro_b3": 0.3746,
+          "delta_macro_b3_vs_stage1": -0.0027,
+          "micro_b3": 0.4235,
+          "delta_micro_b3_vs_stage1": 0.0015,
+          "n_clusters": 241,
+          "net_fm_red": -12917,
+          "net_fs_red": 2428,
+          "unqueried_improved_posts": 334,
+          "unqueried_degraded_posts": 530,
+          "unqueried_net_improved_posts": -196,
+          "unqueried_posts_fixed_per_query": -3.27,
+          "merge_acc": 0.7619,
+          "merge_total": 42,
+          "seam_acc": 0.8333,
+          "seam_total": 18,
+          "overall_seam_acc": 0.7833,
+          "gate_reject_rate": 0.2,
+          "conflict_flag_rate": 0.1667,
+          "real_tokens_spent": 67880
+        }
+      ],
+      "evid_comp_gate_clean_fallback": [
+        {
+          "k": 20,
+          "n_queries": 20,
+          "ami": 0.5599,
+          "delta_ami_vs_stage1": -0.0,
+          "nmi": 0.5806,
+          "ari": 0.4171,
+          "macro_b3": 0.3773,
+          "delta_macro_b3_vs_stage1": -0.0001,
+          "micro_b3": 0.4221,
+          "delta_micro_b3_vs_stage1": 0.0001,
+          "n_clusters": 231,
+          "net_fm_red": 2020,
+          "net_fs_red": -847,
+          "unqueried_improved_posts": 70,
+          "unqueried_degraded_posts": 130,
+          "unqueried_net_improved_posts": -60,
+          "unqueried_posts_fixed_per_query": -3.0,
+          "merge_acc": 0.7143,
+          "merge_total": 14,
+          "seam_acc": 0.8333,
+          "seam_total": 6,
+          "overall_seam_acc": 0.75,
+          "gate_reject_rate": 0.1,
+          "conflict_flag_rate": 0.1,
+          "real_tokens_spent": 22245
+        },
+        {
+          "k": 40,
+          "n_queries": 40,
+          "ami": 0.5601,
+          "delta_ami_vs_stage1": 0.0001,
+          "nmi": 0.5812,
+          "ari": 0.4171,
+          "macro_b3": 0.3776,
+          "delta_macro_b3_vs_stage1": 0.0003,
+          "micro_b3": 0.4224,
+          "delta_micro_b3_vs_stage1": 0.0003,
+          "n_clusters": 237,
+          "net_fm_red": 2696,
+          "net_fs_red": -988,
+          "unqueried_improved_posts": 123,
+          "unqueried_degraded_posts": 190,
+          "unqueried_net_improved_posts": -67,
+          "unqueried_posts_fixed_per_query": -1.68,
+          "merge_acc": 0.8214,
+          "merge_total": 28,
+          "seam_acc": 0.8333,
+          "seam_total": 12,
+          "overall_seam_acc": 0.825,
+          "gate_reject_rate": 0.175,
+          "conflict_flag_rate": 0.125,
+          "real_tokens_spent": 44544
+        },
+        {
+          "k": 60,
+          "n_queries": 60,
+          "ami": 0.5593,
+          "delta_ami_vs_stage1": -0.0006,
+          "nmi": 0.5808,
+          "ari": 0.4167,
+          "macro_b3": 0.3746,
+          "delta_macro_b3_vs_stage1": -0.0027,
+          "micro_b3": 0.4235,
+          "delta_micro_b3_vs_stage1": 0.0015,
+          "n_clusters": 241,
+          "net_fm_red": -12917,
+          "net_fs_red": 2428,
+          "unqueried_improved_posts": 334,
+          "unqueried_degraded_posts": 530,
+          "unqueried_net_improved_posts": -196,
+          "unqueried_posts_fixed_per_query": -3.27,
+          "merge_acc": 0.7619,
+          "merge_total": 42,
+          "seam_acc": 0.8333,
+          "seam_total": 18,
+          "overall_seam_acc": 0.7833,
+          "gate_reject_rate": 0.2,
+          "conflict_flag_rate": 0.1667,
+          "real_tokens_spent": 67880
+        }
+      ]
+    },
+    "case_studies": {
+      "visual_rescues": [
+        {
+          "query_id": "merge_c83_c103",
+          "query_type": "merge_pair",
+          "route_source": "text_bridge",
+          "oracle_same": false,
+          "rep_corrupted": false,
+          "keywords_a": [
+            "#grenfelltower",
+            "#london",
+            "#boroughmarket",
+            "london"
+          ],
+          "keywords_b": [
+            "prayers",
+            "thoughts",
+            "those",
+            "victims"
+          ],
+          "txt_pred_same": true,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": false,
+          "visual_clue_a": "Burned high-rise building in London",
+          "visual_clue_b": "Mexican flag with 'Pray for Mexico'",
+          "confidence": 1.0
+        }
+      ],
+      "conflict_blocked": [
+        {
+          "query_id": "merge_c32_c35",
+          "query_type": "merge_pair",
+          "route_source": "text_bridge",
+          "oracle_same": true,
+          "rep_corrupted": true,
+          "keywords_a": [
+            "#neerajchopra",
+            "#tokyo2020",
+            "#gold",
+            "india"
+          ],
+          "keywords_b": [
+            "#tokyo2020",
+            "medal",
+            "congratulations",
+            "#volleyball"
+          ],
+          "txt_pred_same": false,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "Athlete draped in Indian flag on track",
+          "visual_clue_b": "Team in white/red uniforms on podium",
+          "confidence": 1.0
+        },
+        {
+          "query_id": "seam_c76",
+          "query_type": "seam",
+          "route_source": "intra_seam",
+          "oracle_same": false,
+          "rep_corrupted": false,
+          "keywords_a": [
+            "#nationaldogday",
+            "#blacklivesmatter",
+            "#songoftheday",
+            "#eurovisionsongoftheday"
+          ],
+          "keywords_b": [
+            "piped",
+            "kavin",
+            "rocks",
+            "watch"
+          ],
+          "txt_pred_same": false,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "Black hole illustration with text",
+          "visual_clue_b": "Michael Jackson portrait photo",
+          "confidence": 1.0
+        },
+        {
+          "query_id": "seam_c11",
+          "query_type": "seam",
+          "route_source": "intra_seam",
+          "oracle_same": true,
+          "rep_corrupted": false,
+          "keywords_a": [
+            "#jojorgensen2020",
+            "#letherspeak",
+            "#equalitycantwait",
+            "#womensequalityday"
+          ],
+          "keywords_b": [
+            "#rsa",
+            "#castersemenya",
+            "#caster4gold",
+            "#teamsarise"
+          ],
+          "txt_pred_same": false,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "Two female gymnasts in blue uniforms",
+          "visual_clue_b": "Woman on magazine cover with 'WINNER' text",
+          "confidence": 1.0
+        },
+        {
+          "query_id": "seam_c50",
+          "query_type": "seam",
+          "route_source": "intra_seam",
+          "oracle_same": false,
+          "rep_corrupted": false,
+          "keywords_a": [
+            "#craftbeer",
+            "#ukip",
+            "#modown",
+            "#mofarah"
+          ],
+          "keywords_b": [
+            "#rioolympics2016",
+            "#waterpolo",
+            "#waterpoloserbia",
+            "#vaterpolo"
+          ],
+          "txt_pred_same": false,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "Green bottles and glasses on table",
+          "visual_clue_b": "Surfer silhouette at sunset",
+          "confidence": 1.0
+        },
+        {
+          "query_id": "merge_c5_c16",
+          "query_type": "merge_pair",
+          "route_source": "text_bridge",
+          "oracle_same": false,
+          "rep_corrupted": false,
+          "keywords_a": [
+            "cover",
+            "photo",
+            "good",
+            "com"
+          ],
+          "keywords_b": [
+            "sunday",
+            "liv",
+            "party",
+            "game"
+          ],
+          "txt_pred_same": false,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "Crowd holding umbrellas at night",
+          "visual_clue_b": "Bowl of orange cheese popcorn",
+          "confidence": 1.0
+        },
+        {
+          "query_id": "seam_c195",
+          "query_type": "seam",
+          "route_source": "intra_seam",
+          "oracle_same": false,
+          "rep_corrupted": true,
+          "keywords_a": [
+            "arrested",
+            "denise",
+            "police",
+            "sit"
+          ],
+          "keywords_b": [
+            "read",
+            "anyone",
+            "asks",
+            "why"
+          ],
+          "txt_pred_same": false,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": false,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "IND24 news image with Amit Shah",
+          "visual_clue_b": "Text-only post with no image",
+          "confidence": 1.0
+        },
+        {
+          "query_id": "merge_c87_c88",
+          "query_type": "merge_pair",
+          "route_source": "text_bridge",
+          "oracle_same": true,
+          "rep_corrupted": false,
+          "keywords_a": [
+            "#brazil",
+            "ift",
+            "cup",
+            "word"
+          ],
+          "keywords_b": [
+            "#brazil",
+            "cup",
+            "word",
+            "ift"
+          ],
+          "txt_pred_same": false,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "Pep Guardiola pointing at stadium",
+          "visual_clue_b": "Messi and Mueller with World Cup trophy",
+          "confidence": 1.0
+        },
+        {
+          "query_id": "merge_c22_c103",
+          "query_type": "merge_pair",
+          "route_source": "text_bridge",
+          "oracle_same": false,
+          "rep_corrupted": false,
+          "keywords_a": [
+            "#srilanka",
+            "#prayforsrilanka",
+            "#srilankablasts",
+            "sri"
+          ],
+          "keywords_b": [
+            "prayers",
+            "thoughts",
+            "those",
+            "victims"
+          ],
+          "txt_pred_same": true,
+          "mm_pred_same": false,
+          "mm_inline_txt_same": false,
+          "visual_discriminative": true,
+          "visual_conflict_with_text": true,
+          "visual_clue_a": "Destroyed church pews with blood",
+          "visual_clue_b": "Mexican flag with 'Pray for Mexico'",
+          "confidence": 1.0
+        }
+      ]
+    }
+  },
+  "clean_replay_ledger": {
+    "total_calls": 360,
+    "cached_calls": 360,
+    "prompt_tokens": 247807,
+    "completion_tokens": 29750,
+    "total_tokens": 277557,
+    "estimated_cost_cny": 0.183403
+  },
+  "stratified_b3": {
+    "clean": {
+      "text_only_2dse": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3848,
+            "macro_r": 0.3407,
+            "macro_f1": 0.3326
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.493,
+            "macro_r": 0.2733,
+            "macro_f1": 0.3388
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.6991,
+            "macro_r": 0.2689,
+            "macro_f1": 0.3703
+          },
+          "overall_macro_b3_f1": 0.3485
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.4655,
+            "b3_r": 0.2622,
+            "b3_f1": 0.3355
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7487,
+            "b3_r": 0.149,
+            "b3_f1": 0.2485
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6384,
+            "b3_r": 0.2491,
+            "b3_f1": 0.3584
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4413,
+            "b3_r": 0.1753,
+            "b3_f1": 0.2509
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.2917,
+            "b3_r": 0.3281,
+            "b3_f1": 0.3088
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5406,
+            "b3_r": 0.1276,
+            "b3_f1": 0.2064
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1439,
+            "b3_r": 0.2188,
+            "b3_f1": 0.1736
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4356,
+            "b3_r": 0.3236,
+            "b3_f1": 0.3713
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0257,
+            "b3_r": 0.3061,
+            "b3_f1": 0.0474
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4044,
+            "b3_r": 0.304,
+            "b3_f1": 0.3471
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6225,
+            "b3_r": 0.1776,
+            "b3_f1": 0.2764
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.6651,
+            "b3_r": 0.5134,
+            "b3_f1": 0.5795
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.4239,
+            "b3_r": 0.2474,
+            "b3_f1": 0.3125
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.3816,
+            "b3_r": 0.138,
+            "b3_f1": 0.2027
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.5564,
+            "b3_r": 0.6592,
+            "b3_f1": 0.6035
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4954,
+            "b3_r": 0.1648,
+            "b3_f1": 0.2474
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.5122,
+            "b3_r": 0.1927,
+            "b3_f1": 0.28
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9158,
+            "b3_r": 0.6535,
+            "b3_f1": 0.7627
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6264,
+            "b3_r": 0.3661,
+            "b3_f1": 0.4622
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8003,
+            "b3_r": 0.3944,
+            "b3_f1": 0.5284
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5805,
+            "b3_r": 0.2524,
+            "b3_f1": 0.3518
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6236,
+            "b3_r": 0.0863,
+            "b3_f1": 0.1516
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7754,
+            "b3_r": 0.2161,
+            "b3_f1": 0.338
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7058,
+            "b3_r": 0.5526,
+            "b3_f1": 0.6199
+          }
+        }
+      },
+      "visual_idf_mv_2dse": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.4457,
+            "macro_r": 0.377,
+            "macro_f1": 0.3753
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4828,
+            "macro_r": 0.3691,
+            "macro_f1": 0.4006
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.716,
+            "macro_r": 0.3557,
+            "macro_f1": 0.4545
+          },
+          "overall_macro_b3_f1": 0.4124
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5938,
+            "b3_r": 0.4194,
+            "b3_f1": 0.4916
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7685,
+            "b3_r": 0.471,
+            "b3_f1": 0.5841
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6608,
+            "b3_r": 0.2708,
+            "b3_f1": 0.3841
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4657,
+            "b3_r": 0.1952,
+            "b3_f1": 0.2751
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3043,
+            "b3_r": 0.332,
+            "b3_f1": 0.3176
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5498,
+            "b3_r": 0.1571,
+            "b3_f1": 0.2444
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1197,
+            "b3_r": 0.2287,
+            "b3_f1": 0.1572
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4147,
+            "b3_r": 0.3385,
+            "b3_f1": 0.3727
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0253,
+            "b3_r": 0.3673,
+            "b3_f1": 0.0473
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4445,
+            "b3_r": 0.2747,
+            "b3_f1": 0.3395
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6274,
+            "b3_r": 0.3237,
+            "b3_f1": 0.4271
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7155,
+            "b3_r": 0.5852,
+            "b3_f1": 0.6438
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3657,
+            "b3_r": 0.5114,
+            "b3_f1": 0.4264
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.51,
+            "b3_r": 0.1946,
+            "b3_f1": 0.2817
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.742,
+            "b3_r": 0.6078,
+            "b3_f1": 0.6682
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4813,
+            "b3_r": 0.1622,
+            "b3_f1": 0.2426
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4424,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4103
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9263,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6443,
+            "b3_r": 0.2675,
+            "b3_f1": 0.378
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8041,
+            "b3_r": 0.3487,
+            "b3_f1": 0.4864
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5567,
+            "b3_r": 0.3514,
+            "b3_f1": 0.4308
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6317,
+            "b3_r": 0.0915,
+            "b3_f1": 0.1599
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8308,
+            "b3_r": 0.3725,
+            "b3_f1": 0.5144
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7635,
+            "b3_r": 0.6487,
+            "b3_f1": 0.7015
+          }
+        }
+      },
+      "k60_text_only_vlm": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3748,
+            "macro_r": 0.4272,
+            "macro_f1": 0.327
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4686,
+            "macro_r": 0.407,
+            "macro_f1": 0.4158
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.7035,
+            "macro_r": 0.3879,
+            "macro_f1": 0.4777
+          },
+          "overall_macro_b3_f1": 0.4094
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5937,
+            "b3_r": 0.4204,
+            "b3_f1": 0.4922
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7708,
+            "b3_r": 0.4713,
+            "b3_f1": 0.585
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.5687,
+            "b3_r": 0.456,
+            "b3_f1": 0.5062
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.467,
+            "b3_r": 0.195,
+            "b3_f1": 0.2751
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3067,
+            "b3_r": 0.332,
+            "b3_f1": 0.3188
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.55,
+            "b3_r": 0.1571,
+            "b3_f1": 0.2444
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1279,
+            "b3_r": 0.2963,
+            "b3_f1": 0.1786
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4138,
+            "b3_r": 0.2834,
+            "b3_f1": 0.3364
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0209,
+            "b3_r": 0.5306,
+            "b3_f1": 0.0403
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4428,
+            "b3_r": 0.2793,
+            "b3_f1": 0.3425
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6281,
+            "b3_r": 0.3238,
+            "b3_f1": 0.4273
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7134,
+            "b3_r": 0.5871,
+            "b3_f1": 0.6441
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3101,
+            "b3_r": 0.5189,
+            "b3_f1": 0.3882
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5088,
+            "b3_r": 0.2028,
+            "b3_f1": 0.29
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.1775,
+            "b3_r": 0.8178,
+            "b3_f1": 0.2917
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4597,
+            "b3_r": 0.1791,
+            "b3_f1": 0.2577
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4425,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4104
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6154,
+            "b3_r": 0.3719,
+            "b3_f1": 0.4636
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8052,
+            "b3_r": 0.3487,
+            "b3_f1": 0.4866
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5234,
+            "b3_r": 0.5912,
+            "b3_f1": 0.5553
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6356,
+            "b3_r": 0.0915,
+            "b3_f1": 0.1599
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8312,
+            "b3_r": 0.3725,
+            "b3_f1": 0.5144
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7705,
+            "b3_r": 0.6501,
+            "b3_f1": 0.7052
+          }
+        }
+      },
+      "k180_text_only_vlm": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3764,
+            "macro_r": 0.4272,
+            "macro_f1": 0.3281
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4701,
+            "macro_r": 0.4067,
+            "macro_f1": 0.4164
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.705,
+            "macro_r": 0.3852,
+            "macro_f1": 0.4763
+          },
+          "overall_macro_b3_f1": 0.4094
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5943,
+            "b3_r": 0.4204,
+            "b3_f1": 0.4925
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7709,
+            "b3_r": 0.4713,
+            "b3_f1": 0.585
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.5727,
+            "b3_r": 0.4328,
+            "b3_f1": 0.493
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4711,
+            "b3_r": 0.1948,
+            "b3_f1": 0.2757
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3069,
+            "b3_r": 0.332,
+            "b3_f1": 0.3189
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5507,
+            "b3_r": 0.157,
+            "b3_f1": 0.2443
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.131,
+            "b3_r": 0.2963,
+            "b3_f1": 0.1817
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4146,
+            "b3_r": 0.2834,
+            "b3_f1": 0.3367
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0211,
+            "b3_r": 0.5306,
+            "b3_f1": 0.0405
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4465,
+            "b3_r": 0.2793,
+            "b3_f1": 0.3437
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6298,
+            "b3_r": 0.3236,
+            "b3_f1": 0.4275
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7137,
+            "b3_r": 0.5871,
+            "b3_f1": 0.6442
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.314,
+            "b3_r": 0.5189,
+            "b3_f1": 0.3912
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5094,
+            "b3_r": 0.2028,
+            "b3_f1": 0.2901
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.1805,
+            "b3_r": 0.8178,
+            "b3_f1": 0.2957
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4615,
+            "b3_r": 0.1791,
+            "b3_f1": 0.258
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4428,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4105
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6189,
+            "b3_r": 0.3715,
+            "b3_f1": 0.4643
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8061,
+            "b3_r": 0.3483,
+            "b3_f1": 0.4865
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5242,
+            "b3_r": 0.5895,
+            "b3_f1": 0.555
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6381,
+            "b3_r": 0.0913,
+            "b3_f1": 0.1597
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8314,
+            "b3_r": 0.3725,
+            "b3_f1": 0.5145
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7705,
+            "b3_r": 0.6501,
+            "b3_f1": 0.7052
+          }
+        }
+      },
+      "k60_naive_vlm": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3603,
+            "macro_r": 0.397,
+            "macro_f1": 0.3265
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4721,
+            "macro_r": 0.404,
+            "macro_f1": 0.4135
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.7162,
+            "macro_r": 0.3874,
+            "macro_f1": 0.479
+          },
+          "overall_macro_b3_f1": 0.4091
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5937,
+            "b3_r": 0.4204,
+            "b3_f1": 0.4923
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7701,
+            "b3_r": 0.4711,
+            "b3_f1": 0.5846
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.657,
+            "b3_r": 0.2717,
+            "b3_f1": 0.3844
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.467,
+            "b3_r": 0.195,
+            "b3_f1": 0.2751
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3067,
+            "b3_r": 0.332,
+            "b3_f1": 0.3188
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.55,
+            "b3_r": 0.1571,
+            "b3_f1": 0.2444
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.0672,
+            "b3_r": 0.2925,
+            "b3_f1": 0.1093
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.152,
+            "b3_r": 0.32,
+            "b3_f1": 0.2061
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0233,
+            "b3_r": 0.3673,
+            "b3_f1": 0.0439
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4431,
+            "b3_r": 0.2747,
+            "b3_f1": 0.3391
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6281,
+            "b3_r": 0.3237,
+            "b3_f1": 0.4272
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7155,
+            "b3_r": 0.5852,
+            "b3_f1": 0.6438
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3094,
+            "b3_r": 0.5185,
+            "b3_f1": 0.3875
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5097,
+            "b3_r": 0.1946,
+            "b3_f1": 0.2817
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.3779,
+            "b3_r": 0.721,
+            "b3_f1": 0.4959
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4815,
+            "b3_r": 0.1623,
+            "b3_f1": 0.2428
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4425,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4104
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6426,
+            "b3_r": 0.2675,
+            "b3_f1": 0.3778
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8052,
+            "b3_r": 0.3487,
+            "b3_f1": 0.4866
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5235,
+            "b3_r": 0.5908,
+            "b3_f1": 0.5551
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6356,
+            "b3_r": 0.0914,
+            "b3_f1": 0.1599
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8308,
+            "b3_r": 0.6571,
+            "b3_f1": 0.7338
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7741,
+            "b3_r": 0.647,
+            "b3_f1": 0.7049
+          }
+        }
+      },
+      "k180_naive_vlm": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3615,
+            "macro_r": 0.397,
+            "macro_f1": 0.3274
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4737,
+            "macro_r": 0.4037,
+            "macro_f1": 0.414
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.7175,
+            "macro_r": 0.385,
+            "macro_f1": 0.4765
+          },
+          "overall_macro_b3_f1": 0.4086
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5944,
+            "b3_r": 0.4204,
+            "b3_f1": 0.4925
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7702,
+            "b3_r": 0.4711,
+            "b3_f1": 0.5846
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6588,
+            "b3_r": 0.2545,
+            "b3_f1": 0.3672
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4711,
+            "b3_r": 0.1948,
+            "b3_f1": 0.2756
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3069,
+            "b3_r": 0.332,
+            "b3_f1": 0.3189
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5507,
+            "b3_r": 0.157,
+            "b3_f1": 0.2443
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.0703,
+            "b3_r": 0.2925,
+            "b3_f1": 0.1134
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.1528,
+            "b3_r": 0.32,
+            "b3_f1": 0.2068
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0236,
+            "b3_r": 0.3673,
+            "b3_f1": 0.0444
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4468,
+            "b3_r": 0.2747,
+            "b3_f1": 0.3402
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6298,
+            "b3_r": 0.3236,
+            "b3_f1": 0.4275
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7158,
+            "b3_r": 0.5852,
+            "b3_f1": 0.6439
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3132,
+            "b3_r": 0.5184,
+            "b3_f1": 0.3905
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5103,
+            "b3_r": 0.1946,
+            "b3_f1": 0.2818
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.378,
+            "b3_r": 0.721,
+            "b3_f1": 0.4959
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4833,
+            "b3_r": 0.1623,
+            "b3_f1": 0.243
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4428,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4105
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6461,
+            "b3_r": 0.2672,
+            "b3_f1": 0.378
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8061,
+            "b3_r": 0.3483,
+            "b3_f1": 0.4865
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5242,
+            "b3_r": 0.5892,
+            "b3_f1": 0.5548
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6381,
+            "b3_r": 0.0879,
+            "b3_f1": 0.1545
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.831,
+            "b3_r": 0.6571,
+            "b3_f1": 0.7339
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7741,
+            "b3_r": 0.647,
+            "b3_f1": 0.7049
+          }
+        }
+      },
+      "k60_evid_self_gate_inline": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3594,
+            "macro_r": 0.3984,
+            "macro_f1": 0.3272
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.469,
+            "macro_r": 0.4065,
+            "macro_f1": 0.4157
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.7132,
+            "macro_r": 0.3992,
+            "macro_f1": 0.4887
+          },
+          "overall_macro_b3_f1": 0.4136
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5936,
+            "b3_r": 0.4214,
+            "b3_f1": 0.4929
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.77,
+            "b3_r": 0.4737,
+            "b3_f1": 0.5866
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6569,
+            "b3_r": 0.2717,
+            "b3_f1": 0.3845
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.467,
+            "b3_r": 0.195,
+            "b3_f1": 0.2751
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3066,
+            "b3_r": 0.332,
+            "b3_f1": 0.3188
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.55,
+            "b3_r": 0.1571,
+            "b3_f1": 0.2444
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.0672,
+            "b3_r": 0.2925,
+            "b3_f1": 0.1093
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.1481,
+            "b3_r": 0.32,
+            "b3_f1": 0.2024
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0233,
+            "b3_r": 0.3673,
+            "b3_f1": 0.0439
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4428,
+            "b3_r": 0.2747,
+            "b3_f1": 0.339
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6281,
+            "b3_r": 0.3237,
+            "b3_f1": 0.4272
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7134,
+            "b3_r": 0.5871,
+            "b3_f1": 0.6441
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3093,
+            "b3_r": 0.5189,
+            "b3_f1": 0.3876
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5088,
+            "b3_r": 0.2028,
+            "b3_f1": 0.2901
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.3779,
+            "b3_r": 0.721,
+            "b3_f1": 0.4959
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4597,
+            "b3_r": 0.179,
+            "b3_f1": 0.2577
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4425,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4104
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6157,
+            "b3_r": 0.3716,
+            "b3_f1": 0.4634
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8052,
+            "b3_r": 0.3487,
+            "b3_f1": 0.4866
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5234,
+            "b3_r": 0.5912,
+            "b3_f1": 0.5552
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6356,
+            "b3_r": 0.0915,
+            "b3_f1": 0.1599
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8307,
+            "b3_r": 0.6571,
+            "b3_f1": 0.7338
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7741,
+            "b3_r": 0.647,
+            "b3_f1": 0.7049
+          }
+        }
+      },
+      "k180_evid_self_gate_inline": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3606,
+            "macro_r": 0.3984,
+            "macro_f1": 0.3281
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4705,
+            "macro_r": 0.4062,
+            "macro_f1": 0.4162
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.7144,
+            "macro_r": 0.3968,
+            "macro_f1": 0.4863
+          },
+          "overall_macro_b3_f1": 0.4131
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5942,
+            "b3_r": 0.4214,
+            "b3_f1": 0.4931
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7702,
+            "b3_r": 0.4737,
+            "b3_f1": 0.5866
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6587,
+            "b3_r": 0.2545,
+            "b3_f1": 0.3672
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4711,
+            "b3_r": 0.1948,
+            "b3_f1": 0.2756
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3069,
+            "b3_r": 0.332,
+            "b3_f1": 0.3189
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5507,
+            "b3_r": 0.157,
+            "b3_f1": 0.2443
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.0703,
+            "b3_r": 0.2925,
+            "b3_f1": 0.1134
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.1488,
+            "b3_r": 0.32,
+            "b3_f1": 0.2032
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0236,
+            "b3_r": 0.3673,
+            "b3_f1": 0.0444
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4465,
+            "b3_r": 0.2747,
+            "b3_f1": 0.3401
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6298,
+            "b3_r": 0.3236,
+            "b3_f1": 0.4275
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7137,
+            "b3_r": 0.5871,
+            "b3_f1": 0.6442
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3131,
+            "b3_r": 0.5189,
+            "b3_f1": 0.3906
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5094,
+            "b3_r": 0.2028,
+            "b3_f1": 0.2902
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.378,
+            "b3_r": 0.721,
+            "b3_f1": 0.4959
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4615,
+            "b3_r": 0.179,
+            "b3_f1": 0.258
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4428,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4105
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6192,
+            "b3_r": 0.3712,
+            "b3_f1": 0.4641
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8061,
+            "b3_r": 0.3483,
+            "b3_f1": 0.4865
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5242,
+            "b3_r": 0.5895,
+            "b3_f1": 0.5549
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6381,
+            "b3_r": 0.0879,
+            "b3_f1": 0.1545
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8309,
+            "b3_r": 0.6571,
+            "b3_f1": 0.7338
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7741,
+            "b3_r": 0.647,
+            "b3_f1": 0.7049
+          }
+        }
+      },
+      "k60_evid_self_gate_clean_fallback": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3235,
+            "macro_r": 0.469,
+            "macro_f1": 0.2905
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4684,
+            "macro_r": 0.407,
+            "macro_f1": 0.4157
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.6996,
+            "macro_r": 0.4199,
+            "macro_f1": 0.5008
+          },
+          "overall_macro_b3_f1": 0.4059
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5936,
+            "b3_r": 0.4214,
+            "b3_f1": 0.4929
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7701,
+            "b3_r": 0.4714,
+            "b3_f1": 0.5848
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.5356,
+            "b3_r": 0.4594,
+            "b3_f1": 0.4946
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.467,
+            "b3_r": 0.195,
+            "b3_f1": 0.2751
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3067,
+            "b3_r": 0.332,
+            "b3_f1": 0.3188
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.55,
+            "b3_r": 0.1571,
+            "b3_f1": 0.2444
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.0542,
+            "b3_r": 0.5725,
+            "b3_f1": 0.0991
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.0918,
+            "b3_r": 0.3404,
+            "b3_f1": 0.1446
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0202,
+            "b3_r": 0.5306,
+            "b3_f1": 0.0389
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4427,
+            "b3_r": 0.2793,
+            "b3_f1": 0.3425
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.628,
+            "b3_r": 0.3238,
+            "b3_f1": 0.4273
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7134,
+            "b3_r": 0.5871,
+            "b3_f1": 0.6441
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3093,
+            "b3_r": 0.5189,
+            "b3_f1": 0.3876
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5088,
+            "b3_r": 0.2028,
+            "b3_f1": 0.29
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.1629,
+            "b3_r": 0.8178,
+            "b3_f1": 0.2717
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4597,
+            "b3_r": 0.1791,
+            "b3_f1": 0.2577
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4425,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4104
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6153,
+            "b3_r": 0.3719,
+            "b3_f1": 0.4636
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8052,
+            "b3_r": 0.3487,
+            "b3_f1": 0.4866
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5234,
+            "b3_r": 0.5912,
+            "b3_f1": 0.5553
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6356,
+            "b3_r": 0.0915,
+            "b3_f1": 0.1599
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8307,
+            "b3_r": 0.6571,
+            "b3_f1": 0.7338
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7703,
+            "b3_r": 0.6501,
+            "b3_f1": 0.7051
+          }
+        }
+      },
+      "k180_evid_self_gate_clean_fallback": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.325,
+            "macro_r": 0.469,
+            "macro_f1": 0.2921
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.47,
+            "macro_r": 0.4067,
+            "macro_f1": 0.4163
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.7012,
+            "macro_r": 0.4168,
+            "macro_f1": 0.4989
+          },
+          "overall_macro_b3_f1": 0.4059
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.5942,
+            "b3_r": 0.4214,
+            "b3_f1": 0.4931
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7702,
+            "b3_r": 0.4714,
+            "b3_f1": 0.5848
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.5403,
+            "b3_r": 0.4361,
+            "b3_f1": 0.4826
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4711,
+            "b3_r": 0.1948,
+            "b3_f1": 0.2757
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3069,
+            "b3_r": 0.332,
+            "b3_f1": 0.3189
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5507,
+            "b3_r": 0.157,
+            "b3_f1": 0.2443
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.0577,
+            "b3_r": 0.5725,
+            "b3_f1": 0.1049
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.0932,
+            "b3_r": 0.3404,
+            "b3_f1": 0.1463
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0203,
+            "b3_r": 0.5306,
+            "b3_f1": 0.0392
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4465,
+            "b3_r": 0.2793,
+            "b3_f1": 0.3436
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6298,
+            "b3_r": 0.3236,
+            "b3_f1": 0.4275
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7137,
+            "b3_r": 0.5871,
+            "b3_f1": 0.6442
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3131,
+            "b3_r": 0.5189,
+            "b3_f1": 0.3906
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.5094,
+            "b3_r": 0.2028,
+            "b3_f1": 0.2901
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.1654,
+            "b3_r": 0.8178,
+            "b3_f1": 0.2751
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4615,
+            "b3_r": 0.1791,
+            "b3_f1": 0.258
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4428,
+            "b3_r": 0.3826,
+            "b3_f1": 0.4105
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9264,
+            "b3_r": 0.8981,
+            "b3_f1": 0.912
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6188,
+            "b3_r": 0.3715,
+            "b3_f1": 0.4643
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8061,
+            "b3_r": 0.3483,
+            "b3_f1": 0.4865
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5242,
+            "b3_r": 0.5895,
+            "b3_f1": 0.555
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6381,
+            "b3_r": 0.0879,
+            "b3_f1": 0.1545
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.8309,
+            "b3_r": 0.6571,
+            "b3_f1": 0.7338
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7703,
+            "b3_r": 0.6501,
+            "b3_f1": 0.7051
+          }
+        }
+      }
+    },
+    "stress30": {
+      "text_only_2dse": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3848,
+            "macro_r": 0.3407,
+            "macro_f1": 0.3326
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.493,
+            "macro_r": 0.2733,
+            "macro_f1": 0.3388
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.6991,
+            "macro_r": 0.2689,
+            "macro_f1": 0.3703
+          },
+          "overall_macro_b3_f1": 0.3485
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.4655,
+            "b3_r": 0.2622,
+            "b3_f1": 0.3355
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7487,
+            "b3_r": 0.149,
+            "b3_f1": 0.2485
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6384,
+            "b3_r": 0.2491,
+            "b3_f1": 0.3584
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4413,
+            "b3_r": 0.1753,
+            "b3_f1": 0.2509
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.2917,
+            "b3_r": 0.3281,
+            "b3_f1": 0.3088
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5406,
+            "b3_r": 0.1276,
+            "b3_f1": 0.2064
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1439,
+            "b3_r": 0.2188,
+            "b3_f1": 0.1736
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4356,
+            "b3_r": 0.3236,
+            "b3_f1": 0.3713
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0257,
+            "b3_r": 0.3061,
+            "b3_f1": 0.0474
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4044,
+            "b3_r": 0.304,
+            "b3_f1": 0.3471
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6225,
+            "b3_r": 0.1776,
+            "b3_f1": 0.2764
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.6651,
+            "b3_r": 0.5134,
+            "b3_f1": 0.5795
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.4239,
+            "b3_r": 0.2474,
+            "b3_f1": 0.3125
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.3816,
+            "b3_r": 0.138,
+            "b3_f1": 0.2027
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.5564,
+            "b3_r": 0.6592,
+            "b3_f1": 0.6035
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4954,
+            "b3_r": 0.1648,
+            "b3_f1": 0.2474
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.5122,
+            "b3_r": 0.1927,
+            "b3_f1": 0.28
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9158,
+            "b3_r": 0.6535,
+            "b3_f1": 0.7627
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6264,
+            "b3_r": 0.3661,
+            "b3_f1": 0.4622
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.8003,
+            "b3_r": 0.3944,
+            "b3_f1": 0.5284
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5805,
+            "b3_r": 0.2524,
+            "b3_f1": 0.3518
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.6236,
+            "b3_r": 0.0863,
+            "b3_f1": 0.1516
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7754,
+            "b3_r": 0.2161,
+            "b3_f1": 0.338
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7058,
+            "b3_r": 0.5526,
+            "b3_f1": 0.6199
+          }
+        }
+      },
+      "naive_mv_2dse": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3733,
+            "macro_r": 0.2899,
+            "macro_f1": 0.3151
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4353,
+            "macro_r": 0.2525,
+            "macro_f1": 0.3025
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.6389,
+            "macro_r": 0.2849,
+            "macro_f1": 0.3792
+          },
+          "overall_macro_b3_f1": 0.3355
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.3096,
+            "b3_r": 0.188,
+            "b3_f1": 0.2339
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.682,
+            "b3_r": 0.2098,
+            "b3_f1": 0.3209
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6092,
+            "b3_r": 0.1739,
+            "b3_f1": 0.2706
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4284,
+            "b3_r": 0.0915,
+            "b3_f1": 0.1507
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.3466,
+            "b3_r": 0.2365,
+            "b3_f1": 0.2812
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.4545,
+            "b3_r": 0.1401,
+            "b3_f1": 0.2142
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1081,
+            "b3_r": 0.205,
+            "b3_f1": 0.1416
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4117,
+            "b3_r": 0.3184,
+            "b3_f1": 0.3591
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.1503,
+            "b3_r": 0.1429,
+            "b3_f1": 0.1465
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4267,
+            "b3_r": 0.2762,
+            "b3_f1": 0.3354
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.5636,
+            "b3_r": 0.2682,
+            "b3_f1": 0.3634
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.653,
+            "b3_r": 0.5421,
+            "b3_f1": 0.5924
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.3091,
+            "b3_r": 0.3846,
+            "b3_f1": 0.3427
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.3307,
+            "b3_r": 0.0837,
+            "b3_f1": 0.1336
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.5959,
+            "b3_r": 0.5625,
+            "b3_f1": 0.5787
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.3647,
+            "b3_r": 0.1984,
+            "b3_f1": 0.257
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.4459,
+            "b3_r": 0.1282,
+            "b3_f1": 0.1991
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.8076,
+            "b3_r": 0.6453,
+            "b3_f1": 0.7174
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.5937,
+            "b3_r": 0.2715,
+            "b3_f1": 0.3726
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.7221,
+            "b3_r": 0.3187,
+            "b3_f1": 0.4422
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5055,
+            "b3_r": 0.2613,
+            "b3_f1": 0.3445
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.5841,
+            "b3_r": 0.0904,
+            "b3_f1": 0.1566
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7335,
+            "b3_r": 0.4462,
+            "b3_f1": 0.5549
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.6467,
+            "b3_r": 0.4668,
+            "b3_f1": 0.5422
+          }
+        }
+      },
+      "visual_idf_mv_2dse": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.415,
+            "macro_r": 0.3479,
+            "macro_f1": 0.3564
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4796,
+            "macro_r": 0.2676,
+            "macro_f1": 0.3269
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.6932,
+            "macro_r": 0.3314,
+            "macro_f1": 0.4352
+          },
+          "overall_macro_b3_f1": 0.3773
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.4273,
+            "b3_r": 0.2808,
+            "b3_f1": 0.3389
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7495,
+            "b3_r": 0.391,
+            "b3_f1": 0.5139
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6388,
+            "b3_r": 0.2832,
+            "b3_f1": 0.3924
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4219,
+            "b3_r": 0.1397,
+            "b3_f1": 0.2099
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.2355,
+            "b3_r": 0.3065,
+            "b3_f1": 0.2664
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5355,
+            "b3_r": 0.1069,
+            "b3_f1": 0.1782
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1147,
+            "b3_r": 0.2188,
+            "b3_f1": 0.1505
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4335,
+            "b3_r": 0.3182,
+            "b3_f1": 0.367
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0521,
+            "b3_r": 0.2857,
+            "b3_f1": 0.0881
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4422,
+            "b3_r": 0.2762,
+            "b3_f1": 0.34
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6271,
+            "b3_r": 0.3192,
+            "b3_f1": 0.4231
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7193,
+            "b3_r": 0.6012,
+            "b3_f1": 0.655
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.4221,
+            "b3_r": 0.2564,
+            "b3_f1": 0.3191
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4178,
+            "b3_r": 0.1687,
+            "b3_f1": 0.2404
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.7133,
+            "b3_r": 0.6338,
+            "b3_f1": 0.6712
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4904,
+            "b3_r": 0.167,
+            "b3_f1": 0.2492
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.5067,
+            "b3_r": 0.1979,
+            "b3_f1": 0.2846
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9016,
+            "b3_r": 0.7379,
+            "b3_f1": 0.8116
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6221,
+            "b3_r": 0.3374,
+            "b3_f1": 0.4375
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.7977,
+            "b3_r": 0.3967,
+            "b3_f1": 0.5299
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5724,
+            "b3_r": 0.221,
+            "b3_f1": 0.3188
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.5808,
+            "b3_r": 0.1544,
+            "b3_f1": 0.244
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7863,
+            "b3_r": 0.2558,
+            "b3_f1": 0.3861
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7079,
+            "b3_r": 0.5845,
+            "b3_f1": 0.6403
+          }
+        }
+      },
+      "k60_text_only_vlm": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3172,
+            "macro_r": 0.4041,
+            "macro_f1": 0.2972
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4845,
+            "macro_r": 0.2665,
+            "macro_f1": 0.3273
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.6939,
+            "macro_r": 0.3359,
+            "macro_f1": 0.44
+          },
+          "overall_macro_b3_f1": 0.3595
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.4288,
+            "b3_r": 0.2808,
+            "b3_f1": 0.3393
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7533,
+            "b3_r": 0.3936,
+            "b3_f1": 0.5171
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6259,
+            "b3_r": 0.2956,
+            "b3_f1": 0.4015
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4307,
+            "b3_r": 0.1342,
+            "b3_f1": 0.2046
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.2461,
+            "b3_r": 0.3062,
+            "b3_f1": 0.2728
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5418,
+            "b3_r": 0.1069,
+            "b3_f1": 0.1785
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.0607,
+            "b3_r": 0.3862,
+            "b3_f1": 0.1048
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.1488,
+            "b3_r": 0.3688,
+            "b3_f1": 0.212
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0348,
+            "b3_r": 0.3571,
+            "b3_f1": 0.0635
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4405,
+            "b3_r": 0.2809,
+            "b3_f1": 0.343
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6288,
+            "b3_r": 0.3186,
+            "b3_f1": 0.4229
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7193,
+            "b3_r": 0.602,
+            "b3_f1": 0.6554
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.4246,
+            "b3_r": 0.2539,
+            "b3_f1": 0.3178
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4195,
+            "b3_r": 0.1687,
+            "b3_f1": 0.2407
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.2848,
+            "b3_r": 0.7884,
+            "b3_f1": 0.4184
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.492,
+            "b3_r": 0.1673,
+            "b3_f1": 0.2497
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.5113,
+            "b3_r": 0.1978,
+            "b3_f1": 0.2852
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9017,
+            "b3_r": 0.7379,
+            "b3_f1": 0.8117
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6236,
+            "b3_r": 0.3378,
+            "b3_f1": 0.4382
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.7993,
+            "b3_r": 0.3967,
+            "b3_f1": 0.5302
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5793,
+            "b3_r": 0.2211,
+            "b3_f1": 0.3201
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.5815,
+            "b3_r": 0.1544,
+            "b3_f1": 0.244
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7897,
+            "b3_r": 0.2819,
+            "b3_f1": 0.4155
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7079,
+            "b3_r": 0.5853,
+            "b3_f1": 0.6408
+          }
+        }
+      },
+      "k60_naive_vlm": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.4159,
+            "macro_r": 0.3479,
+            "macro_f1": 0.3567
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4847,
+            "macro_r": 0.2664,
+            "macro_f1": 0.3272
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.697,
+            "macro_r": 0.3313,
+            "macro_f1": 0.4357
+          },
+          "overall_macro_b3_f1": 0.3777
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.4288,
+            "b3_r": 0.2808,
+            "b3_f1": 0.3393
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7542,
+            "b3_r": 0.391,
+            "b3_f1": 0.515
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6492,
+            "b3_r": 0.2829,
+            "b3_f1": 0.3941
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4307,
+            "b3_r": 0.1342,
+            "b3_f1": 0.2046
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.2462,
+            "b3_r": 0.3062,
+            "b3_f1": 0.2729
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5422,
+            "b3_r": 0.1068,
+            "b3_f1": 0.1784
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1161,
+            "b3_r": 0.2188,
+            "b3_f1": 0.1517
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4335,
+            "b3_r": 0.3182,
+            "b3_f1": 0.367
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0521,
+            "b3_r": 0.2857,
+            "b3_f1": 0.0881
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4422,
+            "b3_r": 0.2762,
+            "b3_f1": 0.34
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6288,
+            "b3_r": 0.3186,
+            "b3_f1": 0.4229
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7202,
+            "b3_r": 0.6012,
+            "b3_f1": 0.6554
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.4247,
+            "b3_r": 0.2539,
+            "b3_f1": 0.3178
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4198,
+            "b3_r": 0.1687,
+            "b3_f1": 0.2407
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.7141,
+            "b3_r": 0.6338,
+            "b3_f1": 0.6716
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4926,
+            "b3_r": 0.167,
+            "b3_f1": 0.2495
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.5113,
+            "b3_r": 0.1978,
+            "b3_f1": 0.2853
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9018,
+            "b3_r": 0.7379,
+            "b3_f1": 0.8117
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6258,
+            "b3_r": 0.3372,
+            "b3_f1": 0.4383
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.7993,
+            "b3_r": 0.3967,
+            "b3_f1": 0.5302
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5795,
+            "b3_r": 0.221,
+            "b3_f1": 0.3199
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.5817,
+            "b3_r": 0.1544,
+            "b3_f1": 0.244
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7899,
+            "b3_r": 0.2558,
+            "b3_f1": 0.3865
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7081,
+            "b3_r": 0.5845,
+            "b3_f1": 0.6404
+          }
+        }
+      },
+      "k60_evid_self_gate_inline": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.4158,
+            "macro_r": 0.3479,
+            "macro_f1": 0.3567
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4847,
+            "macro_r": 0.2664,
+            "macro_f1": 0.3272
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.697,
+            "macro_r": 0.3315,
+            "macro_f1": 0.4359
+          },
+          "overall_macro_b3_f1": 0.3778
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.4288,
+            "b3_r": 0.2808,
+            "b3_f1": 0.3393
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7542,
+            "b3_r": 0.3935,
+            "b3_f1": 0.5172
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6492,
+            "b3_r": 0.2829,
+            "b3_f1": 0.3941
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4307,
+            "b3_r": 0.1342,
+            "b3_f1": 0.2046
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.2461,
+            "b3_r": 0.3062,
+            "b3_f1": 0.2729
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5422,
+            "b3_r": 0.1068,
+            "b3_f1": 0.1784
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1161,
+            "b3_r": 0.2188,
+            "b3_f1": 0.1517
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4335,
+            "b3_r": 0.3182,
+            "b3_f1": 0.367
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0521,
+            "b3_r": 0.2857,
+            "b3_f1": 0.0881
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4419,
+            "b3_r": 0.2762,
+            "b3_f1": 0.34
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6288,
+            "b3_r": 0.3186,
+            "b3_f1": 0.4229
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7202,
+            "b3_r": 0.6012,
+            "b3_f1": 0.6554
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.4247,
+            "b3_r": 0.2539,
+            "b3_f1": 0.3178
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4198,
+            "b3_r": 0.1687,
+            "b3_f1": 0.2407
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.7141,
+            "b3_r": 0.6338,
+            "b3_f1": 0.6716
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4925,
+            "b3_r": 0.167,
+            "b3_f1": 0.2494
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.5113,
+            "b3_r": 0.1978,
+            "b3_f1": 0.2853
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9018,
+            "b3_r": 0.7379,
+            "b3_f1": 0.8117
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6258,
+            "b3_r": 0.3372,
+            "b3_f1": 0.4383
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.7993,
+            "b3_r": 0.3967,
+            "b3_f1": 0.5302
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5795,
+            "b3_r": 0.221,
+            "b3_f1": 0.3199
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.5817,
+            "b3_r": 0.1544,
+            "b3_f1": 0.244
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7899,
+            "b3_r": 0.2558,
+            "b3_f1": 0.3865
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7081,
+            "b3_r": 0.5845,
+            "b3_f1": 0.6404
+          }
+        }
+      },
+      "k60_evid_self_gate_clean_fallback": {
+        "strata": {
+          "small": {
+            "n_events": 8,
+            "macro_p": 0.3876,
+            "macro_r": 0.364,
+            "macro_f1": 0.3473
+          },
+          "medium": {
+            "n_events": 7,
+            "macro_p": 0.4846,
+            "macro_r": 0.2664,
+            "macro_f1": 0.3272
+          },
+          "head": {
+            "n_events": 9,
+            "macro_p": 0.6955,
+            "macro_r": 0.3317,
+            "macro_f1": 0.4358
+          },
+          "overall_macro_b3_f1": 0.3746
+        },
+        "per_event": {
+          "E1": {
+            "event_id": "E1",
+            "size": 64,
+            "stratum": "small",
+            "b3_p": 0.4288,
+            "b3_r": 0.2808,
+            "b3_f1": 0.3393
+          },
+          "E10": {
+            "event_id": "E10",
+            "size": 1011,
+            "stratum": "head",
+            "b3_p": 0.7542,
+            "b3_r": 0.3935,
+            "b3_f1": 0.5172
+          },
+          "E12": {
+            "event_id": "E12",
+            "size": 787,
+            "stratum": "head",
+            "b3_p": 0.6376,
+            "b3_r": 0.2843,
+            "b3_f1": 0.3933
+          },
+          "E13": {
+            "event_id": "E13",
+            "size": 452,
+            "stratum": "medium",
+            "b3_p": 0.4307,
+            "b3_r": 0.1342,
+            "b3_f1": 0.2046
+          },
+          "E14": {
+            "event_id": "E14",
+            "size": 264,
+            "stratum": "medium",
+            "b3_p": 0.2461,
+            "b3_r": 0.3062,
+            "b3_f1": 0.2729
+          },
+          "E16": {
+            "event_id": "E16",
+            "size": 736,
+            "stratum": "head",
+            "b3_p": 0.5422,
+            "b3_r": 0.1068,
+            "b3_f1": 0.1784
+          },
+          "E17": {
+            "event_id": "E17",
+            "size": 40,
+            "stratum": "small",
+            "b3_p": 0.1155,
+            "b3_r": 0.2225,
+            "b3_f1": 0.1521
+          },
+          "E18": {
+            "event_id": "E18",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4324,
+            "b3_r": 0.3182,
+            "b3_f1": 0.3666
+          },
+          "E2": {
+            "event_id": "E2",
+            "size": 14,
+            "stratum": "small",
+            "b3_p": 0.0518,
+            "b3_r": 0.2857,
+            "b3_f1": 0.0876
+          },
+          "E21": {
+            "event_id": "E21",
+            "size": 36,
+            "stratum": "small",
+            "b3_p": 0.4407,
+            "b3_r": 0.2762,
+            "b3_f1": 0.3396
+          },
+          "E27": {
+            "event_id": "E27",
+            "size": 852,
+            "stratum": "head",
+            "b3_p": 0.6288,
+            "b3_r": 0.3186,
+            "b3_f1": 0.4229
+          },
+          "E28": {
+            "event_id": "E28",
+            "size": 150,
+            "stratum": "small",
+            "b3_p": 0.7202,
+            "b3_r": 0.6012,
+            "b3_f1": 0.6554
+          },
+          "E29": {
+            "event_id": "E29",
+            "size": 401,
+            "stratum": "medium",
+            "b3_p": 0.4247,
+            "b3_r": 0.2539,
+            "b3_f1": 0.3178
+          },
+          "E3": {
+            "event_id": "E3",
+            "size": 108,
+            "stratum": "small",
+            "b3_p": 0.4196,
+            "b3_r": 0.1687,
+            "b3_f1": 0.2407
+          },
+          "E30": {
+            "event_id": "E30",
+            "size": 177,
+            "stratum": "small",
+            "b3_p": 0.492,
+            "b3_r": 0.7589,
+            "b3_f1": 0.597
+          },
+          "E32": {
+            "event_id": "E32",
+            "size": 354,
+            "stratum": "medium",
+            "b3_p": 0.4921,
+            "b3_r": 0.167,
+            "b3_f1": 0.2494
+          },
+          "E34": {
+            "event_id": "E34",
+            "size": 552,
+            "stratum": "medium",
+            "b3_p": 0.5113,
+            "b3_r": 0.1978,
+            "b3_f1": 0.2853
+          },
+          "E35": {
+            "event_id": "E35",
+            "size": 744,
+            "stratum": "head",
+            "b3_p": 0.9018,
+            "b3_r": 0.7379,
+            "b3_f1": 0.8117
+          },
+          "E37": {
+            "event_id": "E37",
+            "size": 1140,
+            "stratum": "head",
+            "b3_p": 0.6239,
+            "b3_r": 0.3372,
+            "b3_f1": 0.4378
+          },
+          "E39": {
+            "event_id": "E39",
+            "size": 982,
+            "stratum": "head",
+            "b3_p": 0.7993,
+            "b3_r": 0.3967,
+            "b3_f1": 0.5302
+          },
+          "E4": {
+            "event_id": "E4",
+            "size": 568,
+            "stratum": "medium",
+            "b3_p": 0.5794,
+            "b3_r": 0.221,
+            "b3_f1": 0.3199
+          },
+          "E5": {
+            "event_id": "E5",
+            "size": 940,
+            "stratum": "head",
+            "b3_p": 0.5817,
+            "b3_r": 0.1544,
+            "b3_f1": 0.244
+          },
+          "E7": {
+            "event_id": "E7",
+            "size": 1096,
+            "stratum": "head",
+            "b3_p": 0.7899,
+            "b3_r": 0.2558,
+            "b3_f1": 0.3865
+          },
+          "E8": {
+            "event_id": "E8",
+            "size": 379,
+            "stratum": "medium",
+            "b3_p": 0.7081,
+            "b3_r": 0.5848,
+            "b3_f1": 0.6406
+          }
+        }
+      }
+    }
+  },
+  "action_confusion": {
+    "clean_k60": {
+      "text_only_vlm": {
+        "merge_tp": 4,
+        "merge_fp": 1,
+        "separate_tn": 37,
+        "separate_fn": 10,
+        "split_tp": 5,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.8,
+        "split_prec": 0.625,
+        "stratum_touched": {
+          "small": 10,
+          "medium": 28,
+          "head": 52
+        },
+        "stratum_merge_fp": {
+          "small": 1,
+          "medium": 0,
+          "head": 1
+        }
+      },
+      "naive_vlm": {
+        "merge_tp": 2,
+        "merge_fp": 2,
+        "separate_tn": 36,
+        "separate_fn": 12,
+        "split_tp": 5,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.5,
+        "split_prec": 0.625,
+        "stratum_touched": {
+          "small": 10,
+          "medium": 28,
+          "head": 52
+        },
+        "stratum_merge_fp": {
+          "small": 2,
+          "medium": 0,
+          "head": 2
+        }
+      },
+      "evid_self_gate_inline": {
+        "merge_tp": 4,
+        "merge_fp": 2,
+        "separate_tn": 36,
+        "separate_fn": 10,
+        "split_tp": 5,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.6667,
+        "split_prec": 0.625,
+        "stratum_touched": {
+          "small": 10,
+          "medium": 28,
+          "head": 52
+        },
+        "stratum_merge_fp": {
+          "small": 2,
+          "medium": 0,
+          "head": 2
+        }
+      },
+      "evid_self_gate_clean_fallback": {
+        "merge_tp": 5,
+        "merge_fp": 2,
+        "separate_tn": 36,
+        "separate_fn": 9,
+        "split_tp": 5,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.7143,
+        "split_prec": 0.625,
+        "stratum_touched": {
+          "small": 10,
+          "medium": 28,
+          "head": 52
+        },
+        "stratum_merge_fp": {
+          "small": 2,
+          "medium": 0,
+          "head": 2
+        }
+      }
+    },
+    "clean_k180": {
+      "text_only_vlm": {
+        "merge_tp": 4,
+        "merge_fp": 1,
+        "separate_tn": 107,
+        "separate_fn": 42,
+        "split_tp": 10,
+        "split_fp": 12,
+        "keep_tn": 2,
+        "keep_fn": 0,
+        "skipped_low_conf": 2,
+        "merge_prec": 0.8,
+        "split_prec": 0.4545,
+        "stratum_touched": {
+          "small": 20,
+          "medium": 72,
+          "head": 157
+        },
+        "stratum_merge_fp": {
+          "small": 1,
+          "medium": 0,
+          "head": 1
+        }
+      },
+      "naive_vlm": {
+        "merge_tp": 2,
+        "merge_fp": 2,
+        "separate_tn": 108,
+        "separate_fn": 44,
+        "split_tp": 10,
+        "split_fp": 13,
+        "keep_tn": 1,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.5,
+        "split_prec": 0.4348,
+        "stratum_touched": {
+          "small": 20,
+          "medium": 72,
+          "head": 157
+        },
+        "stratum_merge_fp": {
+          "small": 2,
+          "medium": 0,
+          "head": 2
+        }
+      },
+      "evid_self_gate_inline": {
+        "merge_tp": 4,
+        "merge_fp": 2,
+        "separate_tn": 108,
+        "separate_fn": 42,
+        "split_tp": 10,
+        "split_fp": 13,
+        "keep_tn": 1,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.6667,
+        "split_prec": 0.4348,
+        "stratum_touched": {
+          "small": 20,
+          "medium": 72,
+          "head": 157
+        },
+        "stratum_merge_fp": {
+          "small": 2,
+          "medium": 0,
+          "head": 2
+        }
+      },
+      "evid_self_gate_clean_fallback": {
+        "merge_tp": 5,
+        "merge_fp": 2,
+        "separate_tn": 107,
+        "separate_fn": 41,
+        "split_tp": 10,
+        "split_fp": 13,
+        "keep_tn": 1,
+        "keep_fn": 0,
+        "skipped_low_conf": 1,
+        "merge_prec": 0.7143,
+        "split_prec": 0.4348,
+        "stratum_touched": {
+          "small": 20,
+          "medium": 72,
+          "head": 157
+        },
+        "stratum_merge_fp": {
+          "small": 2,
+          "medium": 0,
+          "head": 2
+        }
+      }
+    },
+    "stress30_k60": {
+      "text_only_vlm": {
+        "merge_tp": 3,
+        "merge_fp": 2,
+        "separate_tn": 30,
+        "separate_fn": 7,
+        "split_tp": 15,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.6,
+        "split_prec": 0.8333,
+        "stratum_touched": {
+          "small": 5,
+          "medium": 24,
+          "head": 53
+        },
+        "stratum_merge_fp": {
+          "small": 2,
+          "medium": 0,
+          "head": 2
+        }
+      },
+      "naive_vlm": {
+        "merge_tp": 0,
+        "merge_fp": 0,
+        "separate_tn": 31,
+        "separate_fn": 10,
+        "split_tp": 15,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 1,
+        "merge_prec": 0.0,
+        "split_prec": 0.8333,
+        "stratum_touched": {
+          "small": 5,
+          "medium": 24,
+          "head": 53
+        },
+        "stratum_merge_fp": {
+          "small": 0,
+          "medium": 0,
+          "head": 0
+        }
+      },
+      "evid_self_gate_inline": {
+        "merge_tp": 1,
+        "merge_fp": 0,
+        "separate_tn": 31,
+        "separate_fn": 9,
+        "split_tp": 15,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 1,
+        "merge_prec": 1.0,
+        "split_prec": 0.8333,
+        "stratum_touched": {
+          "small": 5,
+          "medium": 24,
+          "head": 53
+        },
+        "stratum_merge_fp": {
+          "small": 0,
+          "medium": 0,
+          "head": 0
+        }
+      },
+      "evid_self_gate_clean_fallback": {
+        "merge_tp": 1,
+        "merge_fp": 1,
+        "separate_tn": 31,
+        "separate_fn": 9,
+        "split_tp": 15,
+        "split_fp": 3,
+        "keep_tn": 0,
+        "keep_fn": 0,
+        "skipped_low_conf": 0,
+        "merge_prec": 0.5,
+        "split_prec": 0.8333,
+        "stratum_touched": {
+          "small": 5,
+          "medium": 24,
+          "head": 53
+        },
+        "stratum_merge_fp": {
+          "small": 1,
+          "medium": 0,
+          "head": 1
+        }
+      }
+    }
+  },
+  "top_event_deltas": {
+    "clean_k60_inline": {
+      "top_improved": [
+        {
+          "event_id": "E7",
+          "size": 1096,
+          "stratum": "head",
+          "s1_p": 0.8308,
+          "s1_r": 0.3725,
+          "s1_f1": 0.5144,
+          "s2_p": 0.8307,
+          "s2_r": 0.6571,
+          "s2_f1": 0.7338,
+          "delta_p": -0.0001,
+          "delta_r": 0.2846,
+          "delta_f1": 0.2194
+        },
+        {
+          "event_id": "E4",
+          "size": 568,
+          "stratum": "medium",
+          "s1_p": 0.5567,
+          "s1_r": 0.3514,
+          "s1_f1": 0.4308,
+          "s2_p": 0.5234,
+          "s2_r": 0.5912,
+          "s2_f1": 0.5552,
+          "delta_p": -0.0333,
+          "delta_r": 0.2398,
+          "delta_f1": 0.1244
+        },
+        {
+          "event_id": "E37",
+          "size": 1140,
+          "stratum": "head",
+          "s1_p": 0.6443,
+          "s1_r": 0.2675,
+          "s1_f1": 0.378,
+          "s2_p": 0.6157,
+          "s2_r": 0.3716,
+          "s2_f1": 0.4634,
+          "delta_p": -0.0286,
+          "delta_r": 0.1041,
+          "delta_f1": 0.0854
+        }
+      ],
+      "top_degraded": [
+        {
+          "event_id": "E30",
+          "size": 177,
+          "stratum": "small",
+          "s1_p": 0.742,
+          "s1_r": 0.6078,
+          "s1_f1": 0.6682,
+          "s2_p": 0.3779,
+          "s2_r": 0.721,
+          "s2_f1": 0.4959,
+          "delta_p": -0.3641,
+          "delta_r": 0.1132,
+          "delta_f1": -0.1723
+        },
+        {
+          "event_id": "E18",
+          "size": 108,
+          "stratum": "small",
+          "s1_p": 0.4147,
+          "s1_r": 0.3385,
+          "s1_f1": 0.3727,
+          "s2_p": 0.1481,
+          "s2_r": 0.32,
+          "s2_f1": 0.2024,
+          "delta_p": -0.2666,
+          "delta_r": -0.0185,
+          "delta_f1": -0.1703
+        },
+        {
+          "event_id": "E17",
+          "size": 40,
+          "stratum": "small",
+          "s1_p": 0.1197,
+          "s1_r": 0.2287,
+          "s1_f1": 0.1572,
+          "s2_p": 0.0672,
+          "s2_r": 0.2925,
+          "s2_f1": 0.1093,
+          "delta_p": -0.0525,
+          "delta_r": 0.0638,
+          "delta_f1": -0.0479
+        }
+      ]
+    },
+    "clean_k180_inline": {
+      "top_improved": [
+        {
+          "event_id": "E7",
+          "size": 1096,
+          "stratum": "head",
+          "s1_p": 0.8308,
+          "s1_r": 0.3725,
+          "s1_f1": 0.5144,
+          "s2_p": 0.8309,
+          "s2_r": 0.6571,
+          "s2_f1": 0.7338,
+          "delta_p": 0.0001,
+          "delta_r": 0.2846,
+          "delta_f1": 0.2194
+        },
+        {
+          "event_id": "E4",
+          "size": 568,
+          "stratum": "medium",
+          "s1_p": 0.5567,
+          "s1_r": 0.3514,
+          "s1_f1": 0.4308,
+          "s2_p": 0.5242,
+          "s2_r": 0.5895,
+          "s2_f1": 0.5549,
+          "delta_p": -0.0325,
+          "delta_r": 0.2381,
+          "delta_f1": 0.1241
+        },
+        {
+          "event_id": "E37",
+          "size": 1140,
+          "stratum": "head",
+          "s1_p": 0.6443,
+          "s1_r": 0.2675,
+          "s1_f1": 0.378,
+          "s2_p": 0.6192,
+          "s2_r": 0.3712,
+          "s2_f1": 0.4641,
+          "delta_p": -0.0251,
+          "delta_r": 0.1037,
+          "delta_f1": 0.0861
+        }
+      ],
+      "top_degraded": [
+        {
+          "event_id": "E30",
+          "size": 177,
+          "stratum": "small",
+          "s1_p": 0.742,
+          "s1_r": 0.6078,
+          "s1_f1": 0.6682,
+          "s2_p": 0.378,
+          "s2_r": 0.721,
+          "s2_f1": 0.4959,
+          "delta_p": -0.364,
+          "delta_r": 0.1132,
+          "delta_f1": -0.1723
+        },
+        {
+          "event_id": "E18",
+          "size": 108,
+          "stratum": "small",
+          "s1_p": 0.4147,
+          "s1_r": 0.3385,
+          "s1_f1": 0.3727,
+          "s2_p": 0.1488,
+          "s2_r": 0.32,
+          "s2_f1": 0.2032,
+          "delta_p": -0.2659,
+          "delta_r": -0.0185,
+          "delta_f1": -0.1695
+        },
+        {
+          "event_id": "E17",
+          "size": 40,
+          "stratum": "small",
+          "s1_p": 0.1197,
+          "s1_r": 0.2287,
+          "s1_f1": 0.1572,
+          "s2_p": 0.0703,
+          "s2_r": 0.2925,
+          "s2_f1": 0.1134,
+          "delta_p": -0.0494,
+          "delta_r": 0.0638,
+          "delta_f1": -0.0438
+        }
+      ]
+    },
+    "clean_k180_cleanfb": {
+      "top_improved": [
+        {
+          "event_id": "E7",
+          "size": 1096,
+          "stratum": "head",
+          "s1_p": 0.8308,
+          "s1_r": 0.3725,
+          "s1_f1": 0.5144,
+          "s2_p": 0.8309,
+          "s2_r": 0.6571,
+          "s2_f1": 0.7338,
+          "delta_p": 0.0001,
+          "delta_r": 0.2846,
+          "delta_f1": 0.2194
+        },
+        {
+          "event_id": "E4",
+          "size": 568,
+          "stratum": "medium",
+          "s1_p": 0.5567,
+          "s1_r": 0.3514,
+          "s1_f1": 0.4308,
+          "s2_p": 0.5242,
+          "s2_r": 0.5895,
+          "s2_f1": 0.555,
+          "delta_p": -0.0325,
+          "delta_r": 0.2381,
+          "delta_f1": 0.1242
+        },
+        {
+          "event_id": "E12",
+          "size": 787,
+          "stratum": "head",
+          "s1_p": 0.6608,
+          "s1_r": 0.2708,
+          "s1_f1": 0.3841,
+          "s2_p": 0.5403,
+          "s2_r": 0.4361,
+          "s2_f1": 0.4826,
+          "delta_p": -0.1205,
+          "delta_r": 0.1653,
+          "delta_f1": 0.0985
+        }
+      ],
+      "top_degraded": [
+        {
+          "event_id": "E30",
+          "size": 177,
+          "stratum": "small",
+          "s1_p": 0.742,
+          "s1_r": 0.6078,
+          "s1_f1": 0.6682,
+          "s2_p": 0.1654,
+          "s2_r": 0.8178,
+          "s2_f1": 0.2751,
+          "delta_p": -0.5766,
+          "delta_r": 0.21,
+          "delta_f1": -0.3931
+        },
+        {
+          "event_id": "E18",
+          "size": 108,
+          "stratum": "small",
+          "s1_p": 0.4147,
+          "s1_r": 0.3385,
+          "s1_f1": 0.3727,
+          "s2_p": 0.0932,
+          "s2_r": 0.3404,
+          "s2_f1": 0.1463,
+          "delta_p": -0.3215,
+          "delta_r": 0.0019,
+          "delta_f1": -0.2264
+        },
+        {
+          "event_id": "E17",
+          "size": 40,
+          "stratum": "small",
+          "s1_p": 0.1197,
+          "s1_r": 0.2287,
+          "s1_f1": 0.1572,
+          "s2_p": 0.0577,
+          "s2_r": 0.5725,
+          "s2_f1": 0.1049,
+          "delta_p": -0.062,
+          "delta_r": 0.3438,
+          "delta_f1": -0.0523
+        }
+      ]
+    },
+    "stress30_k60_cleanfb": {
+      "top_improved": [
+        {
+          "event_id": "E14",
+          "size": 264,
+          "stratum": "medium",
+          "s1_p": 0.2355,
+          "s1_r": 0.3065,
+          "s1_f1": 0.2664,
+          "s2_p": 0.2461,
+          "s2_r": 0.3062,
+          "s2_f1": 0.2729,
+          "delta_p": 0.0106,
+          "delta_r": -0.0003,
+          "delta_f1": 0.0065
+        },
+        {
+          "event_id": "E10",
+          "size": 1011,
+          "stratum": "head",
+          "s1_p": 0.7495,
+          "s1_r": 0.391,
+          "s1_f1": 0.5139,
+          "s2_p": 0.7542,
+          "s2_r": 0.3935,
+          "s2_f1": 0.5172,
+          "delta_p": 0.0047,
+          "delta_r": 0.0025,
+          "delta_f1": 0.0033
+        },
+        {
+          "event_id": "E17",
+          "size": 40,
+          "stratum": "small",
+          "s1_p": 0.1147,
+          "s1_r": 0.2188,
+          "s1_f1": 0.1505,
+          "s2_p": 0.1155,
+          "s2_r": 0.2225,
+          "s2_f1": 0.1521,
+          "delta_p": 0.0008,
+          "delta_r": 0.0037,
+          "delta_f1": 0.0016
+        }
+      ],
+      "top_degraded": [
+        {
+          "event_id": "E30",
+          "size": 177,
+          "stratum": "small",
+          "s1_p": 0.7133,
+          "s1_r": 0.6338,
+          "s1_f1": 0.6712,
+          "s2_p": 0.492,
+          "s2_r": 0.7589,
+          "s2_f1": 0.597,
+          "delta_p": -0.2213,
+          "delta_r": 0.1251,
+          "delta_f1": -0.0742
+        },
+        {
+          "event_id": "E13",
+          "size": 452,
+          "stratum": "medium",
+          "s1_p": 0.4219,
+          "s1_r": 0.1397,
+          "s1_f1": 0.2099,
+          "s2_p": 0.4307,
+          "s2_r": 0.1342,
+          "s2_f1": 0.2046,
+          "delta_p": 0.0088,
+          "delta_r": -0.0055,
+          "delta_f1": -0.0053
+        },
+        {
+          "event_id": "E29",
+          "size": 401,
+          "stratum": "medium",
+          "s1_p": 0.4221,
+          "s1_r": 0.2564,
+          "s1_f1": 0.3191,
+          "s2_p": 0.4247,
+          "s2_r": 0.2539,
+          "s2_f1": 0.3178,
+          "delta_p": 0.0026,
+          "delta_r": -0.0025,
+          "delta_f1": -0.0013
+        }
+      ]
+    }
+  }
+}

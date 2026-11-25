@@ -1,0 +1,1 @@
+{"request_hash": "0c76bcec9c5d6ea44afffb1281898921ba0e8cc3611a18b30516cd2230296190", "request_id": "seam_c22", "model": "Qwen/Qwen3-8B", "prompt_tokens": 422, "completion_tokens": 28, "response": {"event_a": "Seven Syrian generals defect to Turkey", "event_b": "Turkey-related topics discussed", "same_event": false}}

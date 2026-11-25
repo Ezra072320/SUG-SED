@@ -1,0 +1,50 @@
+\section{Prompt Schemas and Frozen Protocol}
+\label{sec:appendix}
+
+\subsection{Anonymized Dual-Image Seam VLM Prompts}
+Across all Gate~B and Phase~2 calls to \texttt{Qwen/Qwen3-VL-8B-Instruct}, inputs never contain ground-truth \texttt{event\_name} labels or calendar years/dates. In Phase~2 Stage~2 multimodal seam queries, up to two labeled Visual-IDF representative images (\texttt{"Representative Image for Cluster A:"} and \texttt{"Representative Image for Cluster B:"}) are passed alongside anonymized cluster briefs (top-5 hashtags/tokens and up to 3 medoid tweets clipped at $145$ characters). The model is constrained to \texttt{response\_format=json\_object} with explicit fields:
+\begin{verbatim}
+{
+  "event_a": "<5-10 words>",
+  "event_b": "<5-10 words>",
+  "visual_clue_a": "<5-10 words or none>",
+  "visual_clue_b": "<5-10 words or none>",
+  "visual_discriminative": true | false,
+  "visual_conflict_with_text": true | false,
+  "same_event_text_only": true | false,
+  "same_event_multimodal": true | false,
+  "evidence_source": "text"|"image"|"both"|"none",
+  "confidence": <float in [0.0, 1.0]>
+}
+\end{verbatim}
+In \texttt{text\_only} mode (used for \texttt{text\_only\_vlm} and \texttt{CleanFB} fallback), images and visual fields are omitted and the prompt returns \texttt{\{"event\_a", "event\_b", "same\_event", "confidence"\}}.
+
+\subsection{Frozen Protocol Hyperparameters}
+Table~\ref{tab:protocol_trackb} archives all immutable Stage~1, Stage~2 router, and VLM hyperparameters recorded in \texttt{trackB\_evid\_msed/protocol\_trackB\_v1.json} prior to unlocking the 24-event \texttt{NED Holdout} split.
+
+\begin{table}[h]
+\centering
+\caption{Exact Frozen Hyperparameters in \texttt{protocol\_trackB\_v1.json} (Locked Prior to Unseen \texttt{NED Holdout} Execution).}
+\label{tab:protocol_trackb}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{ll}
+\toprule
+\textbf{Component / Parameter} & \textbf{Frozen Value} \\
+\midrule
+Protocol Version & \texttt{Evid-MSED-v1.0-frozen} (\texttt{2026-11-22T15:30:01Z}) \\
+Frozen SHA-256 Tracked Files & 9 Python modules (\texttt{core\_shared/*}, \texttt{trackB\_evid\_msed/*}) \\
+Text Encoder & \texttt{sentence-transformers/all-MiniLM-L6-v2} ($384$-d) \\
+Visual Encoder & \texttt{openai/clip-vit-base-patch32} ($512$-d, center-crop bicubic) \\
+Text Graph $W^T$ & $\text{knn\_k}=12$, $\theta_T=0.38$, $\alpha=0.45$, $\lambda_\tau=0.0$ \\
+Stage-1 Visual-IDF Weighting & \texttt{block\_size}$=1{,}024$, near-dup $\cos \ge 0.88$ \\
+§\ref{sec:stage1_method} Soft Imputation & $\tau_{\text{imp}}=0.55$, $\gamma_{\text{imp}}=0.70$, \texttt{use\_soft\_imputation}=\texttt{True} \\
+Visual View $W^V$ & $k_V=10$, $\theta_V=0.72$, $\lambda_V=0.65$ \\
+2D-SE Solver & Exact greedy agglomerative + monotone node-move refine \\
+Stage-2 Router & $K=180$ (prefixes $60/120/180$), $\rho_M=0.70$, $\tau_{\text{conf}}=0.60$ \\
+Merge Candidate Gate & $t_{\text{sim}} \ge 0.42$ ($\text{cut}\ge 2.0$) $\vee$ ($v_{\text{sim}}\ge 0.68 \wedge t_{\text{sim}}\ge 0.18 \wedge \text{vidf}\ge 0.50$) \\
+Seam Detector Gate & $|C|\ge 10$, $|S_p|\ge 4$, conductance $\le 0.50$, $\Delta_{\text{sem}} \ge 0.08$ \\
+VLM Endpoint & \texttt{Qwen/Qwen3-VL-8B-Instruct} (SiliconFlow, $\text{temp}=0.0$) \\
+Image Payload & Max side $384\text{px}$ JPEG ($q=82$), SHA-256 hash cache \\
+\bottomrule
+\end{tabular}}
+\end{table}

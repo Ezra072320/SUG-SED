@@ -1,0 +1,1 @@
+{"request_hash": "685d375034dbd826935a34332a5a2dd1d2b8a0e140c25887d44edbe499f0ccbf", "request_id": "seam_c11", "model": "Qwen/Qwen3-8B", "prompt_tokens": 429, "completion_tokens": 16, "response": {"action": "SPLIT", "confidence": 0.95}}
