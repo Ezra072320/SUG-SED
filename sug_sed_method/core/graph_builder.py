@@ -31,6 +31,7 @@ class MessageGraph:
     attr_adj: sparse.csr_matrix         # Pure attribute-sharing adjacency
     embeddings: np.ndarray              # L2-normalized dense embeddings (n x d)
     non_entity_tfidf: sparse.csr_matrix # L2-normalized TF-IDF with entity tokens stripped
+    knn_sim_threshold: Optional[float] = None
 
 
 def build_non_entity_tfidf(ds: SocialDataset) -> sparse.csr_matrix:
@@ -152,7 +153,8 @@ def _build_semantic_knn(
 
         if time_decay_per_day > 0.0 and len(r_idx) > 0:
             dt_days = np.abs(timestamps[r_idx] - timestamps[c_idx]) / 86400.0
-            v_val = v_val * np.exp(-time_decay_per_day * dt_days)
+            decay = np.where(np.isnan(dt_days), 1.0, np.exp(-time_decay_per_day * dt_days))
+            v_val = v_val * decay
 
         rows_list.append(r_idx)
         cols_list.append(c_idx)
@@ -183,9 +185,10 @@ def _build_attribute_graph(
 ) -> sparse.csr_matrix:
     """Build sparse attribute-cooccurrence graph with hub capping & semantic gating.
 
-    For large attribute buckets (e.g., high-frequency hub entities), connects each
-    post only to its temporally closest `max_neighbors_per_attr` peers sharing that
-    attribute, weighted by cosine similarity and IDF-like bucket dampening.
+    Connects each post to its temporally closest `max_neighbors_per_attr` peers
+    sharing that attribute, weighted by cosine similarity and IDF-like bucket
+    dampening. For large hub buckets (`m > max_bucket_size`), tightens the local
+    temporal window and semantic similarity floor instead of dropping the bucket.
     """
     n = len(ds)
     if n <= 1:
@@ -208,23 +211,32 @@ def _build_attribute_graph(
 
     for (atype, _aval), nodes in attr_buckets.items():
         m = len(nodes)
-        if m < 2 or m > max_bucket_size:
+        if m < 2:
             continue
-        # Sort bucket chronologically so local temporal window linking is O(m * window)
-        nodes_sorted = sorted(nodes, key=lambda idx: ts[idx])
+        # Sort bucket chronologically (NaN timestamps placed at end) so temporal linking is O(m * window)
+        nodes_sorted = sorted(
+            nodes,
+            key=lambda idx: (bool(np.isnan(ts[idx])), 0.0 if np.isnan(ts[idx]) else float(ts[idx])),
+        )
         # IDF-like dampening for frequent attributes
         base_w = type_weights[atype] / np.log2(2.0 + m)
         half_win = max(1, max_neighbors_per_attr // 2)
+        if m > max_bucket_size:
+            eff_half_win = max(1, min(half_win, 4))
+            eff_min_sim = max(min_sem_sim, 0.35)
+        else:
+            eff_half_win = half_win
+            eff_min_sim = min_sem_sim
 
         for pos, u in enumerate(nodes_sorted):
-            hi = min(m, pos + half_win + 1)
+            hi = min(m, pos + eff_half_win + 1)
             for pos2 in range(pos + 1, hi):
                 v = nodes_sorted[pos2]
                 sim = float(np.dot(embeddings[u], embeddings[v]))
-                if sim < min_sem_sim:
+                if sim < eff_min_sim:
                     continue
                 w = base_w * max(0.0, sim)
-                if time_decay_per_day > 0.0:
+                if time_decay_per_day > 0.0 and not (np.isnan(ts[u]) or np.isnan(ts[v])):
                     dt_days = abs(ts[u] - ts[v]) / 86400.0
                     w *= float(np.exp(-time_decay_per_day * dt_days))
                 if w <= 0.0:
@@ -255,6 +267,7 @@ def build_message_graph(
     attr_alpha: float = 0.5,
     time_decay_per_day: float = 0.0,
     max_attr_bucket_size: int = 300,
+    compute_non_entity_tfidf: bool = True,
 ) -> MessageGraph:
     """Build combined sparse heterogeneous + semantic message graph."""
     sem_adj = _build_semantic_knn(
@@ -273,11 +286,16 @@ def build_message_graph(
     combined = (sem_adj + attr_alpha * attr_adj).tocsr()
     combined.setdiag(0.0)
     combined.eliminate_zeros()
-    non_ent_tfidf = build_non_entity_tfidf(ds)
+    non_ent_tfidf = (
+        build_non_entity_tfidf(ds)
+        if compute_non_entity_tfidf
+        else sparse.csr_matrix((len(ds), 1), dtype=np.float64)
+    )
     return MessageGraph(
         adj=combined,
         sem_adj=sem_adj,
         attr_adj=attr_adj,
         embeddings=embeddings,
         non_entity_tfidf=non_ent_tfidf,
+        knn_sim_threshold=knn_sim_threshold,
     )

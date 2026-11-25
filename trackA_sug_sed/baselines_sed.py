@@ -120,6 +120,7 @@ def run_hisevent(
     knn_k: int = 15,
     knn_sim_threshold: float = 0.35,
     attr_alpha: float = 0.5,
+    embed_model: Optional[str] = None,
 ) -> Tuple[np.ndarray, Dict[str, Any]]:
     """Heterogeneous semantic + attribute message graph 2D Structural Entropy (HiSEvent)."""
     t0 = time.time()
@@ -129,6 +130,7 @@ def run_hisevent(
         knn_k=knn_k,
         knn_sim_threshold=knn_sim_threshold,
         attr_alpha=attr_alpha,
+        compute_non_entity_tfidf=False,
     )
     labels, se_sec = load_or_solve_2d_se(
         dataset_name=dataset_name,
@@ -138,6 +140,7 @@ def run_hisevent(
         knn_sim_threshold=knn_sim_threshold,
         attr_alpha=attr_alpha,
         refine_moves=True,
+        embed_model=embed_model,
     )
     return labels, {
         "runtime_sec": round(time.time() - t0, 3),

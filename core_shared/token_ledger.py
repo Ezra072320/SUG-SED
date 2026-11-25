@@ -13,7 +13,7 @@ import threading
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, Optional, Sequence
 
 
 def canonical_request_hash(payload: Dict[str, Any]) -> str:

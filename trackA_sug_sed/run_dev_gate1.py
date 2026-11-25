@@ -169,10 +169,18 @@ def _prepare_dev_context(dataset_name: str, block_ids: Sequence[int]) -> Dict[st
         _bname, bidx = blocks[bid]
         sd = ds_full.subset(bidx, name_suffix=f"_M{bid:02d}")
         em = load_or_extract_block_embeddings(dataset_name, bid, sd.texts, model_name=embed_model)
-        g_pure = build_message_graph(sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5)
-        l_pure, _ = run_hisevent(dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5)
-        g_def = build_message_graph(sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5)
-        l_def, _ = run_hisevent(dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5)
+        g_pure = build_message_graph(
+            sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5, compute_non_entity_tfidf=False
+        )
+        l_pure, _ = run_hisevent(
+            dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5, embed_model=embed_model
+        )
+        g_def = build_message_graph(
+            sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5, compute_non_entity_tfidf=False
+        )
+        l_def, _ = run_hisevent(
+            dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5, embed_model=embed_model
+        )
 
         ds_map[bid] = sd
         emb_map[bid] = em

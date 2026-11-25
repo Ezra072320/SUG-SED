@@ -7,15 +7,15 @@
 ## 一、五阶段方法主体流程
 
 1. **Stage 1 · 高纯度异构消息图与二维结构熵底座（Pure 2D-SE Base）**  
-   由 [data_loader.py](./core/data_loader.py)、[embed_cache.py](./method/embed_cache.py)、[graph_builder.py](./core/graph_builder.py) 与 [se_solver.py](./core/se_solver.py)（配 [partition_cache.py](./core/partition_cache.py)）构成：在冻结句向量与高语义门槛 `knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5` 上构建稀疏语义 $k$-NN + 属性共现异构图，采用全图精确体积更新最小堆凝聚求解二维结构熵并做节点迁移精化，优先抑制初始假合并，获得高纯度介观微簇。
+   由 [data_loader.py](./core/data_loader.py)、[embed_cache.py](./method/embed_cache.py)、[graph_builder.py](./core/graph_builder.py) 与 [se_solver.py](./core/se_solver.py)（配 [partition_cache.py](./core/partition_cache.py)）构成：在冻结句向量（`float32` 缓存一致精度）与高语义门槛 `knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5` 上构建稀疏语义 $k$-NN + 属性共现异构图（大属性桶按时间窗局部近邻连接，不丢弃头条事件桶），采用全图精确体积更新最小堆凝聚求解二维结构熵并做节点迁移精化，优先抑制初始假合并，获得高纯度介观微簇。
 2. **Stage 2 · 零成本高置信合并与质心防雪崩并查集（`AutoMerge` + `GuardedUnionFind`）**  
    位于 [star_meso.py](./method/star_meso.py)：在多帖微簇域（`size >= 2`）按原型余弦降序自动合并高置信微簇（`tau_auto=0.85`）；全部 `AutoMerge` 与后续 LLM 合并操作统一受控于 `GuardedUnionFind(guard_sim=0.40, min_cl_votes=1)`，阻断传递闭包链式误合并。
 3. **Stage 3 · 干净介观缝隙拆分（`Clean Seam Split` · 核心通用引擎）**  
-   位于 [star_meso.py](./method/star_meso.py)（`detect_clean_seams`）：对大小 `>= 8` 的混杂簇并行执行确定性最远点球面 $k$-means 与 Fiedler 谱二分，提取口袋大小 `>= 3`（`<= 0.48|C|`）且语义分离度 `sem_sep >= 0.12` 的候选缝隙，按效用排序取前 `max_seam_calls=3` 个送交 [llm_client.py](./method/llm_client.py) 平衡对比裁决。
+   位于 [star_meso.py](./method/star_meso.py)（`detect_clean_seams`）：对大小 `>= 8` 的混杂簇并行执行确定性最远点球面 $k$-means（含小簇 `k=2` 均衡二分）与 Fiedler 谱二分，提取口袋大小 `>= 3`（`<= |C|//2`）、语义分离度 `sem_sep >= 0.12` 且排除高交叉相似度精准转发团伙（`len < 6, intra_pock > 0.96, cross_sim > 0.65`）的候选缝隙，按效用排序取前 `max_seam_calls=3`（且单块 Seam 支出不超过块预算 `35%`，防止低预算下饿死 Stage 4）送交 [llm_client.py](./method/llm_client.py) 平衡对比裁决。
 4. **Stage 4 · 两阶段多候选星型打包裁决（`Star-Merge` · 核心通用引擎）**  
-   位于 [star_meso.py](./method/star_meso.py)（`run_pure_star_meso`）：第 1 阶段聚焦模糊核心带 `[0.55, 0.85)`（目标大小 `>= 2`），第 2 阶段扩充至 `[0.45, 0.85)` 含孤立微簇，每次将 1 个锚簇与至多 `k_nb=4` 个最模糊邻簇打包并发查询（总上限 `max_star_calls=24`，全流程受 [token_ledger.py](./core/token_ledger.py) `CausalUniformBucket(10000, allow_carryover=False)` 前瞻预算与 [anonymizer.py](./method/anonymizer.py) 可选脱敏审计约束）。
+   位于 [star_meso.py](./method/star_meso.py)（`run_pure_star_meso`）：第 1 阶段聚焦模糊核心带 `[0.55, 0.85)`（目标大小 `>= 2`），第 2 阶段扩充至 `[0.45, 0.85)` 含孤立微簇；每次合并后实时重建根分量的质心、`size`、`medoids`、簇级 TF-IDF 关键词及相似度矩阵行，并将 1 个锚点根分量与至多 `k_nb=4` 个最模糊邻分量打包并发查询（结构安全上限 `max_star_calls=24`，在 `10,000` tokens/block 桶下实际通常受 Token 预算约束运行 `7–18` 次；全流程受 [token_ledger.py](./core/token_ledger.py) `CausalUniformBucket(10000, allow_carryover=False)` 与 [anonymizer.py](./method/anonymizer.py) 可选脱敏审计约束）。
 5. **Stage 5 · 跨天流式原型记忆与不确定带裁决（`SUG-CrossStar`）**  
-   位于 [cross_day.py](./method/cross_day.py)（`GlobalEventMemory` & `evaluate_cross_day_stream`）：在 14 块滑动窗口内执行 `tau_hi=0.90` 自动续连，对中间模糊带 `[0.65, 0.90)`（且日簇大小 `>= 3`）在因果结转预算桶（`budget=6000, max_carryover_mult=1.5`）内调用跨天星型匹配 Prompt 合并跨日演化事件。
+   位于 [cross_day.py](./method/cross_day.py)（`GlobalEventMemory` & `evaluate_cross_day_stream`）：在 14 块滑动窗口内主动淘汰过期事件以维持 $O(|E_{\text{active}}|\cdot d)$ 复杂度，并施加同块唯一性及日内 `CANNOT_LINK`/Seam 拆分互斥约束防止静默二次合并；执行 `tau_hi=0.90` 自动续连，对中间模糊带 `[0.65, 0.90)`（且日簇大小 `>= 3`）在因果结转预算桶（`budget=6000, max_carryover_mult=1.5`）内调用跨天星型匹配 Prompt 合并跨日演化事件（`tau_fb=0.90` 即预算耗尽时保守新建事件）。
 
 ---
 

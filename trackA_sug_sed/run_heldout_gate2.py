@@ -435,14 +435,26 @@ def _prepare_context(dataset_name: str, block_ids: Sequence[int], need_tuned_dif
         _bname, bidx = blocks[bid]
         sd = ds_full.subset(bidx, name_suffix=f"_M{bid:02d}")
         em = load_or_extract_block_embeddings(dataset_name, bid, sd.texts, model_name=embed_model)
-        g_pure = build_message_graph(sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5)
-        l_pure, st_pure = run_hisevent(dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5)
-        g_def = build_message_graph(sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5)
-        l_def, st_def = run_hisevent(dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5)
+        g_pure = build_message_graph(
+            sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5, compute_non_entity_tfidf=False
+        )
+        l_pure, st_pure = run_hisevent(
+            dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5, embed_model=embed_model
+        )
+        g_def = build_message_graph(
+            sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5, compute_non_entity_tfidf=False
+        )
+        l_def, st_def = run_hisevent(
+            dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5, embed_model=embed_model
+        )
 
         if need_tuned_diff and (abs(tuned_tau - 0.50) > 1e-6 or abs(tuned_alpha - 0.5) > 1e-6):
-            g_tun = build_message_graph(sd, em, knn_k=15, knn_sim_threshold=tuned_tau, attr_alpha=tuned_alpha)
-            l_tun, st_tun = run_hisevent(dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=tuned_tau, attr_alpha=tuned_alpha)
+            g_tun = build_message_graph(
+                sd, em, knn_k=15, knn_sim_threshold=tuned_tau, attr_alpha=tuned_alpha, compute_non_entity_tfidf=False
+            )
+            l_tun, st_tun = run_hisevent(
+                dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=tuned_tau, attr_alpha=tuned_alpha, embed_model=embed_model
+            )
         else:
             g_tun, l_tun, st_tun = g_pure, l_pure, st_pure
 
@@ -1594,7 +1606,9 @@ def run_stage_budget_anon(contexts: Dict[str, Dict[str, Any]], max_workers: int 
             e2e_mh_preds, e2e_mh_sts = [], []
             for i, b in enumerate(abids):
                 ads, aemb, ameta = _deidentify_block_full(dss[i], b, embed_model)
-                ag = build_message_graph(ads, aemb, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5)
+                ag = build_message_graph(
+                    ads, aemb, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5, compute_non_entity_tfidf=False
+                )
                 al, _ = solve_2d_se(ag.adj, refine_moves=True)
                 am_p, am_s = run_automerge_only(ads, aemb, al, tau_auto=0.85, guard_sim=0.40)
                 mh_p, mh_s = run_meso_heur_best(ads, aemb, ag, al, tau_merge=tm_mh, min_seam_sep=ss_mh)

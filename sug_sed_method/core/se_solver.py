@@ -287,9 +287,8 @@ def refine_2d_se_node_moves(
     cur_labels = cur_labels.astype(np.int64)
     n_comm = int(cur_labels.max()) + 1
 
-    # Maintain community volume V_c, cut g_c, and size
+    # Maintain community volume V_c and cut g_c
     comm_vol = np.bincount(cur_labels, weights=degrees, minlength=n_comm).astype(np.float64)
-    comm_size = np.bincount(cur_labels, minlength=n_comm).astype(np.int64)
 
     coo = mat.tocoo()
     same = cur_labels[coo.row] == cur_labels[coo.col]
@@ -301,18 +300,14 @@ def refine_2d_se_node_moves(
     indptr = mat.indptr
     indices = mat.indices
     data = mat.data
+    log2_vol_g = math.log2(vol_g)
 
     def _comm_term(v: float, g: float) -> float:
         if v <= 0.0:
             return 0.0
-        # Exact contribution of community c to vol_g * H^2(G; P) up to constant sum_i d_i log2(d_i):
-        # -g * log2(v / vol_g) + v * log2(v) = g * log2(vol_g) + (v - g) * log2(v)
-        # Wait: let's verify!
-        # Full H^2 * vol_g = sum_c [ -g_c log2(V_c / vol_g) - sum_{i in c} d_i log2(d_i) + V_c log2(V_c) ]
-        #                  = const + sum_c [ g_c log2(vol_g) + (V_c - g_c) log2(V_c) ]
+        # Exact contribution of community c to vol_g * H^2(G; P) up to constant -sum_i d_i log2(d_i):
+        # vol_g * H^2 = const + sum_c [ g_c * log2(vol_g) + (V_c - g_c) * log2(V_c) ]
         return g * log2_vol_g + (v - g) * math.log2(v)
-
-    log2_vol_g = math.log2(vol_g)
 
     for _ in range(max_iters):
         moved = 0
@@ -370,11 +365,9 @@ def refine_2d_se_node_moves(
                 w_i_best = w_to_comm[best_c]
                 comm_vol[ci] = v_ci_after
                 comm_cut[ci] = g_ci_after
-                comm_size[ci] -= 1
 
                 comm_vol[best_c] += di
                 comm_cut[best_c] += (di - 2.0 * w_i_best)
-                comm_size[best_c] += 1
 
                 cur_labels[i] = best_c
                 moved += 1

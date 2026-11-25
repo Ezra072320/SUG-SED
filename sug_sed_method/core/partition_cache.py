@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import time
 from pathlib import Path
 from typing import Optional, Tuple
@@ -19,6 +20,17 @@ DEFAULT_PARTITION_CACHE_DIR = (
 )
 
 
+def _adj_fingerprint(adj: sparse.spmatrix) -> str:
+    """Compute a fast deterministic SHA-256 fingerprint of a CSR graph structure and weights."""
+    csr = adj.tocsr()
+    h = hashlib.sha256()
+    h.update(f"{csr.shape[0]}x{csr.shape[1]}:{csr.nnz}".encode("ascii"))
+    h.update(csr.indptr.astype(np.int64, copy=False).tobytes())
+    h.update(csr.indices.astype(np.int64, copy=False).tobytes())
+    h.update(np.round(csr.data.astype(np.float64, copy=False), 5).tobytes())
+    return h.hexdigest()[:12]
+
+
 def load_or_solve_2d_se(
     dataset_name: str,
     block_id: int,
@@ -28,13 +40,17 @@ def load_or_solve_2d_se(
     attr_alpha: float = 0.5,
     refine_moves: bool = True,
     cache_dir: Optional[Path] = None,
+    embed_model: Optional[str] = None,
 ) -> Tuple[np.ndarray, float]:
     """Load cached Stage-1 2D SE partition or solve and persist it atomically."""
     cdir = Path(cache_dir) if cache_dir is not None else DEFAULT_PARTITION_CACHE_DIR
     cdir.mkdir(parents=True, exist_ok=True)
+    enc_tag = f"_enc_{embed_model.replace('/', '__')}" if embed_model else ""
+    adj_hash = _adj_fingerprint(adj)
     fname = (
         f"{dataset_name}_M{int(block_id):02d}_k{int(knn_k)}"
-        f"_tau{float(knn_sim_threshold):.3f}_a{float(attr_alpha):.3f}_ref{int(bool(refine_moves))}.npz"
+        f"_tau{float(knn_sim_threshold):.3f}_a{float(attr_alpha):.3f}_ref{int(bool(refine_moves))}"
+        f"{enc_tag}_g{adj_hash}.npz"
     )
     path = cdir / fname
     n = int(adj.shape[0])

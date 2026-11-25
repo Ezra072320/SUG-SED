@@ -243,11 +243,7 @@ class QueryAnonymizer:
                     shown_hashtag_surfaces.add(hs)
 
         kw_tokens: List[str] = []
-        if q.query_type == "merge_pair":
-            for cid in cids:
-                if cid in summaries:
-                    kw_tokens.extend(summaries[cid].top_keywords[:5])
-        elif q.query_type not in {"merge_pair", "seam"}:
+        if q.query_type != "seam":
             for cid in cids:
                 if cid in summaries:
                     kw_tokens.extend(summaries[cid].top_keywords[:5])

@@ -70,8 +70,9 @@ def load_or_extract_block_embeddings(
     texts: Sequence[str],
     model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
     cache_dir: Optional[Path] = None,
+    storage_dtype: str = "float32",
 ) -> np.ndarray:
-    """Load precomputed float16 block embeddings from disk cache or extract on GPU/CPU."""
+    """Load precomputed block embeddings from disk cache or extract on GPU/CPU."""
     cdir = Path(cache_dir) if cache_dir is not None else EMBED_CACHE_DIR
     cdir.mkdir(parents=True, exist_ok=True)
     safe_model = model_name.replace("/", "__")
@@ -83,6 +84,8 @@ def load_or_extract_block_embeddings(
 
     t0 = time.time()
     emb = encode_texts_hf(texts, model_name=model_name, batch_size=64, max_length=128)
-    np.save(cache_path, emb.astype(np.float16))
-    print(f"  [Emb] Extracted & cached {cache_path.name} shape={emb.shape} in {time.time()-t0:.1f}s")
-    return emb
+    save_dtype = np.float16 if storage_dtype == "float16" else np.float32
+    emb_saved = emb.astype(save_dtype)
+    np.save(cache_path, emb_saved)
+    print(f"  [Emb] Extracted & cached {cache_path.name} shape={emb_saved.shape} ({save_dtype.__name__}) in {time.time()-t0:.1f}s")
+    return emb_saved.astype(np.float32)

@@ -22,6 +22,7 @@ from __future__ import annotations
 import math
 import threading
 import time
+import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
@@ -37,10 +38,26 @@ from core_shared.graph_builder import MessageGraph, build_message_graph
 from core_shared.partition_cache import load_or_solve_2d_se
 from trackA_sug_sed.llm_client import (
     BudgetedLLMClient,
-    build_pairwise_same_event_prompt,
     build_seam_split_prompt,
     build_star_merge_prompt,
 )
+
+
+def _parse_bool(val: Any, default: bool = False) -> bool:
+    """Parse boolean JSON values safely without treating 'false' or '0' as True."""
+    if isinstance(val, bool):
+        return val
+    if val is None:
+        return default
+    if isinstance(val, (int, float)):
+        return bool(val)
+    if isinstance(val, str):
+        s = val.strip().lower()
+        if s in {"true", "1", "yes", "y"}:
+            return True
+        if s in {"false", "0", "no", "n", "null", "none", ""}:
+            return False
+    return bool(val)
 
 
 @dataclass
@@ -54,6 +71,86 @@ class ClusterSummary:
     mean_timestamp: float
 
 
+def _compute_cluster_idf(
+    ds: SocialDataset,
+    comm_to_members: Dict[int, List[int]],
+) -> Dict[str, float]:
+    """Compute cluster-level IDF across all clusters in a block so generic words do not drown discriminative cues."""
+    n_clusters = max(1, len(comm_to_members))
+    cluster_df: Dict[str, int] = defaultdict(int)
+    for members in comm_to_members.values():
+        seen_terms: Set[str] = set()
+        for m in members:
+            for e in ds.entities[m]:
+                seen_terms.add(e)
+            for h in ds.hashtags[m]:
+                seen_terms.add(f"#{h}")
+            for tok in ds.tokens_lemma[m]:
+                if len(tok) >= 3:
+                    seen_terms.add(tok)
+        for t in seen_terms:
+            cluster_df[t] += 1
+    return {
+        t: math.log((1.0 + n_clusters) / (1.0 + df)) + 1.0
+        for t, df in cluster_df.items()
+    }
+
+
+def _summarize_members(
+    cid: int,
+    members: List[int],
+    ds: SocialDataset,
+    embeddings: np.ndarray,
+    term_idf: Optional[Dict[str, float]] = None,
+    max_medoids: int = 3,
+    max_keywords: int = 5,
+) -> ClusterSummary:
+    """Build or refresh a ClusterSummary from a member index list using TF-IDF keywords."""
+    idx = np.asarray(members, dtype=np.int64)
+    sub_emb = embeddings[idx]
+    proto = sub_emb.mean(axis=0)
+    norm = float(np.linalg.norm(proto))
+    if norm > 1e-12:
+        proto = proto / norm
+
+    sims = sub_emb @ proto
+    top_local = np.argsort(-sims)[:max_medoids]
+    medoids = [int(idx[k]) for k in top_local]
+
+    kw_counts: Dict[str, int] = defaultdict(int)
+    for m in members:
+        for e in ds.entities[m]:
+            kw_counts[e] += 2
+        for h in ds.hashtags[m]:
+            kw_counts[f"#{h}"] += 2
+        for tok in ds.tokens_lemma[m]:
+            if len(tok) >= 3:
+                kw_counts[tok] += 1
+
+    if term_idf is not None:
+        scored_kw = sorted(
+            kw_counts.items(),
+            key=lambda kv: (-(1.0 + math.log(max(1, kv[1]))) * term_idf.get(kv[0], 1.0), -kv[1], kv[0]),
+        )
+    else:
+        scored_kw = sorted(kw_counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    top_kw = [k for k, _ in scored_kw[:max_keywords]]
+
+    ts_vals = ds.timestamps[idx]
+    valid_ts = ts_vals[~np.isnan(ts_vals)]
+    mean_ts = float(np.mean(valid_ts)) if len(valid_ts) > 0 else float("nan")
+
+    return ClusterSummary(
+        cluster_id=cid,
+        members=list(members),
+        size=len(members),
+        prototype=proto.astype(np.float32),
+        medoids=medoids,
+        top_keywords=top_kw,
+        mean_timestamp=mean_ts,
+    )
+
+
 def build_cluster_summaries(
     ds: SocialDataset,
     embeddings: np.ndarray,
@@ -61,43 +158,22 @@ def build_cluster_summaries(
     max_medoids: int = 3,
     max_keywords: int = 5,
 ) -> Dict[int, ClusterSummary]:
-    """Summarize each cluster by prototype, medoids, and top keywords."""
+    """Summarize each cluster by prototype, medoids, and IDF-weighted top keywords."""
     comm_to_members: Dict[int, List[int]] = defaultdict(list)
     for i, c in enumerate(np.asarray(labels).tolist()):
         comm_to_members[int(c)].append(i)
 
+    term_idf = _compute_cluster_idf(ds, comm_to_members)
     summaries: Dict[int, ClusterSummary] = {}
     for cid, members in comm_to_members.items():
-        idx = np.asarray(members, dtype=np.int64)
-        sub_emb = embeddings[idx]
-        proto = sub_emb.mean(axis=0)
-        norm = float(np.linalg.norm(proto))
-        if norm > 1e-12:
-            proto = proto / norm
-
-        sims = sub_emb @ proto
-        top_local = np.argsort(-sims)[:max_medoids]
-        medoids = [int(idx[k]) for k in top_local]
-
-        kw_counts: Dict[str, int] = defaultdict(int)
-        for m in members:
-            for e in ds.entities[m]:
-                kw_counts[e] += 2
-            for h in ds.hashtags[m]:
-                kw_counts[f"#{h}"] += 2
-            for tok in ds.tokens_lemma[m]:
-                if len(tok) >= 3:
-                    kw_counts[tok] += 1
-        top_kw = [k for k, _ in sorted(kw_counts.items(), key=lambda kv: -kv[1])[:max_keywords]]
-
-        summaries[cid] = ClusterSummary(
-            cluster_id=cid,
-            members=members,
-            size=len(members),
-            prototype=proto.astype(np.float32),
-            medoids=medoids,
-            top_keywords=top_kw,
-            mean_timestamp=float(np.mean(ds.timestamps[idx])),
+        summaries[cid] = _summarize_members(
+            cid,
+            members,
+            ds,
+            embeddings,
+            term_idf=term_idf,
+            max_medoids=max_medoids,
+            max_keywords=max_keywords,
         )
     return summaries
 
@@ -342,14 +418,16 @@ def detect_clean_seams(
         sub_emb = emb[members]
 
         k_sub = min(6, max(3, summ.size // 12))
-        klab = _spherical_kmeans_deterministic(sub_emb, k=k_sub, n_iters=15)
+        k_values = [2, k_sub] if summ.size < 18 else [k_sub]
 
         splits: List[Tuple[np.ndarray, np.ndarray]] = []
-        for p in range(k_sub):
-            p_loc = np.where(klab == p)[0]
-            r_loc = np.where(klab != p)[0]
-            if len(p_loc) >= min_pocket_size and len(p_loc) <= int(0.48 * summ.size) and len(r_loc) >= min_pocket_size:
-                splits.append((r_loc, p_loc))
+        for kv in k_values:
+            klab = _spherical_kmeans_deterministic(sub_emb, k=kv, n_iters=15)
+            for p in range(kv):
+                p_loc = np.where(klab == p)[0]
+                r_loc = np.where(klab != p)[0]
+                if len(p_loc) >= min_pocket_size and len(p_loc) <= len(r_loc) and len(r_loc) >= min_pocket_size:
+                    splits.append((r_loc, p_loc))
 
         fg1, fg2 = _fiedler_bipartition(sub_adj, sub_emb)
         if len(fg1) < len(fg2):
@@ -367,7 +445,8 @@ def detect_clean_seams(
 
             intra_pock = float(np.mean(emb[g_pock] @ p_pock))
             cross_sim = float(np.dot(p_main, p_pock))
-            if len(g_pock) < 6 and intra_pock > 0.96:
+            # Guard against same-event exact-retweet bursts with moderate cross_sim hijacking Seam budget
+            if len(g_pock) < 6 and intra_pock > 0.96 and cross_sim > 0.65:
                 continue
             sem_sep = max(0.0, intra_pock - cross_sim)
             if sem_sep < min_sem_sep:
@@ -440,6 +519,8 @@ def run_pure_star_meso(
     audit_store: Optional[Any] = None,
     pre_anonymized: bool = False,
     orig_ds_for_audit: Optional[SocialDataset] = None,
+    embed_model: Optional[str] = None,
+    max_seam_budget_frac: float = 0.35,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict[str, Any]]:
     """Run Pure-Star-Meso on one streaming block under causal budget & all_shown accounting.
 
@@ -456,8 +537,23 @@ def run_pure_star_meso(
         )
 
     knn_tau = 0.50 if use_purity_base else 0.35
+    if graph is not None and getattr(graph, "knn_sim_threshold", None) is not None:
+        if abs(float(graph.knn_sim_threshold) - knn_tau) > 1e-6:
+            warnings.warn(
+                f"run_pure_star_meso received pre-built graph with knn_sim_threshold={graph.knn_sim_threshold}, "
+                f"which overrides use_purity_base={use_purity_base} (expected {knn_tau}).",
+                RuntimeWarning,
+                stacklevel=2,
+            )
     if graph is None:
-        graph = build_message_graph(ds, embeddings, knn_k=15, knn_sim_threshold=knn_tau, attr_alpha=0.5)
+        graph = build_message_graph(
+            ds,
+            embeddings,
+            knn_k=15,
+            knn_sim_threshold=knn_tau,
+            attr_alpha=0.5,
+            compute_non_entity_tfidf=False,
+        )
     if labels_init is None:
         labels_init, _ = load_or_solve_2d_se(
             dataset_name=dataset_name,
@@ -467,6 +563,7 @@ def run_pure_star_meso(
             knn_sim_threshold=knn_tau,
             attr_alpha=0.5,
             refine_moves=True,
+            embed_model=embed_model,
         )
 
     labels = np.asarray(labels_init, dtype=np.int64).copy()
@@ -482,7 +579,7 @@ def run_pure_star_meso(
     )
 
     # --- Step 1: Zero-token Auto-Merge (>= tau_auto) with Centroid-Cohesive GuardedUF ---
-    eff_tau_auto = float(tau_auto) if (use_auto_merge and use_bayes_band) else 1.01
+    eff_tau_auto = float(tau_auto) if use_auto_merge else 1.01
     if eff_tau_auto <= 1.0:
         summs0 = build_cluster_summaries(ds, embeddings, labels)
         cids0 = sorted([c for c, s in summs0.items() if s.size >= 2])
@@ -507,6 +604,7 @@ def run_pure_star_meso(
             labels = uf0.apply_to_labels(labels)
 
     # --- Step 2: Clean SPLIT_SEAM adjudication BEFORE Star-Merge ---
+    seam_split_node_pairs: List[Tuple[int, int]] = []
     if max_seam_calls > 0:
         summs_pre_seam = build_cluster_summaries(ds, embeddings, labels)
         seams = detect_clean_seams(
@@ -521,6 +619,12 @@ def run_pure_star_meso(
             seed=seed,
         )
         next_cid = int(labels.max()) + 1 if n > 0 else 0
+        seam_tokens_spent = 0
+        seam_cap = (
+            int(float(bucket.current_block_cap) * float(max_seam_budget_frac))
+            if (bucket is not None and float(max_seam_budget_frac) > 0.0 and getattr(bucket, "current_block_cap", 0) > 0)
+            else None
+        )
         for sc in seams[:max_seam_calls]:
             seam_audit = None
             raw_seam_user = ""
@@ -569,6 +673,9 @@ def run_pure_star_meso(
                 res_tuple = ({"different_events": do_split}, 0, 0, 0.0, "ORACLE")
             else:
                 assert client is not None
+                est_seam_tok = int((len(sys_msg) + len(user_msg)) / 3.4) + 85
+                if seam_cap is not None and seam_calls > 0 and (seam_tokens_spent + est_seam_tok) > seam_cap:
+                    break
                 t_api0 = time.perf_counter()
                 res_tuple = client.call_json(
                     request_id=sc.query_id,
@@ -590,6 +697,7 @@ def run_pure_star_meso(
             parsed, pt, ct, lat, _st = res_tuple
             prompt_tok += pt
             comp_tok += ct
+            seam_tokens_spent += pt + ct
             llm_api_sec += lat
             total_calls += 1
             seam_calls += 1
@@ -607,38 +715,63 @@ def run_pure_star_meso(
                 if leaked:
                     anon_leak_queries += 1
                     anon_leak_terms += len(leaked)
-            if bool(parsed.get("different_events", False)):
+            if _parse_bool(parsed.get("different_events", False)):
                 labels[sc.sub2] = next_cid
                 next_cid += 1
                 seam_splits += 1
+                if sc.sub1 and sc.sub2:
+                    seam_split_node_pairs.append((int(sc.sub1[0]), int(sc.sub2[0])))
 
-    # --- Step 3: Two-Tier Adaptive Contrastive Star-Merge with Online Guarded UF ---
-    summs = build_cluster_summaries(ds, embeddings, labels)
+    # --- Step 3: Two-Tier Adaptive Contrastive Star-Merge with Online Component Refresh ---
+    comm_to_members: Dict[int, List[int]] = defaultdict(list)
+    for i_node, c_lab in enumerate(labels.tolist()):
+        comm_to_members[int(c_lab)].append(i_node)
+    term_idf = _compute_cluster_idf(ds, comm_to_members)
+    summs = {
+        cid: _summarize_members(cid, mems, ds, embeddings, term_idf=term_idf)
+        for cid, mems in comm_to_members.items()
+    }
     all_cids = sorted(summs.keys())
+    uf: Optional[GuardedUnionFind] = None
     if len(all_cids) >= 2 and max_star_calls > 0:
-        protos = np.vstack([summs[c].prototype for c in all_cids])
+        cid_to_pos = {c: i for i, c in enumerate(all_cids)}
+        protos = np.vstack([summs[c].prototype for c in all_cids]).astype(np.float32)
         sizes = [summs[c].size for c in all_cids]
         sim_mat = protos @ protos.T
         uf = GuardedUnionFind(
             all_cids, sim_mat, guard_sim=guard_sim, enforce_guards=use_guarded_uf, protos=protos, sizes=sizes
         )
+        for c in all_cids:
+            uf.comp_vec[c] = embeddings[summs[c].members].sum(axis=0, dtype=np.float64)
+
+        comp_summs: Dict[int, ClusterSummary] = dict(summs)
+        active_roots: Set[int] = set(all_cids)
         eff_k_nb = int(k_nb) if use_star_packing else 1
         eff_max_star_calls = max_star_calls if use_star_packing else max(80, max_star_calls * 3)
-        queried_pairs: Set[Tuple[int, int]] = set()
+        queried_leaf_pairs: Set[Tuple[int, int]] = set()
         rng = np.random.default_rng(seed)
 
+        def _components_queried(r1: int, r2: int) -> bool:
+            assert uf is not None
+            for a in uf.comp_members[r1]:
+                for b in uf.comp_members[r2]:
+                    ek = (a, b) if a < b else (b, a)
+                    if ek in queried_leaf_pairs:
+                        return True
+            return False
+
         if not use_bayes_band:
-            tiers: List[Tuple[float, float, int]] = [(0.35, 1.01, 1)]
+            tiers: List[Tuple[float, float, int]] = [(0.35, eff_tau_auto, 1)]
         elif random_order:
             tiers = [(0.45, eff_tau_auto, 1)]
         else:
             tiers = [(float(tau_lo), eff_tau_auto, 2), (0.45, eff_tau_auto, 1)]
 
-        # Majority true labels per cluster only used when dry_run_oracle=True
+        # Majority true labels per live root component (only used when dry_run_oracle=True)
         maj_true: Dict[int, int] = {}
         if dry_run_oracle:
             for c in all_cids:
-                vs, cs = np.unique(ds.labels[summs[c].members], return_counts=True)
+                vs, cs = np.unique(ds.labels[comp_summs[c].members], return_counts=True)
                 maj_true[c] = int(vs[int(np.argmax(cs))])
 
         step_idx = 0
@@ -647,63 +780,71 @@ def run_pure_star_meso(
             if budget_exhausted or step_idx >= eff_max_star_calls:
                 break
             while step_idx < eff_max_star_calls:
+                live_roots = sorted(active_roots)
+                if len(live_roots) < 2:
+                    break
+                live_pos = np.asarray([cid_to_pos[r] for r in live_roots], dtype=np.int64)
+                live_sizes = np.asarray([comp_summs[r].size for r in live_roots], dtype=np.int64)
+
                 candidates_for_step: List[Tuple[float, int, List[Tuple[float, int]]]] = []
-                for i, c1 in enumerate(all_cids):
-                    if summs[c1].size < min_sz:
+                for idx1, r1 in enumerate(live_roots):
+                    s1 = int(live_sizes[idx1])
+                    if s1 < min_sz:
                         continue
-                    r1 = uf.root(c1)
-                    row_sims = sim_mat[i]
-                    js = np.where((row_sims >= tier_lo) & (row_sims < tier_hi))[0]
+                    row_sims = sim_mat[live_pos[idx1], live_pos]
+                    mask = (row_sims >= tier_lo) & (row_sims < tier_hi) & (live_sizes >= min_sz)
+                    mask[idx1] = False
+                    js = np.where(mask)[0]
                     if len(js) == 0:
                         continue
                     js = js[np.argsort(-row_sims[js])]
                     pack: List[Tuple[float, int]] = []
-                    seen_roots = {r1}
                     for j in js:
-                        c2 = all_cids[int(j)]
-                        if summs[c2].size < min_sz:
+                        r2 = live_roots[int(j)]
+                        s2 = int(live_sizes[int(j)])
+                        sim_val = float(row_sims[int(j)])
+                        if s1 == 1 and s2 == 1 and sim_val < 0.55:
                             continue
-                        if summs[c1].size == 1 and summs[c2].size == 1 and float(row_sims[int(j)]) < 0.55:
+                        if _components_queried(r1, r2):
                             continue
-                        r2 = uf.root(c2)
-                        if r2 in seen_roots:
+                        if not uf.can_merge(r1, r2):
                             continue
-                        ek = (c1, c2) if c1 < c2 else (c2, c1)
-                        if ek in queried_pairs:
-                            continue
-                        if not uf.can_merge(c1, c2):
-                            continue
-                        pack.append((float(row_sims[int(j)]), c2))
-                        seen_roots.add(r2)
+                        pack.append((sim_val, r2))
                         if len(pack) >= eff_k_nb:
                             break
                     if not pack:
                         continue
-                    # Calibrated Bayes utility: sim^2 * bounded size leverage (log1p min size)
+                    # Calibrated Bayes utility over LIVE component sizes & similarities
                     utility = sum(
-                        (s**2) * (1.0 + 0.25 * math.log1p(min(summs[c1].size, summs[c2].size)))
-                        for s, c2 in pack
+                        (s**2) * (1.0 + 0.25 * math.log1p(min(s1, comp_summs[r2].size)))
+                        for s, r2 in pack
                     )
-                    candidates_for_step.append((utility, c1, pack))
+                    candidates_for_step.append((utility, r1, pack))
 
                 if not candidates_for_step:
                     break
 
                 if random_order:
                     pick_pos = int(rng.integers(0, len(candidates_for_step)))
-                    _u, anchor_c, pack = candidates_for_step[pick_pos]
+                    _u, anchor_r, pack = candidates_for_step[pick_pos]
                 else:
                     candidates_for_step.sort(key=lambda x: -x[0])
-                    _u, anchor_c, pack = candidates_for_step[0]
+                    _u, anchor_r, pack = candidates_for_step[0]
 
-                cand_cids = [c2 for _s, c2 in pack]
-                cand_summs = [summs[c2] for c2 in cand_cids]
+                cand_roots = [r2 for _s, r2 in pack]
+                cand_summs = [comp_summs[r2] for r2 in cand_roots]
+                anchor_summ = comp_summs[anchor_r]
                 star_audit = None
                 raw_star_user = ""
+                qid_star = (
+                    f"star_s{step_idx}_c{anchor_r}_n{len(cand_roots)}"
+                    if use_star_packing
+                    else f"pair_s{step_idx}_c{anchor_r}_c{cand_roots[0]}"
+                )
 
                 if dry_run_oracle:
                     matched_indices = [
-                        idx for idx, c2 in enumerate(cand_cids, start=1) if maj_true[anchor_c] == maj_true[c2]
+                        idx for idx, r2 in enumerate(cand_roots, start=1) if maj_true[anchor_r] == maj_true[r2]
                     ]
                     res_tuple = (
                         {"matches": [{"id": idx, "shared_event": "oracle"} for idx in matched_indices]},
@@ -712,53 +853,36 @@ def run_pure_star_meso(
                         0.0,
                         "ORACLE",
                     )
-                elif not use_star_packing:
-                    # 1-on-1 static pairwise ablation uses standard pairwise prompt
-                    c2 = cand_cids[0]
-                    t1 = " | ".join(ds.texts[m].replace("\n", " ")[:120] for m in summs[anchor_c].medoids[:2])
-                    t2 = " | ".join(ds.texts[m].replace("\n", " ")[:120] for m in summs[c2].medoids[:2])
-                    sys_msg, user_msg = build_pairwise_same_event_prompt(t1, t2)
-                    assert client is not None
-                    t_api0 = time.perf_counter()
-                    res_tuple = client.call_json(
-                        request_id=f"pair_s{step_idx}_c{anchor_c}_c{c2}",
-                        block_id=block_id,
-                        strategy=strategy_tag,
-                        query_type="merge_pair",
-                        sys_msg=sys_msg,
-                        user_msg=user_msg,
-                        bucket=bucket,
-                        est_completion_tokens=75,
-                    )
-                    api_wall_sec += time.perf_counter() - t_api0
                 else:
-                    qid_star = f"star_s{step_idx}_c{anchor_c}_n{len(cand_cids)}"
+                    # Both k=4 (Star Packing) and k=1 (w/o Star Packing) use identical prompt richness & rules
                     if anonymizer is not None:
-                        _, raw_star_user = build_star_merge_prompt(summs[anchor_c], cand_summs, ds)
+                        _, raw_star_user = build_star_merge_prompt(anchor_summ, cand_summs, ds)
                         q_star = QueryItem(
                             query_id=qid_star,
                             query_type="star_merge",
-                            primary_nodes=list(summs[anchor_c].medoids[:2])
+                            primary_nodes=list(anchor_summ.medoids[:2])
                             + [m for cs in cand_summs for m in cs.medoids[:2]],
-                            candidate_clusters=[anchor_c] + cand_cids,
+                            candidate_clusters=[anchor_r] + cand_roots,
                         )
-                        anon_texts, anon_summs, star_audit = anonymizer.build_query_anonymized_inputs(q_star, ds, summs)
+                        anon_texts, anon_summs, star_audit = anonymizer.build_query_anonymized_inputs(
+                            q_star, ds, comp_summs
+                        )
                         sys_msg, user_msg = build_star_merge_prompt(
-                            anon_summs[anchor_c],
-                            [anon_summs[c] for c in cand_cids],
+                            anon_summs[anchor_r],
+                            [anon_summs[r2] for r2 in cand_roots],
                             ds,
                             text_override=anon_texts,
                         )
                         sys_msg = sys_msg + _anon_note
                     else:
-                        sys_msg, user_msg = build_star_merge_prompt(summs[anchor_c], cand_summs, ds)
+                        sys_msg, user_msg = build_star_merge_prompt(anchor_summ, cand_summs, ds)
                         if pre_anonymized:
                             sys_msg = sys_msg + _anon_note
                             if orig_ds_for_audit is not None:
-                                star_shown = list(summs[anchor_c].medoids[:2]) + [
+                                star_shown = list(anchor_summ.medoids[:2]) + [
                                     m for cs in cand_summs for m in cs.medoids[:2]
                                 ]
-                                shown_kws = list(summs[anchor_c].top_keywords[:5]) + [
+                                shown_kws = list(anchor_summ.top_keywords[:5]) + [
                                     kw for cs in cand_summs for kw in cs.top_keywords[:5]
                                 ]
                                 star_audit = audit_pre_anonymized_query(
@@ -770,7 +894,7 @@ def run_pure_star_meso(
                                 )
                                 if audit_store is not None:
                                     _, raw_star_user = build_star_merge_prompt(
-                                        summs[anchor_c], cand_summs, orig_ds_for_audit
+                                        anchor_summ, cand_summs, orig_ds_for_audit
                                     )
                     assert client is not None
                     t_api0 = time.perf_counter()
@@ -778,11 +902,11 @@ def run_pure_star_meso(
                         request_id=qid_star,
                         block_id=block_id,
                         strategy=strategy_tag,
-                        query_type="star_merge",
+                        query_type="star_merge" if use_star_packing else "merge_pair",
                         sys_msg=sys_msg,
                         user_msg=user_msg,
                         bucket=bucket,
-                        est_completion_tokens=105,
+                        est_completion_tokens=105 if use_star_packing else 85,
                     )
                     api_wall_sec += time.perf_counter() - t_api0
 
@@ -800,18 +924,20 @@ def run_pure_star_meso(
                 llm_api_sec += lat
                 total_calls += 1
                 star_calls += 1
-                star_edges_checked += len(cand_cids)
+                star_edges_checked += len(cand_roots)
 
                 # Strict all_shown marking: anchor medoids + every shown candidate medoid!
-                for m in summs[anchor_c].medoids[:2]:
+                for m in anchor_summ.medoids[:2]:
                     all_shown[int(m)] = True
                 for cs in cand_summs:
                     for m in cs.medoids[:2]:
                         all_shown[int(m)] = True
 
-                for c2 in cand_cids:
-                    ek = (anchor_c, c2) if anchor_c < c2 else (c2, anchor_c)
-                    queried_pairs.add(ek)
+                for r2 in cand_roots:
+                    for a_leaf in uf.comp_members[anchor_r]:
+                        for b_leaf in uf.comp_members[r2]:
+                            ek = (a_leaf, b_leaf) if a_leaf < b_leaf else (b_leaf, a_leaf)
+                            queried_leaf_pairs.add(ek)
 
                 if "error" in parsed:
                     parse_errors += 1
@@ -830,8 +956,8 @@ def run_pure_star_meso(
                         anon_leak_terms += len(leaked)
 
                 matched_pos: Set[int] = set()
-                if not use_star_packing and "same_event" in parsed:
-                    if bool(parsed.get("same_event", False)):
+                if not use_star_packing and "matches" not in parsed and "same_event" in parsed:
+                    if _parse_bool(parsed.get("same_event", False)):
                         matched_pos.add(1)
                 else:
                     raw_matches = parsed.get("matches", [])
@@ -846,17 +972,58 @@ def run_pure_star_meso(
                                 except (ValueError, TypeError):
                                     pass
 
-                # Apply CANNOT-LINK first on unmatched candidates, then GUARDED MERGE on matched
-                for pos, c2 in enumerate(cand_cids, start=1):
+                # Apply CANNOT-LINK first on unmatched candidates, then GUARDED MERGE with live component refresh
+                for pos, r2 in enumerate(cand_roots, start=1):
                     if pos not in matched_pos:
-                        uf.add_cannot_link(anchor_c, c2)
-                for pos, c2 in enumerate(cand_cids, start=1):
-                    if pos in matched_pos:
-                        if uf.merge(anchor_c, c2):
-                            star_merges += 1
+                        uf.add_cannot_link(anchor_r, r2)
+
+                cur_anchor = anchor_r
+                for pos, r2 in enumerate(cand_roots, start=1):
+                    if pos not in matched_pos:
+                        continue
+                    cur_anchor = uf.root(cur_anchor)
+                    cur_r2 = uf.root(r2)
+                    if cur_anchor == cur_r2:
+                        continue
+                    if uf.merge(cur_anchor, cur_r2):
+                        star_merges += 1
+                        new_r = uf.root(cur_anchor)
+                        old_r = cur_r2 if new_r == cur_anchor else cur_anchor
+                        merged_members = comp_summs[cur_anchor].members + comp_summs[cur_r2].members
+                        new_summ = _summarize_members(new_r, merged_members, ds, embeddings, term_idf=term_idf)
+                        comp_summs[new_r] = new_summ
+                        comp_summs.pop(old_r, None)
+                        active_roots.discard(old_r)
+
+                        uf.comp_vec[new_r] = embeddings[merged_members].sum(axis=0, dtype=np.float64)
+                        uf.comp_size[new_r] = len(merged_members)
+
+                        pos_new = cid_to_pos[new_r]
+                        protos[pos_new] = new_summ.prototype
+                        new_row = protos @ new_summ.prototype
+                        sim_mat[pos_new, :] = new_row
+                        sim_mat[:, pos_new] = new_row
+
+                        if dry_run_oracle:
+                            vs, cs = np.unique(ds.labels[merged_members], return_counts=True)
+                            maj_true[new_r] = int(vs[int(np.argmax(cs))])
+                        cur_anchor = new_r
 
         blocked_guards += uf.blocked_count
         labels = uf.apply_to_labels(labels)
+
+    cl_final: Set[Tuple[int, int]] = set()
+    for n1, n2 in seam_split_node_pairs:
+        l1, l2 = int(labels[n1]), int(labels[n2])
+        if l1 != l2:
+            cl_final.add((l1, l2) if l1 < l2 else (l2, l1))
+    if uf is not None:
+        for a, b in uf.cannot_pairs:
+            na = summs[a].members[0]
+            nb = summs[b].members[0]
+            la, lb = int(labels[na]), int(labels[nb])
+            if la != lb:
+                cl_final.add((la, lb) if la < lb else (lb, la))
 
     total_wall = time.perf_counter() - t_cpu0
     router_cpu_sec = max(0.0, total_wall - api_wall_sec)
@@ -869,6 +1036,7 @@ def run_pure_star_meso(
         "star_edges_checked": star_edges_checked,
         "star_merges": star_merges,
         "blocked_by_guard": blocked_guards,
+        "intra_cannot_link_pairs": sorted(cl_final),
         "anon_leak_queries": anon_leak_queries,
         "anon_leak_terms": anon_leak_terms,
         "prompt_tokens": prompt_tok,

@@ -11,9 +11,9 @@ Evaluates chronological multi-block cluster continuity without future leakage:
 
 from __future__ import annotations
 
-from collections import Counter
+from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
 import numpy as np
 
@@ -49,6 +49,17 @@ class GlobalEventMemory:
             for ev in self.events.values()
             if (current_block - ev.last_block) <= self.window_blocks
         ]
+
+    def evict_expired(self, current_block: int) -> int:
+        """Evict historical events outside the sliding window to keep O(|E_active|*d) memory/scan."""
+        expired = [
+            gid
+            for gid, ev in self.events.items()
+            if (current_block - ev.last_block) > self.window_blocks
+        ]
+        for gid in expired:
+            del self.events[gid]
+        return len(expired)
 
     def spawn_event(self, block_id: int, summ: ClusterSummary, ds: SocialDataset) -> int:
         gid = self.next_gid
@@ -113,6 +124,8 @@ def evaluate_cross_day_stream(
     client: Optional[BudgetedLLMClient] = None,
     budget_per_block: int = 6000,
     strategy_tag: str = "sug_cross_star",
+    enforce_block_uniqueness: bool = True,
+    block_cannot_links: Optional[Dict[int, Sequence[Tuple[int, int]]]] = None,
 ) -> Dict[str, Any]:
     """Evaluate a cross-day linking policy chronologically over `(block_id, ds, emb, labels)`."""
     mem = GlobalEventMemory(window_blocks=window_blocks)
@@ -127,6 +140,8 @@ def evaluate_cross_day_stream(
         "llm_rejected": 0,
         "spawned_new": 0,
         "parse_errors": 0,
+        "blocked_same_block_collisions": 0,
+        "same_block_gid_collisions": 0,
         "cross_tokens": 0,
         "budget_per_block": int(budget_per_block),
         "allow_carryover": True,
@@ -140,6 +155,7 @@ def evaluate_cross_day_stream(
 
     for bid, ds, emb, blk_labels in block_stream:
         is_eval = int(bid) >= int(eval_start_block)
+        mem.evict_expired(int(bid))
         summaries = build_cluster_summaries(ds, emb, blk_labels)
         ordered_cids = sorted(summaries.keys(), key=lambda c: -summaries[c].size)
         active = mem.active_events(bid)
@@ -150,9 +166,46 @@ def evaluate_cross_day_stream(
             act_gids = []
             act_protos = np.zeros((0, emb.shape[1]), dtype=np.float32)
 
+        gid_to_act_pos: Dict[int, int] = {gid: i for i, gid in enumerate(act_gids)}
+        gid_to_cids: Dict[int, List[int]] = defaultdict(list)
+        bid_cl_set: Set[Tuple[int, int]] = set()
+        if block_cannot_links and int(bid) in block_cannot_links:
+            for a, b in block_cannot_links[int(bid)]:
+                ca, cb = int(a), int(b)
+                bid_cl_set.add((ca, cb) if ca < cb else (cb, ca))
+
+        def _gid_allowed(cur_cid: int, target_gid: int) -> bool:
+            prev_cids = gid_to_cids.get(target_gid)
+            if not prev_cids:
+                return True
+            if enforce_block_uniqueness:
+                return False
+            for pc in prev_cids:
+                pair = (cur_cid, pc) if cur_cid < pc else (pc, cur_cid)
+                if pair in bid_cl_set:
+                    return False
+            return True
+
         if bucket is not None and is_eval:
             bucket.start_block()
         local_to_global: Dict[int, int] = {}
+
+        def _link_to_gid(cur_cid: int, target_gid: int) -> None:
+            mem.update_event(target_gid, bid, summaries[cur_cid], ds)
+            pos_act = gid_to_act_pos.get(target_gid)
+            if pos_act is not None:
+                act_protos[pos_act] = mem.events[target_gid].prototype
+            local_to_global[cur_cid] = target_gid
+            gid_to_cids[target_gid].append(cur_cid)
+            if is_eval and len(gid_to_cids[target_gid]) > 1:
+                stats["same_block_gid_collisions"] += 1
+
+        def _spawn_gid(cur_cid: int, cur_maj: int) -> int:
+            new_gid = mem.spawn_event(bid, summaries[cur_cid], ds)
+            oracle_hist_maj[new_gid] = cur_maj
+            local_to_global[cur_cid] = new_gid
+            gid_to_cids[new_gid].append(cur_cid)
+            return new_gid
 
         for cid in ordered_cids:
             summ = summaries[cid]
@@ -160,9 +213,7 @@ def evaluate_cross_day_stream(
             cur_maj = int(vs[int(np.argmax(cs))])
 
             if mode == "no_link" or not act_gids:
-                gid = mem.spawn_event(bid, summ, ds)
-                oracle_hist_maj[gid] = cur_maj
-                local_to_global[cid] = gid
+                _spawn_gid(cid, cur_maj)
                 if is_eval:
                     stats["spawned_new"] += 1
                 continue
@@ -180,70 +231,69 @@ def evaluate_cross_day_stream(
                 scores = cos_sims
 
             top_pos = np.argsort(-scores)
-            best_pos = int(top_pos[0])
+            allowed_positions = [int(p) for p in top_pos if _gid_allowed(cid, act_gids[int(p)])]
+            if len(top_pos) > 0 and not _gid_allowed(cid, act_gids[int(top_pos[0])]) and is_eval:
+                stats["blocked_same_block_collisions"] += 1
+
+            if not allowed_positions:
+                _spawn_gid(cid, cur_maj)
+                if is_eval:
+                    stats["spawned_new"] += 1
+                continue
+
+            best_pos = allowed_positions[0]
             best_score = float(scores[best_pos])
             best_cos = float(cos_sims[best_pos])
             best_gid = act_gids[best_pos]
 
             if mode in {"proto_only", "proto_attr_only"}:
                 if best_score >= tau_proto:
-                    mem.update_event(best_gid, bid, summ, ds)
-                    local_to_global[cid] = best_gid
+                    _link_to_gid(cid, best_gid)
                     if is_eval:
                         stats["auto_linked"] += 1
                 else:
-                    gid = mem.spawn_event(bid, summ, ds)
-                    oracle_hist_maj[gid] = cur_maj
-                    local_to_global[cid] = gid
+                    _spawn_gid(cid, cur_maj)
                     if is_eval:
                         stats["spawned_new"] += 1
             elif mode == "oracle_band":
                 if best_cos >= tau_hi:
-                    mem.update_event(best_gid, bid, summ, ds)
-                    local_to_global[cid] = best_gid
+                    _link_to_gid(cid, best_gid)
                     if is_eval:
                         stats["auto_linked"] += 1
                 elif best_cos >= tau_lo and summ.size >= min_cross_size and is_eval:
                     stats["llm_queried"] += 1
                     matched_gid = None
-                    for pos in top_pos[:top_k_cand]:
-                        cand_gid = act_gids[int(pos)]
-                        if float(cos_sims[int(pos)]) >= tau_lo and oracle_hist_maj.get(cand_gid) == cur_maj:
+                    for pos in allowed_positions[:top_k_cand]:
+                        cand_gid = act_gids[pos]
+                        if float(cos_sims[pos]) >= tau_lo and oracle_hist_maj.get(cand_gid) == cur_maj:
                             matched_gid = cand_gid
                             break
                     if matched_gid is not None:
-                        mem.update_event(matched_gid, bid, summ, ds)
-                        local_to_global[cid] = matched_gid
+                        _link_to_gid(cid, matched_gid)
                         stats["llm_linked"] += 1
                     else:
-                        gid = mem.spawn_event(bid, summ, ds)
-                        oracle_hist_maj[gid] = cur_maj
-                        local_to_global[cid] = gid
+                        _spawn_gid(cid, cur_maj)
                         stats["llm_rejected"] += 1
                         stats["spawned_new"] += 1
                 else:
                     if best_cos >= tau_fb:
-                        mem.update_event(best_gid, bid, summ, ds)
-                        local_to_global[cid] = best_gid
+                        _link_to_gid(cid, best_gid)
                         if is_eval:
                             stats["auto_linked"] += 1
                     else:
-                        gid = mem.spawn_event(bid, summ, ds)
-                        oracle_hist_maj[gid] = cur_maj
-                        local_to_global[cid] = gid
+                        _spawn_gid(cid, cur_maj)
                         if is_eval:
                             stats["spawned_new"] += 1
             elif mode == "sug_cross_star":
                 if best_cos >= tau_hi or (not is_eval and best_cos >= tau_fb):
-                    mem.update_event(best_gid, bid, summ, ds)
-                    local_to_global[cid] = best_gid
+                    _link_to_gid(cid, best_gid)
                     if is_eval:
                         stats["auto_linked"] += 1
                 elif is_eval and best_cos >= tau_lo and summ.size >= min_cross_size and client is not None:
                     cand_events: List[HistoricalEvent] = []
-                    for pos in top_pos:
-                        if float(cos_sims[int(pos)]) >= tau_lo:
-                            cand_events.append(active[int(pos)])
+                    for pos in allowed_positions:
+                        if float(cos_sims[pos]) >= tau_lo:
+                            cand_events.append(active[pos])
                         if len(cand_events) >= top_k_cand:
                             break
                     if not cand_events:
@@ -263,12 +313,10 @@ def evaluate_cross_day_stream(
                     if res is None:
                         # Causal cross budget exhausted -> tau_fb fallback (when tau_fb == tau_hi == 0.90, always spawns new)
                         if best_cos >= tau_fb:
-                            mem.update_event(best_gid, bid, summ, ds)
-                            local_to_global[cid] = best_gid
+                            _link_to_gid(cid, best_gid)
                             stats["auto_linked"] += 1
                         else:
-                            gid = mem.spawn_event(bid, summ, ds)
-                            local_to_global[cid] = gid
+                            _spawn_gid(cid, cur_maj)
                             stats["spawned_new"] += 1
                     else:
                         parsed, pt, ct, _lat, _st = res
@@ -282,29 +330,26 @@ def evaluate_cross_day_stream(
                             try:
                                 m_idx = int(matched_id)
                                 if 1 <= m_idx <= len(cand_events):
-                                    chosen_gid = cand_events[m_idx - 1].global_id
+                                    cand_gid = cand_events[m_idx - 1].global_id
+                                    if _gid_allowed(cid, cand_gid):
+                                        chosen_gid = cand_gid
                             except (ValueError, TypeError):
                                 chosen_gid = None
 
                         if chosen_gid is not None:
-                            mem.update_event(chosen_gid, bid, summ, ds)
-                            local_to_global[cid] = chosen_gid
+                            _link_to_gid(cid, chosen_gid)
                             stats["llm_linked"] += 1
                         else:
-                            gid = mem.spawn_event(bid, summ, ds)
-                            local_to_global[cid] = gid
+                            _spawn_gid(cid, cur_maj)
                             stats["llm_rejected"] += 1
                             stats["spawned_new"] += 1
                 else:
                     if best_cos >= tau_fb:
-                        mem.update_event(best_gid, bid, summ, ds)
-                        local_to_global[cid] = best_gid
+                        _link_to_gid(cid, best_gid)
                         if is_eval:
                             stats["auto_linked"] += 1
                     else:
-                        gid = mem.spawn_event(bid, summ, ds)
-                        oracle_hist_maj[gid] = cur_maj
-                        local_to_global[cid] = gid
+                        _spawn_gid(cid, cur_maj)
                         if is_eval:
                             stats["spawned_new"] += 1
             else:
@@ -314,6 +359,20 @@ def evaluate_cross_day_stream(
             glab = np.array([local_to_global[int(c)] for c in blk_labels.tolist()], dtype=np.int64)
             eval_true.append(ds.labels)
             eval_pred.append(glab)
+
+    if not eval_true:
+        return {
+            "mode": mode,
+            "tau_proto": tau_proto,
+            "g_ami": 0.0,
+            "g_mac_b3": 0.0,
+            "g_mic_b3": 0.0,
+            "g_ari": 0.0,
+            "g_tail_b3": 0.0,
+            "n_pred_events": 0,
+            "stats": stats,
+            "warning": "no_eval_blocks",
+        }
 
     y_t = np.concatenate(eval_true)
     y_p = np.concatenate(eval_pred)

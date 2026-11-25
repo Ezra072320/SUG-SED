@@ -94,6 +94,8 @@ class BudgetedLLMClient:
         temperature: float = 0.0,
         max_tokens: int = 384,
         timeout_sec: float = 45.0,
+        use_json_mode: bool = True,
+        enable_thinking: Optional[bool] = None,
     ) -> None:
         self.model = model
         self.ledger = ledger
@@ -102,24 +104,29 @@ class BudgetedLLMClient:
         self.temperature = float(temperature)
         self.max_tokens = int(max_tokens)
         self.timeout_sec = float(timeout_sec)
+        self.use_json_mode = bool(use_json_mode)
+        self.enable_thinking = (False if "qwen3" in self.model.lower() else None) if enable_thinking is None else enable_thinking
 
     def _call_http(
         self,
         messages: List[Dict[str, str]],
         max_retries: int = 10,
-        use_json_mode: bool = True,
-    ) -> Tuple[str, int, int, float, str]:
+        use_json_mode: Optional[bool] = None,
+        max_tokens_override: Optional[int] = None,
+    ) -> Tuple[str, int, int, float, str, bool]:
         url = f"{self.base_url}/chat/completions"
+        eff_json = self.use_json_mode if use_json_mode is None else bool(use_json_mode)
+        eff_max_tokens = self.max_tokens if max_tokens_override is None else int(max_tokens_override)
         payload: Dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": self.temperature,
-            "max_tokens": self.max_tokens,
+            "max_tokens": eff_max_tokens,
         }
-        if use_json_mode:
+        if eff_json:
             payload["response_format"] = {"type": "json_object"}
-        if "qwen3" in self.model.lower():
-            payload["enable_thinking"] = False
+        if self.enable_thinking is not None:
+            payload["enable_thinking"] = self.enable_thinking
 
         headers = {"Content-Type": "application/json"}
         if self.api_key:
@@ -150,9 +157,10 @@ class BudgetedLLMClient:
                     usage = res.get("usage", {})
                 else:
                     raise ValueError(f"Unexpected response schema keys: {list(body.keys())}")
-                pt = int(usage.get("prompt_tokens", 0))
-                ct = int(usage.get("completion_tokens", 0))
-                return content, pt, ct, latency, finish_reason
+                pt = int(usage.get("prompt_tokens", 0) or 0)
+                ct = int(usage.get("completion_tokens", 0) or 0)
+                usage_missing = (pt == 0) or (bool(content) and ct == 0)
+                return content, pt, ct, latency, finish_reason, usage_missing
             except urllib.error.HTTPError as he:
                 last_exc = he
                 if he.code == 400 and "response_format" in payload:
@@ -196,13 +204,25 @@ class BudgetedLLMClient:
         Returns None if `bucket.can_spend(est_tokens)` refuses before spending;
         otherwise returns `(parsed_dict, prompt_tokens, completion_tokens, latency_sec, status)`.
         """
-        est_tokens = int((len(sys_msg) + len(user_msg)) / 3.4) + est_completion_tokens
+        est_prompt = int((len(sys_msg) + len(user_msg)) / 3.4)
+        est_tokens = est_prompt + est_completion_tokens
         if bucket is not None and not bucket.can_spend(est_tokens):
             return None
 
-        req_payload = {
+        eff_max_tokens = self.max_tokens
+        if bucket is not None:
+            rem_blk = getattr(bucket, "remaining_block_tokens", None)
+            rem_tot = getattr(bucket, "remaining_total_tokens", None)
+            avails = [int(r) - est_prompt for r in (rem_blk, rem_tot) if r is not None]
+            if avails:
+                eff_max_tokens = min(self.max_tokens, max(64, min(avails)))
+
+        req_payload: Dict[str, Any] = {
             "model": self.model,
             "temperature": self.temperature,
+            "max_tokens": eff_max_tokens,
+            "response_format": {"type": "json_object"} if self.use_json_mode else None,
+            "enable_thinking": self.enable_thinking,
             "messages": [
                 {"role": "system", "content": sys_msg},
                 {"role": "user", "content": user_msg},
@@ -234,7 +254,11 @@ class BudgetedLLMClient:
         else:
             pt, ct, latency = 0, 0, 0.0
             try:
-                raw_text, pt, ct, latency, finish_reason = self._call_http(req_payload["messages"])
+                raw_text, pt, ct, latency, finish_reason, usage_missing = self._call_http(
+                    req_payload["messages"],
+                    use_json_mode=self.use_json_mode,
+                    max_tokens_override=eff_max_tokens,
+                )
                 if pt == 0:
                     pt = max(1, int((len(sys_msg) + len(user_msg)) / 3.8))
                 if ct == 0 and raw_text:
@@ -249,6 +273,10 @@ class BudgetedLLMClient:
                         "raw_snippet": raw_text[:140],
                     }
                     status = f"PARSE_ERROR:{type(parse_exc).__name__}"
+                if usage_missing:
+                    status = f"{status}|USAGE_MISSING"
+                    if isinstance(parsed, dict):
+                        parsed["usage_missing"] = True
             except Exception as http_exc:
                 parsed = {"error": str(http_exc)}
                 status = f"HTTP_ERROR:{type(http_exc).__name__}"

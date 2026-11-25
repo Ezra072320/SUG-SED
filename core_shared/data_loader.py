@@ -11,7 +11,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -126,7 +126,9 @@ def load_socialed_npy(
     user_ids = [_normalize_user(x) for x in arr[:, 6]]
 
     ts_series = pd.to_datetime(arr[:, 7], utc=True, errors="coerce")
-    timestamps = (ts_series.astype("int64") // 10**9).to_numpy(dtype=np.float64)
+    is_na_ts = np.asarray(pd.isna(ts_series), dtype=bool)
+    ts_ns = np.asarray(ts_series.astype("int64"), dtype=np.int64)
+    timestamps = np.where(is_na_ts, np.nan, (ts_ns // 10**9).astype(np.float64))
     dates = [t.strftime("%Y-%m-%d") if pd.notna(t) else "unknown" for t in ts_series]
 
     hashtags = [_normalize_str_list(x, strip_prefix="#") for x in arr[:, 9]]
@@ -147,7 +149,8 @@ def load_socialed_npy(
     )
 
     if sort_chronologically:
-        order = np.lexsort((tweet_ids.astype(str), timestamps))
+        sort_ts = np.where(np.isnan(timestamps), np.inf, timestamps)
+        order = np.lexsort((tweet_ids.astype(str), sort_ts))
         ds = ds.subset(order)
     return ds
 
@@ -169,6 +172,9 @@ def split_daily_blocks(
             unique_dates.append(d)
             date_to_indices[d] = []
         date_to_indices[d].append(i)
+
+    unknown_idx = date_to_indices.pop("unknown", [])
+    unique_dates = [d for d in unique_dates if d != "unknown"]
 
     raw_blocks: List[Tuple[str, List[int]]] = []
     if merge_initial_days > 1 and len(unique_dates) >= merge_initial_days:
@@ -205,6 +211,8 @@ def split_daily_blocks(
             )
         else:
             merged.append((buf_name, np.asarray(buf_idx, dtype=np.int64)))
+    if unknown_idx:
+        merged.append(("unknown", np.asarray(unknown_idx, dtype=np.int64)))
     return merged
 
 
