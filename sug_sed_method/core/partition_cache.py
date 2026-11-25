@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import tempfile
 import time
 from pathlib import Path
 from typing import Optional, Tuple
@@ -67,5 +69,17 @@ def load_or_solve_2d_se(
     t0 = time.time()
     labels, _ = solve_2d_se(adj, refine_moves=refine_moves)
     solve_sec = round(time.time() - t0, 3)
-    np.savez_compressed(path, labels=np.asarray(labels, dtype=np.int64), solve_sec=np.float64(solve_sec))
+    tmp_name: Optional[str] = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=cdir, prefix=".tmp_", suffix=".npz", delete=False) as tf:
+            tmp_name = tf.name
+        np.savez_compressed(tmp_name, labels=np.asarray(labels, dtype=np.int64), solve_sec=np.float64(solve_sec))
+        os.replace(tmp_name, path)
+        tmp_name = None
+    finally:
+        if tmp_name is not None and os.path.exists(tmp_name):
+            try:
+                os.remove(tmp_name)
+            except OSError:
+                pass
     return np.asarray(labels, dtype=np.int64), solve_sec

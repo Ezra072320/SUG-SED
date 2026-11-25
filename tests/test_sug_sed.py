@@ -985,6 +985,8 @@ def test_trackA_audit_bugfixes_and_refinements() -> None:
         ("sug_sed_method/core/se_solver.py", "core_shared/se_solver.py"),
         ("sug_sed_method/core/partition_cache.py", "core_shared/partition_cache.py"),
         ("sug_sed_method/core/token_ledger.py", "core_shared/token_ledger.py"),
+        ("sug_sed_method/core/metrics_audit.py", "core_shared/metrics_audit.py"),
+        ("sug_sed_method/core/key_loader.py", "core_shared/key_loader.py"),
         ("sug_sed_method/method/embed_cache.py", "trackA_sug_sed/embed_cache.py"),
         ("sug_sed_method/method/llm_client.py", "trackA_sug_sed/llm_client.py"),
         ("sug_sed_method/method/anonymizer.py", "trackA_sug_sed/anonymizer.py"),
@@ -998,6 +1000,225 @@ def test_trackA_audit_bugfixes_and_refinements() -> None:
         assert diff_cnt <= 30, f"Unexpected divergence between {a_p} and {b_p}: {diff_cnt} lines"
 
 
+def test_trackA_round2_audit_fixes() -> None:
+    """Regression tests for round-2 audit findings A1-A4, B1-B5, and low-severity fixes."""
+    import time as _time
+    import warnings
+    from core_shared.data_loader import split_daily_blocks
+    from core_shared.key_loader import OPEN_SOURCE_PROVIDERS
+    import trackA_sug_sed.embed_cache as ec_mod
+    from trackA_sug_sed.anonymizer import make_anonymized_prompt_fn
+    from trackA_sug_sed.llm_client import BudgetedLLMClient
+    from trackA_sug_sed.star_meso import detect_clean_seams
+
+    rng = np.random.default_rng(2027)
+    dim = 32
+    u0 = rng.normal(size=dim).astype(np.float32); u0 /= np.linalg.norm(u0)
+    u1 = rng.normal(size=dim).astype(np.float32); u1 -= float(np.dot(u1, u0)) * u0; u1 /= np.linalg.norm(u1)
+    u2 = rng.normal(size=dim).astype(np.float32); u2 -= float(np.dot(u2, u0)) * u0 + float(np.dot(u2, u1)) * u1; u2 /= np.linalg.norm(u2)
+
+    # A1: Seam-Split cannot be silently re-merged by Stage-4 Star-Merge
+    v_main = u0
+    v_pock = 0.65 * u0 + np.sqrt(1.0 - 0.65**2) * u1
+    emb_a1 = np.vstack([
+        v_main + 0.02 * rng.normal(size=(12, dim)).astype(np.float32),
+        v_pock + 0.02 * rng.normal(size=(4, dim)).astype(np.float32),
+    ])
+    emb_a1 /= np.linalg.norm(emb_a1, axis=1, keepdims=True)
+    ds_a1 = SocialDataset(
+        name="a1", tweet_ids=np.arange(16, dtype=np.int64), texts=[f"post {i}" for i in range(16)],
+        labels=np.array([0] * 12 + [1] * 4, dtype=np.int64), tokens_lemma=[["post"] for _ in range(16)],
+        entities=[[] for _ in range(16)], hashtags=[[] for _ in range(16)],
+        user_ids=["u"] * 16, mentioned_users=[[] for _ in range(16)],
+        timestamps=np.arange(16, dtype=np.float64) + 1e9, dates=["2026-01-01"] * 16,
+    )
+    g_a1 = build_message_graph(ds_a1, emb_a1, knn_k=6, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+
+    class _A1ConflictClient:
+        def call_json(self, *, query_type, **_kw):
+            if query_type == "seam":
+                return {"event_a": "main", "event_b": "pock", "different_events": True}, 60, 15, 0.0, "MOCK"
+            # Even if Star-Merge tries to re-merge them, Seam CANNOT-LINK must block it!
+            return {"anchor_event": "x", "matches": [{"id": 1, "shared_event": "re-merge"}]}, 60, 15, 0.0, "MOCK"
+
+    pred_a1, _, _, st_a1 = run_pure_star_meso(
+        "a1", 0, ds_a1, emb_a1, _A1ConflictClient(), graph=g_a1, labels_init=np.zeros(16, dtype=np.int64)
+    )
+    assert st_a1["seam_splits"] == 1 and st_a1["star_merges"] == 0, st_a1
+    assert len(set(pred_a1.tolist())) == 2 and len(st_a1["intra_cannot_link_pairs"]) >= 1, st_a1
+
+    # A2: AutoMerge 2-hop chain drift (A.B=0.86, B.C=0.86, A.C=0.479) must block second merge
+    vec_b = u0
+    vec_a = 0.86 * u0 + np.sqrt(1.0 - 0.86**2) * u1
+    # Make vec_c = 0.86 * vec_b + y * u1 + z * u2 such that dot(vec_a, vec_c) = 0.479
+    y_c = (0.479 - 0.86 * 0.86) / float(np.sqrt(1.0 - 0.86**2))
+    z_c = float(np.sqrt(max(0.0, 1.0 - 0.86**2 - y_c**2)))
+    vec_c = 0.86 * u0 + y_c * u1 + z_c * u2
+    emb_a2 = np.vstack([np.tile(vec_a, (4, 1)), np.tile(vec_b, (4, 1)), np.tile(vec_c, (4, 1))]).astype(np.float32)
+    ds_a2 = ds_a1.subset(list(range(12)))
+    ds_a2.labels = np.array([0] * 4 + [1] * 4 + [2] * 4, dtype=np.int64)
+    g_a2 = build_message_graph(ds_a2, emb_a2, knn_k=3, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+    pred_a2, _, _, st_a2 = run_pure_star_meso(
+        "a2", 0, ds_a2, emb_a2, None, dry_run_oracle=True, graph=g_a2,
+        labels_init=np.array([0] * 4 + [1] * 4 + [2] * 4, dtype=np.int64),
+        max_seam_calls=0, max_star_calls=0,
+    )
+    assert st_a2["auto_merge_ops"] == 1 and st_a2["blocked_by_guard"] >= 1, st_a2
+    assert len(set(pred_a2.tolist())) == 2
+
+    # A3: Out-of-range / 0-based / malformed matches must increment parse_errors and NOT add CANNOT_LINK
+    emb_a3 = np.vstack([np.tile(u0, (4, 1)), np.tile(0.70 * u0 + np.sqrt(1.0 - 0.70**2) * u1, (4, 1))]).astype(np.float32)
+    ds_a3 = ds_a1.subset(list(range(8)))
+    ds_a3.labels = np.zeros(8, dtype=np.int64)
+    g_a3 = build_message_graph(ds_a3, emb_a3, knn_k=3, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+    lab_a3 = np.array([0] * 4 + [1] * 4, dtype=np.int64)
+
+    for bad_resp in [
+        {"anchor_event": "x", "matches": [{"id": 9}]},
+        {"anchor_event": "x", "matches": [{"id": 0}]},
+        {"anchor_event": "x", "matches": "bad"},
+        {"anchor_event": "x"},
+    ]:
+        class _BadMatchClient:
+            def call_json(self, **_kw):
+                return bad_resp, 50, 10, 0.0, "OK"
+
+        p_bad, _, _, st_bad = run_pure_star_meso(
+            "a3", 0, ds_a3, emb_a3, _BadMatchClient(), graph=g_a3, labels_init=lab_a3,
+            max_seam_calls=0, max_star_calls=1,
+        )
+        assert st_bad["parse_errors"] == 1, (bad_resp, st_bad)
+        assert st_bad["star_merges"] == 0 and st_bad["intra_cannot_link_pairs"] == [], (bad_resp, st_bad)
+
+    class _StrDigitMatchClient:
+        def call_json(self, **_kw):
+            return {"anchor_event": "x", "matches": ["1"]}, 50, 10, 0.0, "OK"
+
+    p_str, _, _, st_str = run_pure_star_meso(
+        "a3", 0, ds_a3, emb_a3, _StrDigitMatchClient(), graph=g_a3, labels_init=lab_a3,
+        max_seam_calls=0, max_star_calls=1,
+    )
+    assert st_str["parse_errors"] == 0 and st_str["star_merges"] == 1 and len(set(p_str.tolist())) == 1
+
+    # A4 & B3 & B4: Deterministic hash regardless of budget spent, error responses not cached, usage_missing ledger tracking
+    with tempfile.TemporaryDirectory() as tmp:
+        led = TokenLedger(log_dir=Path(tmp))
+        http_calls = []
+
+        class _MockBudgetClient(BudgetedLLMClient):
+            def _call_http(self, messages, max_retries=10, use_json_mode=None, max_tokens_override=None):
+                http_calls.append(max_tokens_override)
+                if len(http_calls) == 1:
+                    return '{"anchor_event": "ok", "matches": []}', 0, 0, 0.01, "stop", True
+                return "not valid json", 120, 15, 0.01, "stop", False
+
+        cl_b = _MockBudgetClient("Qwen/Qwen3-8B", led, max_tokens=384)
+        bk_a = CausalUniformBucket(tokens_per_block=2000, allow_carryover=False)
+        bk_a.start_block()
+        r_first = cl_b.call_json("q1", 0, "s", "star_merge", "sys", "usr_same", bucket=bk_a, est_completion_tokens=90)
+        assert r_first is not None and "USAGE_MISSING" in r_first[4]
+        assert http_calls[0] == 384
+
+        # Second call with DIFFERENT spent budget must hit the exact same cache hash!
+        bk_b = CausalUniformBucket(tokens_per_block=2000, allow_carryover=False)
+        bk_b.start_block()
+        bk_b.record_spend(1000, 0)
+        r_replay = cl_b.call_json("q2", 0, "s", "star_merge", "sys", "usr_same", bucket=bk_b, est_completion_tokens=90)
+        assert r_replay is not None and r_replay[4] == "CACHED_REPLAY|USAGE_MISSING"
+        assert len(http_calls) == 1, "Budget spent should not alter cache hash"
+        assert led.summary()["estimated_calls"] == 2 and led.summary()["estimated_tokens"] > 0
+
+        # B3: Parse error with non-zero tokens must NOT be cached in responses.jsonl
+        r_err = cl_b.call_json("q_err", 0, "s", "star_merge", "sys", "usr_err", bucket=bk_a, est_completion_tokens=90)
+        assert r_err is not None and "error" in r_err[0]
+        r_err_again = cl_b.call_json("q_err2", 0, "s", "star_merge", "sys", "usr_err", bucket=bk_a, est_completion_tokens=90)
+        assert len(http_calls) == 3, "PARSE_ERROR with non-zero tokens must not be cached"
+
+    # B1: Unnormalized embeddings (scaled x3) must not cause false-positive seams or distorted graph
+    g_norm = build_message_graph(ds_a1, emb_a1, knn_k=5, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+    g_x3 = build_message_graph(ds_a1, emb_a1 * 3.0, knn_k=5, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+    assert np.allclose(g_norm.embeddings, g_x3.embeddings, atol=1e-6)
+    s_norm = detect_clean_seams(g_norm, build_cluster_summaries(ds_a1, emb_a1, np.zeros(16, dtype=np.int64)))
+    s_x3 = detect_clean_seams(g_x3, build_cluster_summaries(ds_a1, emb_a1 * 3.0, np.zeros(16, dtype=np.int64)))
+    assert len(s_norm) == len(s_x3)
+    if s_norm:
+        assert abs(s_norm[0].sem_sep - s_x3[0].sem_sep) < 1e-5
+
+    # B2: O(1) GuardedUnionFind.can_merge on two 500-leaf components + protos length check
+    n_big = 1000
+    cids_big = list(range(n_big))
+    p_big = np.tile(u0, (n_big, 1)).astype(np.float32)
+    uf_big = GuardedUnionFind(cids_big, np.zeros((1, 1)), guard_sim=0.40, protos=p_big, sizes=[1] * n_big)
+    for k in range(1, 500):
+        assert uf_big.merge(0, k)
+    for k in range(501, 1000):
+        assert uf_big.merge(500, k)
+    uf_big.add_cannot_link(10, 510)
+    t0_uf = _time.perf_counter()
+    for _ in range(100):
+        assert not uf_big.can_merge(0, 500)
+    assert (_time.perf_counter() - t0_uf) < 0.1
+    try:
+        GuardedUnionFind([0, 1], np.eye(2), protos=np.ones((3, 2)))
+        assert False, "Expected ValueError for mismatched protos length"
+    except ValueError:
+        pass
+
+    # B5: embed_cache isolates same-length different texts + warns on legacy float16 mismatch
+    with tempfile.TemporaryDirectory() as tmp:
+        orig_enc = ec_mod.encode_texts_hf
+        try:
+            ec_mod.encode_texts_hf = lambda txts, **_kw: np.ones((len(txts), 8), dtype=np.float32) * (1.0 if txts[0] == "a" else 2.0)
+            ea = ec_mod.load_or_extract_block_embeddings("b5", 0, ["a", "b"], cache_dir=Path(tmp))
+            eb = ec_mod.load_or_extract_block_embeddings("b5", 0, ["c", "d"], cache_dir=Path(tmp))
+            assert not np.allclose(ea, eb), "Same-length different texts wrongly reused embed cache"
+            np.save(Path(tmp) / "leg_M00_sentence-transformers__all-MiniLM-L6-v2.npy", np.ones((2, 8), dtype=np.float16))
+            with warnings.catch_warnings(record=True) as w_leg:
+                warnings.simplefilter("always")
+                ec_mod.load_or_extract_block_embeddings("leg", 0, ["x", "y"], cache_dir=Path(tmp), storage_dtype="float32")
+                assert any("legacy float16" in str(w.message) for w in w_leg)
+        finally:
+            ec_mod.encode_texts_hf = orig_enc
+
+    # Low-severity checks: key_loader deepseek-chat, cross_day out-of-range matched_id & budget_skipped,
+    # anonymizer star_merge prompt builder, data_loader drop_unknown_dates
+    assert OPEN_SOURCE_PROVIDERS["deepseek"][1] == "deepseek-chat"
+    pfn = make_anonymized_prompt_fn("pseudonym")
+    q_sm = QueryItem(
+        query_id="sm0", query_type="star_merge", primary_nodes=[0, 4], candidate_clusters=[0, 1]
+    )
+    summs_a3 = build_cluster_summaries(ds_a3, emb_a3, lab_a3)
+    _, um_sm = pfn(q_sm, ds_a3, summs_a3)
+    assert "Anchor Cluster" in um_sm and "Candidate [1]" in um_sm
+
+    class _BadCrossClient:
+        def call_json(self, *, bucket=None, **_kw):
+            if bucket is not None and not bucket.can_spend(10):
+                return None
+            return {"daily_event": "x", "matched_id": 99, "reason": "oob"}, 40, 10, 0.0, "OK"
+
+    ds_cd_a = ds_a3.subset(list(range(4)))
+    ds_cd_b = ds_a3.subset(list(range(4, 8)))
+    emb_cd_a = emb_a3[:4]
+    emb_cd_b = 0.75 * emb_a3[:4] + np.sqrt(1.0 - 0.75**2) * np.tile(u1, (4, 1))
+    emb_cd_b /= np.linalg.norm(emb_cd_b, axis=1, keepdims=True)
+    cd_oob = evaluate_cross_day_stream(
+        [(0, ds_cd_a, emb_cd_a, np.zeros(4, dtype=np.int64)), (2, ds_cd_b, emb_cd_b, np.zeros(4, dtype=np.int64))],
+        "sug_cross_star", eval_start_block=2, min_cross_size=2, client=_BadCrossClient(), budget_per_block=5000,
+    )
+    assert cd_oob["stats"]["parse_errors"] == 1 and cd_oob["stats"]["llm_linked"] == 0
+
+    cd_bud0 = evaluate_cross_day_stream(
+        [(0, ds_cd_a, emb_cd_a, np.zeros(4, dtype=np.int64)), (2, ds_cd_b, emb_cd_b, np.zeros(4, dtype=np.int64))],
+        "sug_cross_star", eval_start_block=2, min_cross_size=2, client=_BadCrossClient(), budget_per_block=0,
+    )
+    assert cd_bud0["stats"]["budget_skipped"] == 1 and cd_bud0["stats"]["llm_queried"] == 0
+
+    ds_unk = ds_a3.subset(list(range(4)))
+    ds_unk.dates = ["2026-01-01", "2026-01-01", "unknown", "unknown"]
+    assert len(split_daily_blocks(ds_unk, min_block_size=1, drop_unknown_dates=True)) == 1
+
+
 if __name__ == "__main__":
     test_core_se_and_guarded_uf()
     test_star_meso_and_zero_llm_baselines()
@@ -1007,4 +1228,5 @@ if __name__ == "__main__":
     test_priority1_audit_and_anonymizer_fixes()
     test_priority2_clusterllm_imbalance_and_dynamic_cannot_link()
     test_trackA_audit_bugfixes_and_refinements()
+    test_trackA_round2_audit_fixes()
     print("ALL SUG-SED UNIT TESTS PASSED cleanly.")

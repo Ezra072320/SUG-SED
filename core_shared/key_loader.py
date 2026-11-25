@@ -29,7 +29,7 @@ OPEN_SOURCE_PROVIDERS: Dict[str, Tuple[str, str]] = {
     "modelscope": ("https://api-inference.modelscope.cn/v1", "Qwen/Qwen3-8B"),
     "cloudflare": ("https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1", "@cf/meta/llama-3.1-8b-instruct-fast"),
     "vllm": ("http://127.0.0.1:8000/v1", "Qwen/Qwen3-8B"),
-    "deepseek": ("https://api.deepseek.com/v1", "deepseek-flash"),
+    "deepseek": ("https://api.deepseek.com/v1", "deepseek-chat"),
 }
 
 

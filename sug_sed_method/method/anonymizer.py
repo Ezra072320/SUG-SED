@@ -14,7 +14,11 @@ import unicodedata
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from sug_sed_method.core.data_loader import SocialDataset
-from sug_sed_method.method.llm_client import build_pairwise_same_event_prompt, build_post_assign_prompt
+from sug_sed_method.method.llm_client import (
+    build_pairwise_same_event_prompt,
+    build_post_assign_prompt,
+    build_star_merge_prompt,
+)
 from sug_sed_method.method.star_meso import ClusterSummary
 
 
@@ -721,6 +725,11 @@ def make_anonymized_prompt_fn(
             t1 = " | ".join(pds.texts[m][:130] for m in q.seam_sub1_medoids[:3])
             t2 = " | ".join(pds.texts[m][:130] for m in q.seam_sub2_medoids[:3])
             return build_pairwise_same_event_prompt(t1, t2)
+        if q.query_type == "star_merge" and q.candidate_clusters:
+            anchor_cid = q.candidate_clusters[0]
+            cand_cids = q.candidate_clusters[1:]
+            if anchor_cid in psumm and all(c in psumm for c in cand_cids):
+                return build_star_merge_prompt(psumm[anchor_cid], [psumm[c] for c in cand_cids], pds)
         return build_post_assign_prompt(q.primary_nodes[0], q.candidate_clusters, psumm, pds)
 
     def _prompt_fn(

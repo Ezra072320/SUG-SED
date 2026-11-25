@@ -34,7 +34,7 @@ from scipy import sparse
 from scipy.sparse.linalg import eigsh
 
 from sug_sed_method.core.data_loader import SocialDataset
-from sug_sed_method.core.graph_builder import MessageGraph, build_message_graph
+from sug_sed_method.core.graph_builder import MessageGraph, _ensure_l2_normalized, build_message_graph
 from sug_sed_method.core.partition_cache import load_or_solve_2d_se
 from sug_sed_method.method.llm_client import (
     BudgetedLLMClient,
@@ -202,6 +202,10 @@ class GuardedUnionFind:
         self.comp_members: Dict[int, Set[int]] = {c: {c} for c in self.cids}
         self.use_centroid = protos is not None
         if protos is not None:
+            if len(protos) != len(self.cids):
+                raise ValueError(f"protos length {len(protos)} != cids length {len(self.cids)}")
+            if sizes is not None and len(sizes) != len(self.cids):
+                raise ValueError(f"sizes length {len(sizes)} != cids length {len(self.cids)}")
             sz_arr = list(sizes) if sizes is not None else [1] * len(self.cids)
             self.comp_vec: Dict[int, np.ndarray] = {
                 c: np.asarray(protos[i], dtype=np.float64) * max(1, int(sz_arr[i]))
@@ -212,6 +216,7 @@ class GuardedUnionFind:
             self.comp_vec = {}
             self.comp_size = {}
         self.cannot_pairs: Set[Tuple[int, int]] = set()
+        self.comp_cl_counts: Dict[int, Dict[int, int]] = {c: {} for c in self.cids}
         self.blocked_count: int = 0
 
     @staticmethod
@@ -232,15 +237,8 @@ class GuardedUnionFind:
             return False
         if not self.enforce_guards:
             return True
-        if self._ekey(c1, c2) in self.cannot_pairs:
+        if self.comp_cl_counts[r1].get(r2, 0) >= self.min_cl_votes:
             return False
-        cl_hits = 0
-        for a in self.comp_members[r1]:
-            for b in self.comp_members[r2]:
-                if self._ekey(a, b) in self.cannot_pairs:
-                    cl_hits += 1
-                    if cl_hits >= self.min_cl_votes:
-                        return False
         if self.guard_sim > 0.0:
             if self.use_centroid:
                 if float(np.dot(self._comp_proto(r1), self._comp_proto(r2))) < self.guard_sim:
@@ -256,7 +254,14 @@ class GuardedUnionFind:
         return True
 
     def add_cannot_link(self, c1: int, c2: int) -> None:
-        self.cannot_pairs.add(self._ekey(c1, c2))
+        ek = self._ekey(c1, c2)
+        if ek in self.cannot_pairs:
+            return
+        self.cannot_pairs.add(ek)
+        r1, r2 = self.comp_of[c1], self.comp_of[c2]
+        if r1 != r2:
+            self.comp_cl_counts[r1][r2] = self.comp_cl_counts[r1].get(r2, 0) + 1
+            self.comp_cl_counts[r2][r1] = self.comp_cl_counts[r2].get(r1, 0) + 1
 
     def merge(self, c1: int, c2: int) -> bool:
         r1, r2 = self.comp_of[c1], self.comp_of[c2]
@@ -272,6 +277,16 @@ class GuardedUnionFind:
             self.comp_of[m] = r1
         self.comp_members[r1].update(self.comp_members[r2])
         del self.comp_members[r2]
+
+        cl_r2 = self.comp_cl_counts.pop(r2, {})
+        cl_r2.pop(r1, None)
+        self.comp_cl_counts[r1].pop(r2, None)
+        for nbr_r, cnt in cl_r2.items():
+            self.comp_cl_counts[r1][nbr_r] = self.comp_cl_counts[r1].get(nbr_r, 0) + cnt
+            if nbr_r in self.comp_cl_counts:
+                self.comp_cl_counts[nbr_r].pop(r2, None)
+                self.comp_cl_counts[nbr_r][r1] = self.comp_cl_counts[nbr_r].get(r1, 0) + cnt
+
         if self.use_centroid:
             self.comp_vec[r1] = self.comp_vec[r1] + self.comp_vec[r2]
             self.comp_size[r1] += self.comp_size[r2]
@@ -407,7 +422,7 @@ def detect_clean_seams(
 ) -> List[SeamCandidate]:
     """Detect minority false-merge pockets without conductance cap or non-entity TF-IDF."""
     adj = graph.adj
-    emb = graph.embeddings
+    emb = _ensure_l2_normalized(graph.embeddings)
     out: List[SeamCandidate] = []
 
     for cid, summ in sorted(summaries.items()):
@@ -529,6 +544,7 @@ def run_pure_star_meso(
     """
     t_cpu0 = time.perf_counter()
     n = len(ds)
+    embeddings = _ensure_l2_normalized(embeddings)
     if anonymizer is not None or (pre_anonymized and orig_ds_for_audit is not None):
         from sug_sed_method.method.anonymizer import (
             QueryItem,
@@ -590,6 +606,8 @@ def run_pure_star_meso(
             uf0 = GuardedUnionFind(
                 cids0, sim0, guard_sim=guard_sim, enforce_guards=use_guarded_uf, protos=protos0, sizes=sizes0
             )
+            for c in cids0:
+                uf0.comp_vec[c] = embeddings[summs0[c].members].sum(axis=0, dtype=np.float64)
             pairs0: List[Tuple[float, int, int]] = []
             for i in range(len(cids0)):
                 row = sim0[i]
@@ -598,6 +616,14 @@ def run_pure_star_meso(
                         pairs0.append((float(row[j]), cids0[i], cids0[int(j)]))
             pairs0.sort(key=lambda x: -x[0])
             for _s, c1, c2 in pairs0:
+                r1, r2 = uf0.root(c1), uf0.root(c2)
+                if r1 == r2:
+                    continue
+                if use_guarded_uf:
+                    live_cos = float(np.dot(uf0._comp_proto(r1), uf0._comp_proto(r2)))
+                    if live_cos < eff_tau_auto:
+                        uf0.blocked_count += 1
+                        continue
                 if uf0.merge(c1, c2):
                     auto_merge_ops += 1
             blocked_guards += uf0.blocked_count
@@ -674,7 +700,7 @@ def run_pure_star_meso(
             else:
                 assert client is not None
                 est_seam_tok = int((len(sys_msg) + len(user_msg)) / 3.4) + 85
-                if seam_cap is not None and seam_calls > 0 and (seam_tokens_spent + est_seam_tok) > seam_cap:
+                if seam_cap is not None and (seam_tokens_spent + est_seam_tok) > seam_cap:
                     break
                 t_api0 = time.perf_counter()
                 res_tuple = client.call_json(
@@ -743,22 +769,20 @@ def run_pure_star_meso(
         )
         for c in all_cids:
             uf.comp_vec[c] = embeddings[summs[c].members].sum(axis=0, dtype=np.float64)
+        for n1, n2 in seam_split_node_pairs:
+            ca, cb = int(labels[n1]), int(labels[n2])
+            if ca != cb and ca in uf.comp_of and cb in uf.comp_of:
+                uf.add_cannot_link(ca, cb)
 
         comp_summs: Dict[int, ClusterSummary] = dict(summs)
         active_roots: Set[int] = set(all_cids)
         eff_k_nb = int(k_nb) if use_star_packing else 1
         eff_max_star_calls = max_star_calls if use_star_packing else max(80, max_star_calls * 3)
-        queried_leaf_pairs: Set[Tuple[int, int]] = set()
+        queried_root_nbrs: Dict[int, Set[int]] = {c: set() for c in all_cids}
         rng = np.random.default_rng(seed)
 
         def _components_queried(r1: int, r2: int) -> bool:
-            assert uf is not None
-            for a in uf.comp_members[r1]:
-                for b in uf.comp_members[r2]:
-                    ek = (a, b) if a < b else (b, a)
-                    if ek in queried_leaf_pairs:
-                        return True
-            return False
+            return r2 in queried_root_nbrs[r1]
 
         if not use_bayes_band:
             tiers: List[Tuple[float, float, int]] = [(0.35, eff_tau_auto, 1)]
@@ -934,10 +958,8 @@ def run_pure_star_meso(
                         all_shown[int(m)] = True
 
                 for r2 in cand_roots:
-                    for a_leaf in uf.comp_members[anchor_r]:
-                        for b_leaf in uf.comp_members[r2]:
-                            ek = (a_leaf, b_leaf) if a_leaf < b_leaf else (b_leaf, a_leaf)
-                            queried_leaf_pairs.add(ek)
+                    queried_root_nbrs[anchor_r].add(r2)
+                    queried_root_nbrs[r2].add(anchor_r)
 
                 if "error" in parsed:
                     parse_errors += 1
@@ -956,21 +978,35 @@ def run_pure_star_meso(
                         anon_leak_terms += len(leaked)
 
                 matched_pos: Set[int] = set()
+                parse_ok = True
                 if not use_star_packing and "matches" not in parsed and "same_event" in parsed:
                     if _parse_bool(parsed.get("same_event", False)):
                         matched_pos.add(1)
                 else:
-                    raw_matches = parsed.get("matches", [])
-                    if isinstance(raw_matches, list):
+                    raw_matches = parsed.get("matches", None)
+                    if not isinstance(raw_matches, list):
+                        parse_ok = False
+                    else:
                         for item in raw_matches:
-                            if isinstance(item, int):
-                                matched_pos.add(item)
+                            mid: Optional[int] = None
+                            if isinstance(item, int) and not isinstance(item, bool):
+                                mid = item
+                            elif isinstance(item, str) and item.strip().isdigit():
+                                mid = int(item.strip())
                             elif isinstance(item, dict) and "id" in item:
-                                try:
-                                    mid = int(item["id"])
-                                    matched_pos.add(mid)
-                                except (ValueError, TypeError):
-                                    pass
+                                raw_id = item["id"]
+                                if isinstance(raw_id, int) and not isinstance(raw_id, bool):
+                                    mid = raw_id
+                                elif isinstance(raw_id, str) and raw_id.strip().isdigit():
+                                    mid = int(raw_id.strip())
+                            if mid is None or mid < 1 or mid > len(cand_roots):
+                                parse_ok = False
+                                break
+                            matched_pos.add(mid)
+
+                if not parse_ok:
+                    parse_errors += 1
+                    continue
 
                 # Apply CANNOT-LINK first on unmatched candidates, then GUARDED MERGE with live component refresh
                 for pos, r2 in enumerate(cand_roots, start=1):
@@ -994,6 +1030,15 @@ def run_pure_star_meso(
                         comp_summs[new_r] = new_summ
                         comp_summs.pop(old_r, None)
                         active_roots.discard(old_r)
+
+                        old_q = queried_root_nbrs.pop(old_r, set())
+                        old_q.discard(new_r)
+                        for qnbr in old_q:
+                            if qnbr in queried_root_nbrs:
+                                queried_root_nbrs[qnbr].discard(old_r)
+                                queried_root_nbrs[qnbr].add(new_r)
+                                queried_root_nbrs[new_r].add(qnbr)
+                        queried_root_nbrs[new_r].discard(new_r)
 
                         uf.comp_vec[new_r] = embeddings[merged_members].sum(axis=0, dtype=np.float64)
                         uf.comp_size[new_r] = len(merged_members)

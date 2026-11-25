@@ -57,6 +57,7 @@ def event_macro_bcubed(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     subset_mask: Optional[np.ndarray] = None,
+    _precomputed_b3: Optional[Tuple[np.ndarray, np.ndarray, np.ndarray]] = None,
 ) -> Dict[str, float]:
     """Compute Micro B-cubed and Event Macro B-cubed using full-partition counts.
 
@@ -66,7 +67,9 @@ def event_macro_bcubed(
     """
     y_true = np.asarray(y_true)
     y_pred = np.asarray(y_pred)
-    p_item, r_item, f1_item = item_bcubed_scores(y_true, y_pred)
+    p_item, r_item, f1_item = (
+        _precomputed_b3 if _precomputed_b3 is not None else item_bcubed_scores(y_true, y_pred)
+    )
 
     if subset_mask is not None:
         mask = np.asarray(subset_mask, dtype=bool)
@@ -187,6 +190,7 @@ def stratified_tail_audit(
     y_pred: np.ndarray,
     tail_max_size: int = 10,
     head_min_size: int = 50,
+    _precomputed_b3: Optional[Tuple[np.ndarray, np.ndarray, np.ndarray]] = None,
 ) -> Dict[str, Any]:
     """Evaluate Head / Medium / Tail events separately plus Tail Discovery Recall."""
     y_true = np.asarray(y_true)
@@ -195,7 +199,9 @@ def stratified_tail_audit(
     pred_counts = Counter(y_pred.tolist())
     joint_counts = Counter(zip(y_true.tolist(), y_pred.tolist()))
 
-    p_item, r_item, _ = item_bcubed_scores(y_true, y_pred)
+    p_item, r_item, _ = (
+        _precomputed_b3 if _precomputed_b3 is not None else item_bcubed_scores(y_true, y_pred)
+    )
 
     strata_events: Dict[str, list[Any]] = {"tail": [], "medium": [], "head": []}
     for ev, cnt in true_counts.items():
@@ -254,6 +260,7 @@ def full_partition_audit(
     """Comprehensive Gate A partition audit report."""
     yt = np.asarray(y_true)
     yp = np.asarray(y_pred)
+    b3_after = item_bcubed_scores(yt, yp)
 
     report: Dict[str, Any] = {
         "n_posts": int(len(yt)),
@@ -262,15 +269,16 @@ def full_partition_audit(
         "nmi": float(normalized_mutual_info_score(yt, yp)),
         "ami": float(adjusted_mutual_info_score(yt, yp)),
         "ari": float(adjusted_rand_score(yt, yp)),
-        "bcubed_full": event_macro_bcubed(yt, yp),
+        "bcubed_full": event_macro_bcubed(yt, yp, _precomputed_b3=b3_after),
         "pairwise_errors": pairwise_error_counts(yt, yp),
-        "stratified": stratified_tail_audit(yt, yp, tail_max_size, head_min_size),
+        "stratified": stratified_tail_audit(yt, yp, tail_max_size, head_min_size, _precomputed_b3=b3_after),
     }
 
     if y_before is not None:
         yb = np.asarray(y_before)
+        b3_before = item_bcubed_scores(yt, yb)
         report["delta_ami"] = report["ami"] - float(adjusted_mutual_info_score(yt, yb))
-        before_b3 = event_macro_bcubed(yt, yb)
+        before_b3 = event_macro_bcubed(yt, yb, _precomputed_b3=b3_before)
         report["delta_macro_b3_f1"] = report["bcubed_full"]["macro_b3_f1"] - before_b3["macro_b3_f1"]
         report["delta_micro_b3_f1"] = report["bcubed_full"]["micro_b3_f1"] - before_b3["micro_b3_f1"]
         report["error_transition"] = pairwise_error_transition(yt, yb, yp)
@@ -278,13 +286,13 @@ def full_partition_audit(
         if queried_mask is not None:
             qmask = np.asarray(queried_mask, dtype=bool)
             unq_mask = ~qmask
-            _, _, f1_b = item_bcubed_scores(yt, yb)
-            _, _, f1_a = item_bcubed_scores(yt, yp)
+            f1_b = b3_before[2]
+            f1_a = b3_after[2]
 
-            unq_before = event_macro_bcubed(yt, yb, subset_mask=unq_mask)
-            unq_after = event_macro_bcubed(yt, yp, subset_mask=unq_mask)
-            q_before = event_macro_bcubed(yt, yb, subset_mask=qmask)
-            q_after = event_macro_bcubed(yt, yp, subset_mask=qmask)
+            unq_before = event_macro_bcubed(yt, yb, subset_mask=unq_mask, _precomputed_b3=b3_before)
+            unq_after = event_macro_bcubed(yt, yp, subset_mask=unq_mask, _precomputed_b3=b3_after)
+            q_before = event_macro_bcubed(yt, yb, subset_mask=qmask, _precomputed_b3=b3_before)
+            q_after = event_macro_bcubed(yt, yp, subset_mask=qmask, _precomputed_b3=b3_after)
 
             diff_unq = f1_a[unq_mask] - f1_b[unq_mask]
             diff_q = f1_a[qmask] - f1_b[qmask]

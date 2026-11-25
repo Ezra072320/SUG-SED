@@ -115,6 +115,18 @@ def compute_hf_embeddings(
     return np.vstack(all_embs)
 
 
+def _ensure_l2_normalized(embeddings: np.ndarray, tol: float = 1e-3) -> np.ndarray:
+    """Return float32 embeddings with every non-zero row L2-normalized to unit length."""
+    emb = np.asarray(embeddings, dtype=np.float32)
+    if emb.ndim != 2 or emb.shape[0] == 0:
+        return emb
+    norms = np.linalg.norm(emb, axis=1, keepdims=True)
+    nz = norms.ravel() > 1e-12
+    if np.any(nz) and float(np.max(np.abs(norms.ravel()[nz] - 1.0))) > tol:
+        emb = np.divide(emb, np.maximum(norms, 1e-12)).astype(np.float32)
+    return emb
+
+
 def _build_semantic_knn(
     embeddings: np.ndarray,
     timestamps: np.ndarray,
@@ -128,7 +140,7 @@ def _build_semantic_knn(
     if n <= 1:
         return sparse.csr_matrix((n, n), dtype=np.float64)
     k_eff = min(k, n - 1)
-    emb = embeddings.astype(np.float32, copy=False)
+    emb = _ensure_l2_normalized(embeddings)
 
     rows_list: List[np.ndarray] = []
     cols_list: List[np.ndarray] = []
@@ -270,6 +282,7 @@ def build_message_graph(
     compute_non_entity_tfidf: bool = True,
 ) -> MessageGraph:
     """Build combined sparse heterogeneous + semantic message graph."""
+    embeddings = _ensure_l2_normalized(embeddings)
     sem_adj = _build_semantic_knn(
         embeddings=embeddings,
         timestamps=ds.timestamps,

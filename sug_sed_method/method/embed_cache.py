@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import time
+import warnings
 from pathlib import Path
 from typing import Any, Dict, Optional, Sequence, Tuple
 
@@ -64,6 +66,17 @@ def encode_texts_hf(
     return np.vstack(out_chunks)
 
 
+def _texts_fingerprint(texts: Sequence[str]) -> str:
+    """Compute a deterministic SHA-256 fingerprint over block text contents."""
+    h = hashlib.sha256()
+    h.update(f"n={len(texts)}\n".encode("ascii"))
+    for t in texts:
+        b = str(t).encode("utf-8", errors="replace")
+        h.update(len(b).to_bytes(4, "little", signed=False))
+        h.update(b)
+    return h.hexdigest()[:12]
+
+
 def load_or_extract_block_embeddings(
     dataset_name: str,
     block_id: int,
@@ -71,16 +84,32 @@ def load_or_extract_block_embeddings(
     model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
     cache_dir: Optional[Path] = None,
     storage_dtype: str = "float32",
+    allow_legacy_cache: bool = True,
 ) -> np.ndarray:
     """Load precomputed block embeddings from disk cache or extract on GPU/CPU."""
     cdir = Path(cache_dir) if cache_dir is not None else EMBED_CACHE_DIR
     cdir.mkdir(parents=True, exist_ok=True)
     safe_model = model_name.replace("/", "__")
-    cache_path = cdir / f"{dataset_name}_M{int(block_id):02d}_{safe_model}.npy"
+    text_hash = _texts_fingerprint(texts)
+    cache_path = cdir / f"{dataset_name}_M{int(block_id):02d}_{safe_model}_{storage_dtype}_{text_hash}.npy"
     if cache_path.exists():
         emb = np.load(cache_path).astype(np.float32)
         if len(emb) == len(texts):
             return emb
+
+    if allow_legacy_cache:
+        legacy_path = cdir / f"{dataset_name}_M{int(block_id):02d}_{safe_model}.npy"
+        if legacy_path.exists():
+            raw_legacy = np.load(legacy_path)
+            if len(raw_legacy) == len(texts):
+                if raw_legacy.dtype.name != storage_dtype:
+                    warnings.warn(
+                        f"Loaded legacy {raw_legacy.dtype} embedding cache {legacy_path.name} "
+                        f"while storage_dtype={storage_dtype!r}.",
+                        RuntimeWarning,
+                        stacklevel=2,
+                    )
+                return raw_legacy.astype(np.float32)
 
     t0 = time.time()
     emb = encode_texts_hf(texts, model_name=model_name, batch_size=64, max_length=128)

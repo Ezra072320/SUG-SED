@@ -164,6 +164,7 @@ def split_daily_blocks(
     ds: SocialDataset,
     merge_initial_days: int = 1,
     min_block_size: int = 200,
+    drop_unknown_dates: bool = False,
 ) -> List[Tuple[str, np.ndarray]]:
     """Split a chronologically sorted SocialDataset into daily streaming blocks.
 
@@ -216,7 +217,7 @@ def split_daily_blocks(
             )
         else:
             merged.append((buf_name, np.asarray(buf_idx, dtype=np.int64)))
-    if unknown_idx:
+    if unknown_idx and not drop_unknown_dates:
         merged.append(("unknown", np.asarray(unknown_idx, dtype=np.int64)))
     return merged
 

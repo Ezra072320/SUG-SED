@@ -1,19 +1,19 @@
 # `sug_sed_method` · `SUG-SED v2` (`Pure-Star-Meso` + `SUG-CrossStar`) 核心方法独立代码包
 
-本目录是从主研究仓库**独立拷贝并自洽重构**的 Track A 论文主体方法处理流程代码包，仅包含论文提出的 5 阶段核心算法、流式数据/构图/结构熵基础设施、零前瞻因果预算账本、防雪崩并查集与跨天演化模块（不含 10 篇外部对比基线与 Gate 1/2 评测脚手架）。原仓库中的 [core_shared/](../core_shared/)、[trackA_sug_sed/](../trackA_sug_sed/) 及 [protocol_v2.json](../trackA_sug_sed/protocol_v2.json) 均保持原样未改动。
+本目录是从主研究仓库**独立拷贝并自洽重构**的 Track A 论文主体方法处理流程代码包，仅包含论文提出的 5 阶段核心算法、流式数据/构图/结构熵基础设施、零前瞻因果预算账本、防雪崩并查集与跨天演化模块（不含 10 篇外部对比基线与 Gate 1/2 评测脚手架；部分底层工具保留了与主仓同步的兼容接口）。原仓库中的 [core_shared/](../core_shared/)、[trackA_sug_sed/](../trackA_sug_sed/) 及 [protocol_v2.json](../trackA_sug_sed/protocol_v2.json) 均在主仓管理。
 
 ---
 
 ## 一、五阶段方法主体流程
 
 1. **Stage 1 · 高纯度异构消息图与二维结构熵底座（Pure 2D-SE Base）**  
-   由 [data_loader.py](./core/data_loader.py)、[embed_cache.py](./method/embed_cache.py)、[graph_builder.py](./core/graph_builder.py) 与 [se_solver.py](./core/se_solver.py)（配 [partition_cache.py](./core/partition_cache.py)）构成：在冻结句向量（`float32` 缓存一致精度）与高语义门槛 `knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5` 上构建稀疏语义 $k$-NN + 属性共现异构图（大属性桶按时间窗局部近邻连接，不丢弃头条事件桶），采用全图精确体积更新最小堆凝聚求解二维结构熵并做节点迁移精化，优先抑制初始假合并，获得高纯度介观微簇。
+   由 [data_loader.py](./core/data_loader.py)、[embed_cache.py](./method/embed_cache.py)、[graph_builder.py](./core/graph_builder.py) 与 [se_solver.py](./core/se_solver.py)（配原子写入且含编码器与图指纹的 [partition_cache.py](./core/partition_cache.py)）构成：对输入句向量自动执行单位 L2 校验/归一化（默认文本指纹化 `float32` 缓存并兼容旧版 `float16` 缓存回退），在高语义门槛 `knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5` 上构建稀疏语义 $k$-NN + 属性共现异构图（大属性桶按时间窗局部近邻连接，不丢弃头条事件桶），采用全图精确体积更新最小堆凝聚求解二维结构熵并做节点迁移精化，优先抑制初始假合并，获得高纯度介观微簇。
 2. **Stage 2 · 零成本高置信合并与质心防雪崩并查集（`AutoMerge` + `GuardedUnionFind`）**  
-   位于 [star_meso.py](./method/star_meso.py)：在多帖微簇域（`size >= 2`）按原型余弦降序自动合并高置信微簇（`tau_auto=0.85`）；全部 `AutoMerge` 与后续 LLM 合并操作统一受控于 `GuardedUnionFind(guard_sim=0.40, min_cl_votes=1)`，阻断传递闭包链式误合并。
+   位于 [star_meso.py](./method/star_meso.py)：在多帖微簇域（`size >= 2`）按原型余弦降序自动合并高置信微簇（`tau_auto=0.85`），每次合并前均校验实时分量质心余弦 `>= tau_auto` 以阻断传递闭包链式漂移；全部 `AutoMerge` 与后续 LLM 合并操作统一受控于 $O(1)$ 分量级互斥索引的 `GuardedUnionFind(guard_sim=0.40, min_cl_votes=1)`。
 3. **Stage 3 · 干净介观缝隙拆分（`Clean Seam Split` · 核心通用引擎）**  
-   位于 [star_meso.py](./method/star_meso.py)（`detect_clean_seams`）：对大小 `>= 8` 的混杂簇并行执行确定性最远点球面 $k$-means（含小簇 `k=2` 均衡二分）与 Fiedler 谱二分，提取口袋大小 `>= 3`（`<= |C|//2`）、语义分离度 `sem_sep >= 0.12` 且排除高交叉相似度精准转发团伙（`len < 6, intra_pock > 0.96, cross_sim > 0.65`）的候选缝隙，按效用排序取前 `max_seam_calls=3`（且单块 Seam 支出不超过块预算 `35%`，防止低预算下饿死 Stage 4）送交 [llm_client.py](./method/llm_client.py) 平衡对比裁决。
+   位于 [star_meso.py](./method/star_meso.py)（`detect_clean_seams`）：对大小 `>= 8` 的混杂簇并行执行确定性最远点球面 $k$-means（含小簇 `k=2` 均衡二分）与 Fiedler 谱二分，提取口袋大小 `>= 3`（`<= |C|//2`）、语义分离度 `sem_sep >= 0.12` 且排除高交叉相似度精准转发团伙（`len < 6, intra_pock > 0.96, cross_sim > 0.65`）的候选缝隙，按效用排序取前 `max_seam_calls=3`（且单块 Seam 支出严格不超过块预算 `35%`）送交 [llm_client.py](./method/llm_client.py) 平衡对比裁决；所有确认拆分的缝隙立即注入 Stage 4 的 `GuardedUnionFind` 硬互斥约束，防止同块内被静默重新合回。
 4. **Stage 4 · 两阶段多候选星型打包裁决（`Star-Merge` · 核心通用引擎）**  
-   位于 [star_meso.py](./method/star_meso.py)（`run_pure_star_meso`）：第 1 阶段聚焦模糊核心带 `[0.55, 0.85)`（目标大小 `>= 2`），第 2 阶段扩充至 `[0.45, 0.85)` 含孤立微簇；每次合并后实时重建根分量的质心、`size`、`medoids`、簇级 TF-IDF 关键词及相似度矩阵行，并将 1 个锚点根分量与至多 `k_nb=4` 个最模糊邻分量打包并发查询（结构安全上限 `max_star_calls=24`，在 `10,000` tokens/block 桶下实际通常受 Token 预算约束运行 `7–18` 次；全流程受 [token_ledger.py](./core/token_ledger.py) `CausalUniformBucket(10000, allow_carryover=False)` 与 [anonymizer.py](./method/anonymizer.py) 可选脱敏审计约束）。
+   位于 [star_meso.py](./method/star_meso.py)（`run_pure_star_meso`）：第 1 阶段聚焦模糊核心带 `[0.55, 0.85)`（目标大小 `>= 2`），第 2 阶段扩充至 `[0.45, 0.85)` 含孤立微簇；每次合并后实时重建根分量的质心、`size`、`medoids`、簇级 TF-IDF 关键词及相似度矩阵行，并将 1 个锚点根分量与至多 `k_nb=4` 个最模糊邻分量打包并发查询，且严格校验返回 `matches.id` 边界（越界或畸形输出计入 `parse_errors` 而不污染 `CANNOT_LINK`）；结构安全上限 `max_star_calls=24`（`10,000` tokens/block 桶下实际受预算约束运行 `7–18` 次），全流程受 [token_ledger.py](./core/token_ledger.py) `CausalUniformBucket(10000, allow_carryover=False)`（缺失 API `usage` 单独计入 `estimated_calls/tokens` 且不缓存错误响应，请求哈希不随运行时剩余预算变化）与 [anonymizer.py](./method/anonymizer.py) 可选脱敏审计约束。
 5. **Stage 5 · 跨天流式原型记忆与不确定带裁决（`SUG-CrossStar`）**  
    位于 [cross_day.py](./method/cross_day.py)（`GlobalEventMemory` & `evaluate_cross_day_stream`）：在 14 块滑动窗口内主动淘汰过期事件以维持 $O(|E_{\text{active}}|\cdot d)$ 复杂度，并施加同块唯一性及日内 `CANNOT_LINK`/Seam 拆分互斥约束防止静默二次合并；执行 `tau_hi=0.90` 自动续连，对中间模糊带 `[0.65, 0.90)`（且日簇大小 `>= 3`）在因果结转预算桶（`budget=6000, max_carryover_mult=1.5`）内调用跨天星型匹配 Prompt 合并跨日演化事件（`tau_fb=0.90` 即预算耗尽时保守新建事件）。
 

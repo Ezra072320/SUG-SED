@@ -38,6 +38,7 @@ class TokenRecord:
     status: str
     from_cache: bool
     timestamp: float
+    usage_missing: bool = False
 
 
 class CumulativeTokenBucket:
@@ -373,13 +374,13 @@ class TokenLedger:
         self.total_completion_tokens = 0
         self.total_calls = 0
         self.cached_calls = 0
+        self.estimated_calls = 0
+        self.estimated_tokens = 0
 
     @staticmethod
     def _is_transient_http_error(obj: Dict[str, Any]) -> bool:
         resp = obj.get("response", {})
-        pt = int(obj.get("prompt_tokens", 0))
-        ct = int(obj.get("completion_tokens", 0))
-        return isinstance(resp, dict) and ("error" in resp) and pt == 0 and ct == 0
+        return isinstance(resp, dict) and ("error" in resp)
 
     def _load_responses_from_file(self, path: Path) -> None:
         if not path.exists():
@@ -423,9 +424,13 @@ class TokenLedger:
         status: str,
         response_payload: Dict[str, Any],
         from_cache: bool = False,
+        usage_missing: bool = False,
     ) -> TokenRecord:
         total = int(prompt_tokens) + int(completion_tokens)
         cost = self.estimate_cost_cny(prompt_tokens, completion_tokens)
+        is_usage_missing = bool(usage_missing) or (
+            isinstance(response_payload, dict) and bool(response_payload.get("usage_missing", False))
+        ) or ("USAGE_MISSING" in status)
         rec = TokenRecord(
             request_id=request_id,
             block_id=int(block_id),
@@ -441,6 +446,7 @@ class TokenLedger:
             status=status,
             from_cache=bool(from_cache),
             timestamp=time.time(),
+            usage_missing=is_usage_missing,
         )
 
         with self._lock:
@@ -449,17 +455,25 @@ class TokenLedger:
             self.total_calls += 1
             if from_cache:
                 self.cached_calls += 1
+            if rec.usage_missing:
+                self.estimated_calls += 1
+                self.estimated_tokens += rec.total_tokens
 
             with self.journal_path.open("a", encoding="utf-8") as jf:
                 jf.write(json.dumps(asdict(rec), ensure_ascii=False) + "\n")
 
-            if not from_cache and not (rec.prompt_tokens == 0 and rec.completion_tokens == 0 and status.startswith("HTTP_ERROR")):
+            is_err = (
+                (isinstance(response_payload, dict) and "error" in response_payload)
+                or status.startswith(("HTTP_ERROR", "PARSE_ERROR"))
+            )
+            if not from_cache and not is_err:
                 resp_entry = {
                     "request_hash": request_hash,
                     "request_id": request_id,
                     "model": model,
                     "prompt_tokens": rec.prompt_tokens,
                     "completion_tokens": rec.completion_tokens,
+                    "usage_missing": rec.usage_missing,
                     "latency_sec": round(rec.latency_sec, 4),
                     "response": response_payload,
                 }
@@ -479,6 +493,8 @@ class TokenLedger:
             return {
                 "total_calls": self.total_calls,
                 "cached_calls": self.cached_calls,
+                "estimated_calls": self.estimated_calls,
+                "estimated_tokens": self.estimated_tokens,
                 "prompt_tokens": self.total_prompt_tokens,
                 "completion_tokens": self.total_completion_tokens,
                 "total_tokens": total,

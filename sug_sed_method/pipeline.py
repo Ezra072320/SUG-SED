@@ -304,8 +304,8 @@ def run_dataset_pipeline(args: argparse.Namespace) -> None:
 
     if args.cross_day:
         min_eval = min(block_ids)
-        # Align with protocol_v2.json: warmup uses M_00..M_05 (all blocks prior to min_eval up to 6)
-        warmup_ids = [w for w in range(min(6, min_eval))]
+        # Contiguous prior window (e.g. M_00..M_05 when evaluating from M_06, up to 14 prior blocks)
+        warmup_ids = [w for w in range(max(0, min_eval - 14), min_eval)]
         stream: List[Tuple[int, SocialDataset, np.ndarray, np.ndarray]] = []
         for wid in warmup_ids:
             _bname, widx = daily_blocks[wid]

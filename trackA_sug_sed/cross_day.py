@@ -140,6 +140,7 @@ def evaluate_cross_day_stream(
         "llm_rejected": 0,
         "spawned_new": 0,
         "parse_errors": 0,
+        "budget_skipped": 0,
         "blocked_same_block_collisions": 0,
         "same_block_gid_collisions": 0,
         "cross_tokens": 0,
@@ -209,8 +210,10 @@ def evaluate_cross_day_stream(
 
         for cid in ordered_cids:
             summ = summaries[cid]
-            vs, cs = np.unique(ds.labels[summ.members], return_counts=True)
-            cur_maj = int(vs[int(np.argmax(cs))])
+            cur_maj = 0
+            if mode == "oracle_band":
+                vs, cs = np.unique(ds.labels[summ.members], return_counts=True)
+                cur_maj = int(vs[int(np.argmax(cs))])
 
             if mode == "no_link" or not act_gids:
                 _spawn_gid(cid, cur_maj)
@@ -312,6 +315,7 @@ def evaluate_cross_day_stream(
                     )
                     if res is None:
                         # Causal cross budget exhausted -> tau_fb fallback (when tau_fb == tau_hi == 0.90, always spawns new)
+                        stats["budget_skipped"] += 1
                         if best_cos >= tau_fb:
                             _link_to_gid(cid, best_gid)
                             stats["auto_linked"] += 1
@@ -322,19 +326,23 @@ def evaluate_cross_day_stream(
                         parsed, pt, ct, _lat, _st = res
                         stats["llm_queried"] += 1
                         stats["cross_tokens"] += pt + ct
-                        if isinstance(parsed, dict) and "error" in parsed:
+                        has_api_err = isinstance(parsed, dict) and "error" in parsed
+                        if has_api_err:
                             stats["parse_errors"] += 1
                         matched_id = parsed.get("matched_id", None) if isinstance(parsed, dict) else None
                         chosen_gid: Optional[int] = None
-                        if matched_id is not None:
-                            try:
-                                m_idx = int(matched_id)
-                                if 1 <= m_idx <= len(cand_events):
-                                    cand_gid = cand_events[m_idx - 1].global_id
-                                    if _gid_allowed(cid, cand_gid):
-                                        chosen_gid = cand_gid
-                            except (ValueError, TypeError):
-                                chosen_gid = None
+                        if matched_id is not None and not has_api_err:
+                            m_idx: Optional[int] = None
+                            if isinstance(matched_id, int) and not isinstance(matched_id, bool):
+                                m_idx = matched_id
+                            elif isinstance(matched_id, str) and matched_id.strip().isdigit():
+                                m_idx = int(matched_id.strip())
+                            if m_idx is not None and 1 <= m_idx <= len(cand_events):
+                                cand_gid = cand_events[m_idx - 1].global_id
+                                if _gid_allowed(cid, cand_gid):
+                                    chosen_gid = cand_gid
+                            else:
+                                stats["parse_errors"] += 1
 
                         if chosen_gid is not None:
                             _link_to_gid(cid, chosen_gid)

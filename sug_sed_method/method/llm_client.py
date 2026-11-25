@@ -209,18 +209,10 @@ class BudgetedLLMClient:
         if bucket is not None and not bucket.can_spend(est_tokens):
             return None
 
-        eff_max_tokens = self.max_tokens
-        if bucket is not None:
-            rem_blk = getattr(bucket, "remaining_block_tokens", None)
-            rem_tot = getattr(bucket, "remaining_total_tokens", None)
-            avails = [int(r) - est_prompt for r in (rem_blk, rem_tot) if r is not None]
-            if avails:
-                eff_max_tokens = min(self.max_tokens, max(64, min(avails)))
-
         req_payload: Dict[str, Any] = {
             "model": self.model,
             "temperature": self.temperature,
-            "max_tokens": eff_max_tokens,
+            "max_tokens": self.max_tokens,
             "response_format": {"type": "json_object"} if self.use_json_mode else None,
             "enable_thinking": self.enable_thinking,
             "messages": [
@@ -235,8 +227,9 @@ class BudgetedLLMClient:
             parsed = cached["response"]
             pt = int(cached["prompt_tokens"])
             ct = int(cached["completion_tokens"])
+            usage_missing = bool(cached.get("usage_missing", False))
             latency = 0.0
-            status = "CACHED_REPLAY"
+            status = "CACHED_REPLAY|USAGE_MISSING" if usage_missing else "CACHED_REPLAY"
             self.ledger.log_call(
                 request_id=request_id,
                 block_id=block_id,
@@ -250,14 +243,16 @@ class BudgetedLLMClient:
                 status=status,
                 response_payload=parsed,
                 from_cache=True,
+                usage_missing=usage_missing,
             )
         else:
             pt, ct, latency = 0, 0, 0.0
+            usage_missing = False
             try:
                 raw_text, pt, ct, latency, finish_reason, usage_missing = self._call_http(
                     req_payload["messages"],
                     use_json_mode=self.use_json_mode,
-                    max_tokens_override=eff_max_tokens,
+                    max_tokens_override=self.max_tokens,
                 )
                 if pt == 0:
                     pt = max(1, int((len(sys_msg) + len(user_msg)) / 3.8))
@@ -294,6 +289,7 @@ class BudgetedLLMClient:
                 status=status,
                 response_payload=parsed,
                 from_cache=False,
+                usage_missing=usage_missing,
             )
 
         if bucket is not None:
