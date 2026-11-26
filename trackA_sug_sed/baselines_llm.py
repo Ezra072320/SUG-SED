@@ -33,7 +33,7 @@ from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.spatial.distance import pdist
 
 from core_shared.data_loader import SocialDataset
-from core_shared.graph_builder import MessageGraph, build_message_graph
+from core_shared.graph_builder import MessageGraph, _ensure_l2_normalized, build_message_graph
 from core_shared.se_solver import (
     minimize_2d_se_agglomerative,
     refine_2d_se_node_moves,
@@ -47,10 +47,12 @@ from trackA_sug_sed.llm_client import (
     build_lsed_rewrite_prompt,
     build_pairwise_same_event_prompt,
     build_post_assign_prompt,
+    select_display_medoids,
 )
 from trackA_sug_sed.star_meso import (
     ClusterSummary,
     GuardedUnionFind,
+    _parse_bool,
     build_cluster_summaries,
     detect_clean_seams,
 )
@@ -125,6 +127,24 @@ def _proto_index(summaries: Dict[int, ClusterSummary], emb_dim: int, min_size: i
     return np.array(valid, dtype=np.int64), np.vstack([summaries[c].prototype for c in valid])
 
 
+def _loo_cluster_sim(
+    node_idx: int,
+    cid: int,
+    emb: np.ndarray,
+    summs: Dict[int, ClusterSummary],
+    comp_sums: Dict[int, np.ndarray],
+) -> Optional[float]:
+    """Leave-one-out cosine similarity between post `node_idx` and cluster `cid`."""
+    s = summs.get(cid)
+    if s is None or s.size < 2 or cid not in comp_sums:
+        return None
+    diff = comp_sums[cid] - emb[node_idx].astype(np.float64)
+    nm = float(np.linalg.norm(diff))
+    if nm <= 1e-12:
+        return None
+    return float(np.dot(emb[node_idx].astype(np.float64), diff / nm))
+
+
 # ---------------------------------------------------------------------------
 # Internal Control Baselines (Zero-LLM & Random)
 # ---------------------------------------------------------------------------
@@ -144,15 +164,27 @@ def run_automerge_only(
         return np.asarray(labels_init, dtype=np.int64).copy(), {"runtime_sec": 0.0, "auto_merge_ops": 0}
     protos = np.vstack([summs[c].prototype for c in cids])
     sizes = [summs[c].size for c in cids]
+    comp_vecs = [embeddings[summs[c].members].sum(axis=0, dtype=np.float64) for c in cids]
     sim_mat = protos @ protos.T
-    uf = GuardedUnionFind(cids, sim_mat, guard_sim=guard_sim, enforce_guards=True, protos=protos, sizes=sizes)
+    uf = GuardedUnionFind(
+        cids, sim_mat, guard_sim=guard_sim, enforce_guards=True, protos=protos, sizes=sizes, comp_vecs=comp_vecs
+    )
     pairs = []
     for i in range(len(cids)):
         for j in np.where(sim_mat[i] >= tau_auto)[0]:
             if j > i:
                 pairs.append((float(sim_mat[i, j]), cids[i], cids[int(j)]))
     pairs.sort(key=lambda x: -x[0])
-    ops = sum(1 for _s, c1, c2 in pairs if uf.merge(c1, c2))
+    ops = 0
+    for _s, c1, c2 in pairs:
+        r1, r2 = uf.root(c1), uf.root(c2)
+        if r1 == r2:
+            continue
+        if float(np.dot(uf._comp_proto(r1), uf._comp_proto(r2))) < tau_auto:
+            uf.blocked_count += 1
+            continue
+        if uf.merge(r1, r2):
+            ops += 1
     labels = uf.apply_to_labels(labels_init)
     return labels, {"runtime_sec": round(time.time() - t0, 3), "auto_merge_ops": ops}
 
@@ -193,15 +225,26 @@ def run_meso_heur_best(
     if len(cids) >= 2:
         protos = np.vstack([summs[c].prototype for c in cids])
         sizes = [summs[c].size for c in cids]
+        comp_vecs = [embeddings[summs[c].members].sum(axis=0, dtype=np.float64) for c in cids]
         sim_mat = protos @ protos.T
-        uf = GuardedUnionFind(cids, sim_mat, guard_sim=guard_sim, enforce_guards=True, protos=protos, sizes=sizes)
+        uf = GuardedUnionFind(
+            cids, sim_mat, guard_sim=guard_sim, enforce_guards=True, protos=protos, sizes=sizes, comp_vecs=comp_vecs
+        )
         pairs = []
         for i in range(len(cids)):
             for j in np.where(sim_mat[i] >= tau_merge)[0]:
                 if j > i:
                     pairs.append((float(sim_mat[i, j]), cids[i], cids[int(j)]))
         pairs.sort(key=lambda x: -x[0])
-        merge_ops = sum(1 for _s, c1, c2 in pairs if uf.merge(c1, c2))
+        for _s, c1, c2 in pairs:
+            r1, r2 = uf.root(c1), uf.root(c2)
+            if r1 == r2:
+                continue
+            if float(np.dot(uf._comp_proto(r1), uf._comp_proto(r2))) < tau_merge:
+                uf.blocked_count += 1
+                continue
+            if uf.merge(r1, r2):
+                merge_ops += 1
         labels = uf.apply_to_labels(labels)
     return labels, {"runtime_sec": round(time.time() - t0, 3), "seam_ops": seam_ops, "merge_ops": merge_ops}
 
@@ -219,11 +262,13 @@ def run_random_llm(
 ) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """Baseline control: uniform random post selection + post-assignment."""
     t0 = time.perf_counter()
+    t_thread0 = time.thread_time()
+    emb = _ensure_l2_normalized(embeddings)
     n = len(ds)
     rng = np.random.default_rng(seed)
     labels = np.asarray(labels_init, dtype=np.int64).copy()
-    summs = build_cluster_summaries(ds, embeddings, labels)
-    proto_cids, proto_mat = _proto_index(summs, embeddings.shape[1], min_size=2)
+    summs = build_cluster_summaries(ds, emb, labels)
+    proto_cids, proto_mat = _proto_index(summs, emb.shape[1], min_size=2)
 
     all_shown = np.zeros(n, dtype=bool)
     next_cid = int(labels.max()) + 1 if n > 0 else 0
@@ -234,9 +279,11 @@ def run_random_llm(
     for idx in order:
         cands = _multi_route_candidates(idx, ds, graph, labels, summs, proto_mat, proto_cids, max_candidates=4)
         cur_c = int(labels[idx])
-        if cur_c not in cands:
+        if cur_c not in cands and cur_c in summs and summs[cur_c].size >= 2:
             cands = ([cur_c] + cands)[:4]
-        sys_msg, user_msg = build_post_assign_prompt(idx, cands, summs, ds)
+        if not cands:
+            continue
+        sys_msg, user_msg = build_post_assign_prompt(idx, cands, summs, ds, max_medoids=2)
         t_api0 = time.perf_counter()
         res = client.call_json(
             request_id=f"rand_M{block_id:02d}_n{idx}",
@@ -259,7 +306,7 @@ def run_random_llm(
         all_shown[idx] = True
         for cid in cands:
             if cid in summs:
-                for m in summs[cid].medoids[:3]:
+                for m in select_display_medoids(summs[cid], exclude_idx=idx, max_medoids=2):
                     all_shown[int(m)] = True
         if "error" in parsed:
             errs += 1
@@ -274,18 +321,20 @@ def run_random_llm(
             except (ValueError, TypeError):
                 pass
         elif act == "NEW_EVENT":
-            labels[idx] = next_cid
-            next_cid += 1
+            if cur_c in summs and summs[cur_c].size >= 2:
+                labels[idx] = next_cid
+                next_cid += 1
 
     _, clean = np.unique(labels, return_inverse=True)
     total_wall = time.perf_counter() - t0
+    router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     return clean.astype(np.int64), all_shown, {
         "total_calls": calls,
         "total_tokens": pt_sum + ct_sum,
         "shown_posts": int(all_shown.sum()),
         "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
         "parse_errors": errs,
-        "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+        "router_cpu_sec": round(router_cpu, 4),
         "api_wall_sec": round(api_wall_sec, 4),
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(total_wall, 4),
@@ -307,6 +356,8 @@ def run_clusterllm(
 ) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """ClusterLLM (EMNLP 2023): hierarchical clustering + entropy pairwise granularity selection."""
     t0 = time.perf_counter()
+    t_thread0 = time.thread_time()
+    emb = _ensure_l2_normalized(embeddings)
     n = len(ds)
     if n <= 3:
         return np.asarray(labels_init, dtype=np.int64).copy(), np.zeros(n, dtype=bool), {
@@ -319,7 +370,7 @@ def run_clusterllm(
         }
 
     with _COMPUTE_LOCK:
-        dists = pdist(embeddings.astype(np.float64), metric="cosine")
+        dists = pdist(emb.astype(np.float64), metric="cosine")
         dists = np.clip(np.nan_to_num(dists, nan=1.0), 0.0, 2.0)
         Z = linkage(dists, method="average")
 
@@ -329,10 +380,10 @@ def run_clusterllm(
 
     # Build representative medoids on fine_cut (< min(cut_grid)) so candidate pairs
     # span all transition thresholds across cut_grid rather than collapsing below 0.55.
-    fine_summs = build_cluster_summaries(ds, embeddings, fine_cut)
-    cids, p_mat = _proto_index(fine_summs, embeddings.shape[1], min_size=1)
-    medoid_by_cid = {cid: s.medoids[0] for cid, s in fine_summs.items()}
-    size_by_cid = {cid: s.size for cid, s in fine_summs.items()}
+    fine_summs = build_cluster_summaries(ds, emb, fine_cut)
+    cids, p_mat = _proto_index(fine_summs, emb.shape[1], min_size=1)
+    medoid_by_cid = {cid: fine_summs[cid].medoids[0] for cid in cids.tolist()}
+    size_by_cid = {cid: fine_summs[cid].size for cid in cids.tolist()}
 
     sim_cc = p_mat @ p_mat.T if len(cids) >= 2 else np.zeros((0, 0), dtype=np.float32)
     band_buckets: Dict[float, List[Tuple[float, int, int]]] = {d: [] for d in cut_grid}
@@ -419,12 +470,13 @@ def run_clusterllm(
         if "error" in parsed:
             errs += 1
             continue
-        verdicts.append((u, v, bool(parsed.get("same_event", False))))
+        verdicts.append((u, v, _parse_bool(parsed.get("same_event", False))))
 
     # Granularity determination: maximize balanced accuracy (invariant to pair class skew),
     # then F1, accuracy, and proximity to 0.55
     best_d = 0.55
     best_key = (-1.0, -1.0, -1.0, -1.0)
+    n_pos = n_neg = 0
     if verdicts:
         n_pos = sum(1 for _u, _v, same in verdicts if same)
         n_neg = len(verdicts) - n_pos
@@ -452,46 +504,66 @@ def run_clusterllm(
                 best_d = d
 
     labels = cuts[best_d].astype(np.int64).copy()
-    # Apply verified MUST_LINK (union components) and dynamic CANNOT_LINK guards
-    parent: Dict[int, int] = {int(c): int(c) for c in np.unique(labels).tolist()}
+    # Apply verified MUST_LINK merges guarded by CANNOT_LINK constraints and centroid cohesion
+    must_link_merges = 0
+    cannot_link_splits = 0
+    guarded_blocks = 0
+    base_summs = build_cluster_summaries(ds, emb, labels)
+    base_cids = sorted(base_summs.keys())
+    if len(base_cids) >= 2 and verdicts:
+        protos = np.vstack([base_summs[c].prototype for c in base_cids])
+        sizes = [base_summs[c].size for c in base_cids]
+        comp_vecs = [emb[base_summs[c].members].sum(axis=0, dtype=np.float64) for c in base_cids]
+        sim_mat = protos @ protos.T
+        uf = GuardedUnionFind(
+            base_cids,
+            sim_mat,
+            guard_sim=0.40,
+            enforce_guards=True,
+            protos=protos,
+            sizes=sizes,
+            comp_vecs=comp_vecs,
+            min_cl_votes=1,
+        )
+        for u, v, same in verdicts:
+            if not same and int(labels[u]) != int(labels[v]):
+                uf.add_cannot_link(int(labels[u]), int(labels[v]))
+        for u, v, same in verdicts:
+            if same and uf.merge(int(labels[u]), int(labels[v])):
+                must_link_merges += 1
+        labels = uf.apply_to_labels(labels)
+        guarded_blocks = uf.blocked_count
 
-    def _find(x: int) -> int:
-        while parent.get(x, x) != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    cannot_pairs = [(u, v) for u, v, s in verdicts if not s]
-    for u, v, same in verdicts:
-        if same:
-            r1, r2 = _find(int(labels[u])), _find(int(labels[v]))
-            if r1 == r2:
-                continue
-            blocked = any(
-                (_find(int(labels[cu])) == r1 and _find(int(labels[cv])) == r2)
-                or (_find(int(labels[cu])) == r2 and _find(int(labels[cv])) == r1)
-                for cu, cv in cannot_pairs
-            )
-            if not blocked:
-                parent[r2] = r1
-    for i in range(n):
-        labels[i] = _find(int(labels[i]))
     next_cid = int(labels.max()) + 1
     for u, v, same in verdicts:
         if not same and labels[u] == labels[v]:
-            labels[v] = next_cid
+            cid_uv = int(labels[u])
+            if fine_cut[u] != fine_cut[v]:
+                fu_nodes = np.where((labels == cid_uv) & (fine_cut == fine_cut[u]))[0]
+                fv_nodes = np.where((labels == cid_uv) & (fine_cut == fine_cut[v]))[0]
+                peel = fu_nodes if len(fu_nodes) < len(fv_nodes) else fv_nodes
+                labels[peel] = next_cid
+            else:
+                labels[v] = next_cid
             next_cid += 1
+            cannot_link_splits += 1
 
     _, clean = np.unique(labels, return_inverse=True)
     total_wall = time.perf_counter() - t0
+    router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     return clean.astype(np.int64), all_shown, {
         "total_calls": calls,
         "selected_cut_dist": best_d,
+        "verdicts_pos": n_pos,
+        "verdicts_neg": n_neg,
+        "must_link_merges": must_link_merges,
+        "cannot_link_splits": cannot_link_splits,
+        "guarded_blocks": guarded_blocks,
         "total_tokens": pt_sum + ct_sum,
         "shown_posts": int(all_shown.sum()),
         "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
         "parse_errors": errs,
-        "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+        "router_cpu_sec": round(router_cpu, 4),
         "api_wall_sec": round(api_wall_sec, 4),
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(total_wall, 4),
@@ -514,26 +586,37 @@ def run_fewshot_llm_post(
 ) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """Viswanathan et al. (TACL 2024): Post-clustering low-margin LLM assignment correction."""
     t0 = time.perf_counter()
+    t_thread0 = time.thread_time()
+    emb = _ensure_l2_normalized(embeddings)
     n = len(ds)
     labels = np.asarray(labels_init, dtype=np.int64).copy()
-    summs = build_cluster_summaries(ds, embeddings, labels)
-    proto_cids, proto_mat = _proto_index(summs, embeddings.shape[1], min_size=2)
+    summs = build_cluster_summaries(ds, emb, labels)
+    comp_sums = {c: emb[s.members].sum(axis=0, dtype=np.float64) for c, s in summs.items()}
+    proto_cids, proto_mat = _proto_index(summs, emb.shape[1], min_size=2)
     cid_to_row = {int(c): i for i, c in enumerate(proto_cids.tolist())}
 
-    # Rank boundary nodes by lowest confidence margin (sim_own - max_sim_alt)
+    # Rank boundary & high-affinity unattached singletons by leave-one-out confidence margin
     scored_nodes: List[Tuple[float, int]] = []
     if len(proto_cids) >= 2:
-        sims_all = embeddings @ proto_mat.T
+        sims_all = emb @ proto_mat.T
         for i in range(n):
             c_cur = int(labels[i])
             if summs[c_cur].size < 2:
-                scored_nodes.append((-0.5, i))
+                top2 = np.sort(sims_all[i])[-2:]
+                top1_sim, top2_sim = float(top2[-1]), float(top2[0])
+                if top1_sim >= 0.45:
+                    margin = max(-0.05, (top1_sim - top2_sim) - 0.15)
+                else:
+                    margin = 1.0 + (1.0 - top1_sim)
+                scored_nodes.append((margin, i))
                 continue
             r_cur = cid_to_row.get(c_cur)
             if r_cur is None:
                 continue
             row = sims_all[i].copy()
-            s_cur = float(row[r_cur])
+            s_cur = _loo_cluster_sim(i, c_cur, emb, summs, comp_sums)
+            if s_cur is None:
+                s_cur = float(row[r_cur])
             row[r_cur] = -2.0
             s_alt = float(np.max(row))
             margin = s_cur - s_alt
@@ -542,15 +625,19 @@ def run_fewshot_llm_post(
 
     all_shown = np.zeros(n, dtype=bool)
     next_cid = int(labels.max()) + 1 if n > 0 else 0
-    calls = pt_sum = ct_sum = errs = 0
+    calls = pt_sum = ct_sum = errs = reassigned = new_events = 0
     llm_sec = api_wall_sec = 0.0
 
     for _margin, idx in scored_nodes:
-        cands = _multi_route_candidates(idx, ds, graph, labels, summs, proto_mat, proto_cids, max_candidates=4)
+        cands = _multi_route_candidates(
+            idx, ds, graph, labels, summs, proto_mat, proto_cids, max_candidates=4, min_cand_size=2
+        )
         cur_c = int(labels[idx])
-        if cur_c not in cands:
+        if cur_c not in cands and cur_c in summs and summs[cur_c].size >= 2:
             cands = ([cur_c] + cands)[:4]
-        sys_msg, user_msg = build_post_assign_prompt(idx, cands, summs, ds)
+        if not cands:
+            continue
+        sys_msg, user_msg = build_post_assign_prompt(idx, cands, summs, ds, max_medoids=2)
         t_api0 = time.perf_counter()
         res = client.call_json(
             request_id=f"fslp_M{block_id:02d}_n{idx}",
@@ -573,7 +660,7 @@ def run_fewshot_llm_post(
         all_shown[idx] = True
         for cid in cands:
             if cid in summs:
-                for m in summs[cid].medoids[:3]:
+                for m in select_display_medoids(summs[cid], exclude_idx=idx, max_medoids=2):
                     all_shown[int(m)] = True
         if "error" in parsed:
             errs += 1
@@ -583,31 +670,33 @@ def run_fewshot_llm_post(
         if act == "ASSIGN" and tgt is not None:
             try:
                 ti = int(tgt)
-                if ti in cands:
+                if ti in cands and ti != cur_c:
                     labels[idx] = ti
+                    reassigned += 1
             except (ValueError, TypeError):
                 pass
         elif act == "NEW_EVENT":
-            labels[idx] = next_cid
-            next_cid += 1
+            if cur_c in summs and summs[cur_c].size >= 2:
+                labels[idx] = next_cid
+                next_cid += 1
+                new_events += 1
 
     _, clean = np.unique(labels, return_inverse=True)
     total_wall = time.perf_counter() - t0
+    router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     return clean.astype(np.int64), all_shown, {
         "total_calls": calls,
+        "reassigned": reassigned,
+        "new_events": new_events,
         "total_tokens": pt_sum + ct_sum,
         "shown_posts": int(all_shown.sum()),
         "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
         "parse_errors": errs,
-        "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+        "router_cpu_sec": round(router_cpu, 4),
         "api_wall_sec": round(api_wall_sec, 4),
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(total_wall, 4),
     }
-
-
-# ---------------------------------------------------------------------------
-# 7. Cequel (Wang et al., arXiv 2025) — EdgeLLM Direct + Transitive
 # ---------------------------------------------------------------------------
 
 def run_cequel(
@@ -622,6 +711,7 @@ def run_cequel(
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict[str, Any]]:
     """Cequel EdgeLLM: greedy uncertain boundary edge queries -> Direct & Transitive partitions."""
     t0 = time.perf_counter()
+    t_thread0 = time.thread_time()
     n = len(ds)
     labels = np.asarray(labels_init, dtype=np.int64).copy()
     summs = build_cluster_summaries(ds, embeddings, labels)
@@ -701,7 +791,7 @@ def run_cequel(
         if "error" in parsed:
             errs += 1
             continue
-        verdicts.append((u, v, bool(parsed.get("same_event", False))))
+        verdicts.append((u, v, _parse_bool(parsed.get("same_event", False))))
 
     # 1) Direct Edge edits
     lbl_edge = labels.copy()
@@ -752,13 +842,14 @@ def run_cequel(
     _, clean_trans = np.unique(lbl_trans, return_inverse=True)
 
     total_wall = time.perf_counter() - t0
+    router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     stats = {
         "total_calls": calls,
         "total_tokens": pt_sum + ct_sum,
         "shown_posts": int(all_shown.sum()),
         "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
         "parse_errors": errs,
-        "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+        "router_cpu_sec": round(router_cpu, 4),
         "api_wall_sec": round(api_wall_sec, 4),
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(total_wall, 4),
@@ -783,21 +874,26 @@ def run_lsed_budgeted(
 ) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """LSED (ACL 2025) under equal causal budget: rewrite noisy uncertain posts + re-embed + 2D-SE."""
     t0 = time.perf_counter()
+    t_thread0 = time.thread_time()
+    emb = _ensure_l2_normalized(embeddings)
     n = len(ds)
-    summs = build_cluster_summaries(ds, embeddings, labels_init)
-    proto_cids, proto_mat = _proto_index(summs, embeddings.shape[1], min_size=1)
+    summs = build_cluster_summaries(ds, emb, labels_init)
+    comp_sums = {c: emb[s.members].sum(axis=0, dtype=np.float64) for c, s in summs.items()}
+    proto_cids, proto_mat = _proto_index(summs, emb.shape[1], min_size=2)
     cid_to_row = {int(c): i for i, c in enumerate(proto_cids.tolist())}
-    sims_all = embeddings @ proto_mat.T if len(proto_cids) >= 2 else np.zeros((n, 0))
+    sims_all = emb @ proto_mat.T if len(proto_cids) >= 2 else np.zeros((n, 0))
 
-    # Rank uncertain/short posts needing disambiguation (lowest margin + fewest entities)
+    # Rank uncertain/short/isolated posts needing disambiguation using leave-one-out margin
     scored: List[Tuple[float, int]] = []
     for i in range(n):
         c_cur = int(labels_init[i])
-        margin = 1.0
-        if sims_all.shape[1] >= 2 and c_cur in cid_to_row:
+        margin = 0.0
+        if c_cur in summs and summs[c_cur].size >= 2 and sims_all.shape[1] >= 2 and c_cur in cid_to_row:
             r = cid_to_row[c_cur]
             row = sims_all[i].copy()
-            s_cur = float(row[r])
+            s_cur = _loo_cluster_sim(i, c_cur, emb, summs, comp_sums)
+            if s_cur is None:
+                s_cur = float(row[r])
             row[r] = -2.0
             margin = s_cur - float(np.max(row))
         len_pen = min(1.0, len(ds.texts[i]) / 80.0)
@@ -840,22 +936,31 @@ def run_lsed_budgeted(
         rewritten_idx.append(idx)
         rewritten_texts.append(parsed["rewritten_event"].strip())
 
-    emb_new = embeddings.copy()
+    emb_new = emb.copy()
     if rewritten_idx:
         with _COMPUTE_LOCK:
             new_vecs = encode_texts_hf(rewritten_texts, model_name=embed_model, batch_size=32)
+            new_vecs = _ensure_l2_normalized(new_vecs)
             for k, idx in enumerate(rewritten_idx):
                 # LSED blends normalized disambiguated event statement vector cleanly
                 vec = 0.7 * new_vecs[k] + 0.3 * emb_new[idx]
                 nm = float(np.linalg.norm(vec))
                 emb_new[idx] = vec / max(nm, 1e-12)
-            g_new = build_message_graph(ds, emb_new, knn_k=15, knn_sim_threshold=knn_sim_threshold, attr_alpha=0.5)
+            g_new = build_message_graph(
+                ds,
+                emb_new,
+                knn_k=15,
+                knn_sim_threshold=knn_sim_threshold,
+                attr_alpha=0.5,
+                compute_non_entity_tfidf=False,
+            )
             labels_out, _ = solve_2d_se(g_new.adj, refine_moves=True)
     else:
         labels_out = np.asarray(labels_init, dtype=np.int64).copy()
 
     _, clean = np.unique(labels_out, return_inverse=True)
     total_wall = time.perf_counter() - t0
+    router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     return clean.astype(np.int64), all_shown, {
         "total_calls": calls,
         "rewritten_ok": len(rewritten_idx),
@@ -863,7 +968,7 @@ def run_lsed_budgeted(
         "shown_posts": int(all_shown.sum()),
         "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
         "parse_errors": errs,
-        "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+        "router_cpu_sec": round(router_cpu, 4),
         "api_wall_sec": round(api_wall_sec, 4),
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(total_wall, 4),
@@ -886,29 +991,39 @@ def run_ragsede_budgeted(
 ) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """RagSEDE (WWW 2026) under equal causal budget: MMR selection + RAG retrieval + SE repair."""
     t0 = time.perf_counter()
+    t_thread0 = time.thread_time()
+    emb = _ensure_l2_normalized(embeddings)
     n = len(ds)
     labels = np.asarray(labels_init, dtype=np.int64).copy()
-    summs = build_cluster_summaries(ds, embeddings, labels)
-    proto_cids, proto_mat = _proto_index(summs, embeddings.shape[1], min_size=2)
+    summs = build_cluster_summaries(ds, emb, labels)
+    comp_sums = {c: emb[s.members].sum(axis=0, dtype=np.float64) for c, s in summs.items()}
+    proto_cids, proto_mat = _proto_index(summs, emb.shape[1], min_size=2)
     cid_to_row = {int(c): i for i, c in enumerate(proto_cids.tolist())}
 
-    # Base MMR representativeness/uncertainty scores
+    # Base MMR representativeness/uncertainty scores (leave-one-out for multi-post; top1 for singletons)
     deg = np.asarray(graph.adj.sum(axis=1)).ravel()
     norm_deg = deg / max(float(deg.max()), 1.0)
-    sims_all = embeddings @ proto_mat.T if len(proto_cids) >= 2 else np.zeros((n, 0))
+    sims_all = emb @ proto_mat.T if len(proto_cids) >= 2 else np.zeros((n, 0))
 
     rep_score = np.zeros(n, dtype=np.float64)
     for i in range(n):
         amb = 0.5
-        if sims_all.shape[1] >= 2 and int(labels[i]) in cid_to_row:
-            r = cid_to_row[int(labels[i])]
-            row = sims_all[i].copy()
-            s_cur = float(row[r])
-            row[r] = -2.0
-            amb = 1.0 - max(0.0, s_cur - float(np.max(row)))
+        c_cur = int(labels[i])
+        if sims_all.shape[1] >= 2:
+            if c_cur in summs and summs[c_cur].size >= 2 and c_cur in cid_to_row:
+                r = cid_to_row[c_cur]
+                row = sims_all[i].copy()
+                s_cur = _loo_cluster_sim(i, c_cur, emb, summs, comp_sums)
+                if s_cur is None:
+                    s_cur = float(row[r])
+                row[r] = -2.0
+                amb = 1.0 - max(0.0, s_cur - float(np.max(row)))
+            else:
+                top1_sim = float(np.max(sims_all[i]))
+                amb = top1_sim if top1_sim >= 0.45 else 0.2 * max(0.0, top1_sim)
         rep_score[i] = 0.6 * amb + 0.4 * float(norm_deg[i])
 
-    # MMR iterative selection + RAG Top-3 retrieval
+    # MMR iterative selection + RAG Top-2 retrieval
     pool_top = np.argsort(-rep_score)[: min(n, 300)].tolist()
     selected_vecs: List[np.ndarray] = []
     remaining = set(pool_top)
@@ -917,7 +1032,7 @@ def run_ragsede_budgeted(
     warm_labels = labels.copy()
     next_cid = int(warm_labels.max()) + 1 if n > 0 else 0
     movable = np.zeros(n, dtype=bool)
-    calls = pt_sum = ct_sum = errs = 0
+    calls = pt_sum = ct_sum = errs = reassigned = new_events = 0
     llm_sec = api_wall_sec = 0.0
 
     while remaining:
@@ -927,26 +1042,32 @@ def run_ragsede_budgeted(
             sel_mat = np.vstack(selected_vecs)
             best_val, idx = -1e9, -1
             for cand in remaining:
-                div = float(np.max(sel_mat @ embeddings[cand]))
+                div = float(np.max(sel_mat @ emb[cand]))
                 val = 0.5 * rep_score[cand] - 0.5 * div
                 if val > best_val:
                     best_val = val
                     idx = cand
         remaining.remove(idx)
-        selected_vecs.append(embeddings[idx])
+        selected_vecs.append(emb[idx])
 
-        # Retrieve top-3 dense semantic RAG neighbors (excluding idx)
-        cos_n = embeddings @ embeddings[idx]
+        cands = _multi_route_candidates(
+            idx, ds, graph, labels, summs, proto_mat, proto_cids, max_candidates=4, min_cand_size=2
+        )
+        cur_c = int(labels[idx])
+        if cur_c not in cands and cur_c in summs and summs[cur_c].size >= 2:
+            cands = ([cur_c] + cands)[:4]
+        if not cands:
+            continue
+
+        # Retrieve top-2 dense semantic RAG neighbors (excluding idx)
+        cos_n = emb @ emb[idx]
         cos_n[idx] = -2.0
-        rag_idx = np.argsort(-cos_n)[:3].tolist()
+        rag_idx = np.argsort(-cos_n)[:2].tolist()
         rag_txts = [ds.texts[r] for r in rag_idx]
 
-        cands = _multi_route_candidates(idx, ds, graph, labels, summs, proto_mat, proto_cids, max_candidates=4)
-        cur_c = int(labels[idx])
-        if cur_c not in cands:
-            cands = ([cur_c] + cands)[:4]
-
-        sys_msg, user_msg = build_post_assign_prompt(idx, cands, summs, ds, rag_context=rag_txts)
+        sys_msg, user_msg = build_post_assign_prompt(
+            idx, cands, summs, ds, rag_context=rag_txts, max_medoids=2, max_rag=2
+        )
         t_api0 = time.perf_counter()
         res = client.call_json(
             request_id=f"ragsede_M{block_id:02d}_n{idx}",
@@ -967,11 +1088,11 @@ def run_ragsede_budgeted(
         llm_sec += lat
         calls += 1
         all_shown[idx] = True
-        for r in rag_idx:
+        for r in rag_idx[:2]:
             all_shown[int(r)] = True
         for cid in cands:
             if cid in summs:
-                for m in summs[cid].medoids[:3]:
+                for m in select_display_medoids(summs[cid], exclude_idx=idx, max_medoids=2):
                     all_shown[int(m)] = True
         if "error" in parsed:
             errs += 1
@@ -983,24 +1104,49 @@ def run_ragsede_budgeted(
             try:
                 ti = int(tgt)
                 if ti in cands and ti != cur_c and ti in summs:
-                    for nb in list(adj_lil.rows[idx]):
+                    orig_nbs = list(adj_lil.rows[idx])
+                    for nb in orig_nbs:
                         if int(labels[nb]) == cur_c:
                             adj_lil[idx, nb] = 0.0
                             adj_lil[nb, idx] = 0.0
-                    for med in summs[ti].medoids[:2]:
-                        adj_lil[idx, med] = max(float(adj_lil[idx, med]), 1.2)
-                        adj_lil[med, idx] = max(float(adj_lil[med, idx]), 1.2)
+                    ti_meds = select_display_medoids(summs[ti], exclude_idx=idx, max_medoids=2)
+                    for med in ti_meds:
+                        adj_lil[idx, med] = max(float(adj_lil[idx, med]), 1.5)
+                        adj_lil[med, idx] = max(float(adj_lil[med, idx]), 1.5)
                     warm_labels[idx] = ti
                     movable[idx] = True
+                    reassigned += 1
+
+                    # Propagate repair to up to 5 tightly-coupled neighbors aligned with ti
+                    if ti_meds and cur_c in summs and summs[cur_c].size >= 2:
+                        primary_med = ti_meds[0]
+                        prop_cands: List[Tuple[float, int, float]] = []
+                        for nb in orig_nbs:
+                            nb_i = int(nb)
+                            if nb_i == idx or int(labels[nb_i]) != cur_c:
+                                continue
+                            s_in = float(np.dot(emb[idx], emb[nb_i]))
+                            s_ti = float(np.dot(emb[nb_i], summs[ti].prototype))
+                            if s_in >= 0.72 and s_ti >= 0.55:
+                                prop_cands.append((s_in * s_ti, nb_i, s_ti))
+                        prop_cands.sort(key=lambda x: -x[0])
+                        for _sc, nb_i, s_ti in prop_cands[:5]:
+                            movable[nb_i] = True
+                            w_br = 0.5 * s_ti
+                            adj_lil[nb_i, primary_med] = max(float(adj_lil[nb_i, primary_med]), w_br)
+                            adj_lil[primary_med, nb_i] = max(float(adj_lil[primary_med, nb_i]), w_br)
             except (ValueError, TypeError):
                 pass
         elif act == "NEW_EVENT":
-            for nb in list(adj_lil.rows[idx]):
-                adj_lil[idx, nb] = 0.0
-                adj_lil[nb, idx] = 0.0
-            warm_labels[idx] = next_cid
-            next_cid += 1
-            movable[idx] = True
+            if cur_c in summs and summs[cur_c].size >= 2:
+                for nb in list(adj_lil.rows[idx]):
+                    if int(labels[nb]) == cur_c:
+                        adj_lil[idx, nb] = 0.0
+                        adj_lil[nb, idx] = 0.0
+                warm_labels[idx] = next_cid
+                next_cid += 1
+                movable[idx] = True
+                new_events += 1
 
     rep_adj = adj_lil.tocsr()
     rep_adj.setdiag(0.0)
@@ -1014,13 +1160,17 @@ def run_ragsede_budgeted(
 
     _, clean = np.unique(out_labels, return_inverse=True)
     total_wall = time.perf_counter() - t0
+    router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     return clean.astype(np.int64), all_shown, {
         "total_calls": calls,
+        "reassigned": reassigned,
+        "new_events": new_events,
+        "movable_nodes": int(movable.sum()),
         "total_tokens": pt_sum + ct_sum,
         "shown_posts": int(all_shown.sum()),
         "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
         "parse_errors": errs,
-        "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+        "router_cpu_sec": round(router_cpu, 4),
         "api_wall_sec": round(api_wall_sec, 4),
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(total_wall, 4),
@@ -1048,6 +1198,7 @@ def run_lhg_budgeted(
     import torch
 
     t0 = time.perf_counter()
+    t_thread0 = time.thread_time()
     n = len(ds)
     attr_csr = graph.attr_adj.tocsr()
     attr_deg = np.asarray(attr_csr.sum(axis=1)).ravel()
@@ -1183,6 +1334,7 @@ def run_lhg_budgeted(
                         labels_out, _ = solve_2d_se(adj_hyp, refine_moves=True)
                         _, clean = np.unique(labels_out, return_inverse=True)
                         total_wall = time.perf_counter() - t0
+                        router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
                         return clean.astype(np.int64), all_shown, {
                             "total_calls": calls,
                             "mplss_triplets": len(anchors),
@@ -1190,7 +1342,7 @@ def run_lhg_budgeted(
                             "shown_posts": int(all_shown.sum()),
                             "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
                             "parse_errors": errs,
-                            "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+                            "router_cpu_sec": round(router_cpu, 4),
                             "api_wall_sec": round(api_wall_sec, 4),
                             "llm_api_sec": round(llm_sec, 4),
                             "total_wall_sec": round(total_wall, 4),
@@ -1199,6 +1351,7 @@ def run_lhg_budgeted(
     # Fallback if < 3 verified triplets constructed under budget
     _, clean = np.unique(labels_init, return_inverse=True)
     total_wall = time.perf_counter() - t0
+    router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     return clean.astype(np.int64), all_shown, {
         "total_calls": calls,
         "mplss_triplets": 0,
@@ -1206,7 +1359,7 @@ def run_lhg_budgeted(
         "shown_posts": int(all_shown.sum()),
         "shown_pct": float(all_shown.sum() * 100.0 / max(1, n)),
         "parse_errors": errs,
-        "router_cpu_sec": round(max(0.0, total_wall - api_wall_sec), 4),
+        "router_cpu_sec": round(router_cpu, 4),
         "api_wall_sec": round(api_wall_sec, 4),
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(total_wall, 4),

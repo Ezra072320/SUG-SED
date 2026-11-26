@@ -1,20 +1,17 @@
-"""Core SUG-SED Framework (Pure-Star-Meso).
+"""Core SUG-SED Framework (Pure-Star-Meso v2.1).
 
-Empirically calibrated two-layer architecture verified across 27 held-out blocks:
-  Core Universal Engines (cross-lingual statistically significant gains):
-    1. Dynamic Contrastive Star-Merge (k_nb=4, two-tier [0.55, 0.85) -> [0.45, 0.85)):
-       evaluates an anchor component against up to k_nb=4 distinct current-component
-       neighbors per LLM call, halving call count and preventing single-post dilution.
-    2. Clean Seam Split (detect_clean_seams, min_sem_sep=0.12): spherical k-means +
-       Fiedler pocket proposal with balanced subgroup comparison before merging.
-  Efficiency & Tail-Risk Guardrails (calibrated trade-offs):
-    3. Purity-First 2D-SE Base Partition (tau_sim=0.50, alpha=0.5): isolates events
-       into high-purity fragments, shifting hard False Merges into recoverable False Splits.
-    4. Zero-Token AutoMerge (tau_auto=0.85): cosine-calibrated load reducer dependent on
-       encoder high-end isotropy.
-    5. Centroid-Cohesive Guarded Union-Find (guard_sim=0.40, min_cl_votes=1): enforces
-       zero CANNOT-LINK violations and a centroid cohesion floor to block transitive
-       snowball collapses.
+Empirically calibrated five-stage streaming architecture:
+  1. Purity-First 2D-SE Base Partition (tau_sim=0.50, alpha=0.5): isolates events
+     into high-purity fragments, shifting hard False Merges into recoverable False Splits.
+  2. Clean Seam Split (detect_clean_seams, min_sem_sep=0.12): spherical k-means +
+     Fiedler pocket proposal with balanced subgroup comparison before any merging,
+     injecting hard CANNOT-LINK constraints into the unified GuardedUnionFind.
+  3. Zero-Token AutoMerge (tau_auto=0.85 with unsupervised p95 encoder anisotropy
+     self-calibration) + Centroid-Cohesive GuardedUnionFind (guard_sim=0.40,
+     min_cl_votes=1): prevents 2-hop chain drift and transitive snowball collapses.
+  4. Two-Tier Size-Weighted Star-Merge (k_nb=4, [0.55, tau_eff) -> [0.45, tau_eff)):
+     evaluates an anchor component against up to k_nb=4 distinct current-component
+     neighbors per LLM call with live component refresh and strict error isolation.
 """
 
 from __future__ import annotations
@@ -40,6 +37,7 @@ from trackA_sug_sed.llm_client import (
     BudgetedLLMClient,
     build_seam_split_prompt,
     build_star_merge_prompt,
+    estimate_tokens,
 )
 
 
@@ -190,6 +188,7 @@ class GuardedUnionFind:
         protos: Optional[np.ndarray] = None,
         sizes: Optional[Sequence[int]] = None,
         min_cl_votes: int = 1,
+        comp_vecs: Optional[Sequence[np.ndarray]] = None,
     ) -> None:
         self.cids = list(cids)
         self.cid_to_pos = {c: i for i, c in enumerate(self.cids)}
@@ -200,18 +199,29 @@ class GuardedUnionFind:
 
         self.comp_of: Dict[int, int] = {c: c for c in self.cids}
         self.comp_members: Dict[int, Set[int]] = {c: {c} for c in self.cids}
-        self.use_centroid = protos is not None
-        if protos is not None:
+        self.use_centroid = (comp_vecs is not None) or (protos is not None)
+        if comp_vecs is not None:
+            if len(comp_vecs) != len(self.cids):
+                raise ValueError(f"comp_vecs length {len(comp_vecs)} != cids length {len(self.cids)}")
+            if sizes is not None and len(sizes) != len(self.cids):
+                raise ValueError(f"sizes length {len(sizes)} != cids length {len(self.cids)}")
+            sz_arr = list(sizes) if sizes is not None else [1] * len(self.cids)
+            self.comp_vec: Dict[int, np.ndarray] = {
+                c: np.asarray(comp_vecs[i], dtype=np.float64).copy()
+                for i, c in enumerate(self.cids)
+            }
+            self.comp_size: Dict[int, int] = {c: max(1, int(sz_arr[i])) for i, c in enumerate(self.cids)}
+        elif protos is not None:
             if len(protos) != len(self.cids):
                 raise ValueError(f"protos length {len(protos)} != cids length {len(self.cids)}")
             if sizes is not None and len(sizes) != len(self.cids):
                 raise ValueError(f"sizes length {len(sizes)} != cids length {len(self.cids)}")
             sz_arr = list(sizes) if sizes is not None else [1] * len(self.cids)
-            self.comp_vec: Dict[int, np.ndarray] = {
+            self.comp_vec = {
                 c: np.asarray(protos[i], dtype=np.float64) * max(1, int(sz_arr[i]))
                 for i, c in enumerate(self.cids)
             }
-            self.comp_size: Dict[int, int] = {c: max(1, int(sz_arr[i])) for i, c in enumerate(self.cids)}
+            self.comp_size = {c: max(1, int(sz_arr[i])) for i, c in enumerate(self.cids)}
         else:
             self.comp_vec = {}
             self.comp_size = {}
@@ -312,7 +322,7 @@ def _spherical_kmeans_deterministic(x: np.ndarray, k: int, n_iters: int = 15) ->
     if k <= 1 or n <= k:
         return np.arange(n, dtype=np.int64) % max(1, k)
     centers = np.empty((k, x.shape[1]), dtype=np.float32)
-    first = int(np.argmax(np.sum(x @ x.T, axis=1)))
+    first = int(np.argmax(x @ x.sum(axis=0)))
     centers[0] = x[first]
     min_dist = 1.0 - (x @ centers[0])
     for c_idx in range(1, k):
@@ -496,6 +506,24 @@ def detect_clean_seams(
     return out
 
 
+def _calibrate_tau_auto_unsupervised(
+    sim_mat_ge2: np.ndarray,
+    base_tau: float,
+    margin: float = 0.28,
+    cap: float = 0.90,
+    min_clusters: int = 10,
+) -> float:
+    """Unsupervised encoder-anisotropy floor calibration using the 95th percentile of multi-post cluster cosines."""
+    k = int(sim_mat_ge2.shape[0])
+    if k < min_clusters:
+        return float(base_tau)
+    iu, ju = np.triu_indices(k, k=1)
+    if len(iu) == 0:
+        return float(base_tau)
+    p95 = float(np.percentile(sim_mat_ge2[iu, ju], 95.0))
+    return float(max(base_tau, min(cap, p95 + margin)))
+
+
 # ---------------------------------------------------------------------------
 # Full Pure-Star-Meso Block Runner (with Clean Pillar Ablation Toggles)
 # ---------------------------------------------------------------------------
@@ -521,6 +549,8 @@ def run_pure_star_meso(
     # Locked Dev hyperparameters
     tau_auto: float = 0.85,
     tau_lo: float = 0.55,
+    tier2_lo: float = 0.45,
+    auto_calibrate_tau: bool = True,
     guard_sim: float = 0.40,
     k_nb: int = 4,
     max_star_calls: int = 24,
@@ -543,6 +573,7 @@ def run_pure_star_meso(
         (final_labels, labels_init, all_shown_mask, stats)
     """
     t_cpu0 = time.perf_counter()
+    t_thread0 = time.thread_time()
     n = len(ds)
     embeddings = _ensure_l2_normalized(embeddings)
     if anonymizer is not None or (pre_anonymized and orig_ds_for_audit is not None):
@@ -594,42 +625,7 @@ def run_pure_star_meso(
         "decide strictly from event structure and placeholder identity correspondence."
     )
 
-    # --- Step 1: Zero-token Auto-Merge (>= tau_auto) with Centroid-Cohesive GuardedUF ---
-    eff_tau_auto = float(tau_auto) if use_auto_merge else 1.01
-    if eff_tau_auto <= 1.0:
-        summs0 = build_cluster_summaries(ds, embeddings, labels)
-        cids0 = sorted([c for c, s in summs0.items() if s.size >= 2])
-        if len(cids0) >= 2:
-            protos0 = np.vstack([summs0[c].prototype for c in cids0])
-            sizes0 = [summs0[c].size for c in cids0]
-            sim0 = protos0 @ protos0.T
-            uf0 = GuardedUnionFind(
-                cids0, sim0, guard_sim=guard_sim, enforce_guards=use_guarded_uf, protos=protos0, sizes=sizes0
-            )
-            for c in cids0:
-                uf0.comp_vec[c] = embeddings[summs0[c].members].sum(axis=0, dtype=np.float64)
-            pairs0: List[Tuple[float, int, int]] = []
-            for i in range(len(cids0)):
-                row = sim0[i]
-                for j in np.where(row >= eff_tau_auto)[0]:
-                    if j > i:
-                        pairs0.append((float(row[j]), cids0[i], cids0[int(j)]))
-            pairs0.sort(key=lambda x: -x[0])
-            for _s, c1, c2 in pairs0:
-                r1, r2 = uf0.root(c1), uf0.root(c2)
-                if r1 == r2:
-                    continue
-                if use_guarded_uf:
-                    live_cos = float(np.dot(uf0._comp_proto(r1), uf0._comp_proto(r2)))
-                    if live_cos < eff_tau_auto:
-                        uf0.blocked_count += 1
-                        continue
-                if uf0.merge(c1, c2):
-                    auto_merge_ops += 1
-            blocked_guards += uf0.blocked_count
-            labels = uf0.apply_to_labels(labels)
-
-    # --- Step 2: Clean SPLIT_SEAM adjudication BEFORE Star-Merge ---
+    # --- Stage 2: Clean SPLIT_SEAM adjudication BEFORE any merging ---
     seam_split_node_pairs: List[Tuple[int, int]] = []
     if max_seam_calls > 0:
         summs_pre_seam = build_cluster_summaries(ds, embeddings, labels)
@@ -699,7 +695,7 @@ def run_pure_star_meso(
                 res_tuple = ({"different_events": do_split}, 0, 0, 0.0, "ORACLE")
             else:
                 assert client is not None
-                est_seam_tok = int((len(sys_msg) + len(user_msg)) / 3.4) + 85
+                est_seam_tok = estimate_tokens(sys_msg, user_msg, 85)
                 if seam_cap is not None and (seam_tokens_spent + est_seam_tok) > seam_cap:
                     break
                 t_api0 = time.perf_counter()
@@ -748,7 +744,7 @@ def run_pure_star_meso(
                 if sc.sub1 and sc.sub2:
                     seam_split_node_pairs.append((int(sc.sub1[0]), int(sc.sub2[0])))
 
-    # --- Step 3: Two-Tier Adaptive Contrastive Star-Merge with Online Component Refresh ---
+    # --- Unified State & GuardedUnionFind shared by Stage 3 (AutoMerge) and Stage 4 (Star-Merge) ---
     comm_to_members: Dict[int, List[int]] = defaultdict(list)
     for i_node, c_lab in enumerate(labels.tolist()):
         comm_to_members[int(c_lab)].append(i_node)
@@ -759,16 +755,23 @@ def run_pure_star_meso(
     }
     all_cids = sorted(summs.keys())
     uf: Optional[GuardedUnionFind] = None
-    if len(all_cids) >= 2 and max_star_calls > 0:
+    eff_tau_auto = float(tau_auto) if use_auto_merge else 1.01
+
+    if len(all_cids) >= 2:
         cid_to_pos = {c: i for i, c in enumerate(all_cids)}
         protos = np.vstack([summs[c].prototype for c in all_cids]).astype(np.float32)
         sizes = [summs[c].size for c in all_cids]
+        comp_vecs = [embeddings[summs[c].members].sum(axis=0, dtype=np.float64) for c in all_cids]
         sim_mat = protos @ protos.T
         uf = GuardedUnionFind(
-            all_cids, sim_mat, guard_sim=guard_sim, enforce_guards=use_guarded_uf, protos=protos, sizes=sizes
+            all_cids,
+            sim_mat,
+            guard_sim=guard_sim,
+            enforce_guards=use_guarded_uf,
+            protos=protos,
+            sizes=sizes,
+            comp_vecs=comp_vecs,
         )
-        for c in all_cids:
-            uf.comp_vec[c] = embeddings[summs[c].members].sum(axis=0, dtype=np.float64)
         for n1, n2 in seam_split_node_pairs:
             ca, cb = int(labels[n1]), int(labels[n2])
             if ca != cb and ca in uf.comp_of and cb in uf.comp_of:
@@ -776,283 +779,329 @@ def run_pure_star_meso(
 
         comp_summs: Dict[int, ClusterSummary] = dict(summs)
         active_roots: Set[int] = set(all_cids)
-        eff_k_nb = int(k_nb) if use_star_packing else 1
-        eff_max_star_calls = max_star_calls if use_star_packing else max(80, max_star_calls * 3)
         queried_root_nbrs: Dict[int, Set[int]] = {c: set() for c in all_cids}
-        rng = np.random.default_rng(seed)
-
-        def _components_queried(r1: int, r2: int) -> bool:
-            return r2 in queried_root_nbrs[r1]
-
-        if not use_bayes_band:
-            tiers: List[Tuple[float, float, int]] = [(0.35, eff_tau_auto, 1)]
-        elif random_order:
-            tiers = [(0.45, eff_tau_auto, 1)]
-        else:
-            tiers = [(float(tau_lo), eff_tau_auto, 2), (0.45, eff_tau_auto, 1)]
-
-        # Majority true labels per live root component (only used when dry_run_oracle=True)
+        failed_root_pairs: Set[Tuple[int, int]] = set()
         maj_true: Dict[int, int] = {}
         if dry_run_oracle:
             for c in all_cids:
                 vs, cs = np.unique(ds.labels[comp_summs[c].members], return_counts=True)
                 maj_true[c] = int(vs[int(np.argmax(cs))])
 
-        step_idx = 0
-        budget_exhausted = False
-        for tier_lo, tier_hi, min_sz in tiers:
-            if budget_exhausted or step_idx >= eff_max_star_calls:
-                break
-            while step_idx < eff_max_star_calls:
-                live_roots = sorted(active_roots)
-                if len(live_roots) < 2:
-                    break
-                live_pos = np.asarray([cid_to_pos[r] for r in live_roots], dtype=np.int64)
-                live_sizes = np.asarray([comp_summs[r].size for r in live_roots], dtype=np.int64)
+        def _apply_merged_root_refresh(cur_a: int, cur_b: int) -> Optional[int]:
+            assert uf is not None
+            r_a = uf.root(cur_a)
+            r_b = uf.root(cur_b)
+            if r_a == r_b:
+                return None
+            if not uf.merge(r_a, r_b):
+                return None
+            new_r = uf.root(r_a)
+            old_r = r_b if new_r == r_a else r_a
+            merged_members = comp_summs[r_a].members + comp_summs[r_b].members
+            new_summ = _summarize_members(new_r, merged_members, ds, embeddings, term_idf=term_idf)
+            comp_summs[new_r] = new_summ
+            comp_summs.pop(old_r, None)
+            active_roots.discard(old_r)
 
-                candidates_for_step: List[Tuple[float, int, List[Tuple[float, int]]]] = []
-                for idx1, r1 in enumerate(live_roots):
-                    s1 = int(live_sizes[idx1])
-                    if s1 < min_sz:
-                        continue
-                    row_sims = sim_mat[live_pos[idx1], live_pos]
-                    mask = (row_sims >= tier_lo) & (row_sims < tier_hi) & (live_sizes >= min_sz)
-                    mask[idx1] = False
-                    js = np.where(mask)[0]
-                    if len(js) == 0:
-                        continue
-                    js = js[np.argsort(-row_sims[js])]
-                    pack: List[Tuple[float, int]] = []
-                    for j in js:
-                        r2 = live_roots[int(j)]
-                        s2 = int(live_sizes[int(j)])
-                        sim_val = float(row_sims[int(j)])
-                        if s1 == 1 and s2 == 1 and sim_val < 0.55:
-                            continue
-                        if _components_queried(r1, r2):
-                            continue
-                        if not uf.can_merge(r1, r2):
-                            continue
-                        pack.append((sim_val, r2))
-                        if len(pack) >= eff_k_nb:
-                            break
-                    if not pack:
-                        continue
-                    # Calibrated Bayes utility over LIVE component sizes & similarities
-                    utility = sum(
-                        (s**2) * (1.0 + 0.25 * math.log1p(min(s1, comp_summs[r2].size)))
-                        for s, r2 in pack
-                    )
-                    candidates_for_step.append((utility, r1, pack))
+            old_q = queried_root_nbrs.pop(old_r, set())
+            old_q.discard(new_r)
+            for qnbr in old_q:
+                if qnbr in queried_root_nbrs:
+                    queried_root_nbrs[qnbr].discard(old_r)
+                    queried_root_nbrs[qnbr].add(new_r)
+                    queried_root_nbrs[new_r].add(qnbr)
+            queried_root_nbrs[new_r].discard(new_r)
 
-                if not candidates_for_step:
-                    break
+            to_drop = [p for p in failed_root_pairs if old_r in p or new_r in p]
+            for p in to_drop:
+                failed_root_pairs.discard(p)
 
-                if random_order:
-                    pick_pos = int(rng.integers(0, len(candidates_for_step)))
-                    _u, anchor_r, pack = candidates_for_step[pick_pos]
-                else:
-                    candidates_for_step.sort(key=lambda x: -x[0])
-                    _u, anchor_r, pack = candidates_for_step[0]
+            pos_new = cid_to_pos[new_r]
+            protos[pos_new] = new_summ.prototype
+            new_row = protos @ new_summ.prototype
+            sim_mat[pos_new, :] = new_row
+            sim_mat[:, pos_new] = new_row
 
-                cand_roots = [r2 for _s, r2 in pack]
-                cand_summs = [comp_summs[r2] for r2 in cand_roots]
-                anchor_summ = comp_summs[anchor_r]
-                star_audit = None
-                raw_star_user = ""
-                qid_star = (
-                    f"star_s{step_idx}_c{anchor_r}_n{len(cand_roots)}"
-                    if use_star_packing
-                    else f"pair_s{step_idx}_c{anchor_r}_c{cand_roots[0]}"
+            if dry_run_oracle:
+                vs, cs = np.unique(ds.labels[merged_members], return_counts=True)
+                maj_true[new_r] = int(vs[int(np.argmax(cs))])
+            return new_r
+
+        # --- Stage 3: Zero-Token AutoMerge with Unsupervised Anisotropy Calibration & GuardedUF ---
+        cids_ge2 = [c for c in all_cids if summs[c].size >= 2]
+        if eff_tau_auto <= 1.0 and len(cids_ge2) >= 2:
+            pos_ge2 = np.asarray([cid_to_pos[c] for c in cids_ge2], dtype=np.int64)
+            sim_ge2 = sim_mat[np.ix_(pos_ge2, pos_ge2)]
+            if auto_calibrate_tau:
+                eff_tau_auto = _calibrate_tau_auto_unsupervised(
+                    sim_ge2, eff_tau_auto, margin=0.28, cap=0.90, min_clusters=10
                 )
+            pairs0: List[Tuple[float, int, int]] = []
+            for i in range(len(cids_ge2)):
+                row = sim_ge2[i]
+                for j in np.where(row >= eff_tau_auto)[0]:
+                    if j > i:
+                        pairs0.append((float(row[j]), cids_ge2[i], cids_ge2[int(j)]))
+            pairs0.sort(key=lambda x: -x[0])
+            for _s, c1, c2 in pairs0:
+                r1, r2 = uf.root(c1), uf.root(c2)
+                if r1 == r2:
+                    continue
+                if use_guarded_uf:
+                    live_cos = float(np.dot(uf._comp_proto(r1), uf._comp_proto(r2)))
+                    if live_cos < eff_tau_auto:
+                        uf.blocked_count += 1
+                        continue
+                if _apply_merged_root_refresh(r1, r2) is not None:
+                    auto_merge_ops += 1
 
-                if dry_run_oracle:
-                    matched_indices = [
-                        idx for idx, r2 in enumerate(cand_roots, start=1) if maj_true[anchor_r] == maj_true[r2]
-                    ]
-                    res_tuple = (
-                        {"matches": [{"id": idx, "shared_event": "oracle"} for idx in matched_indices]},
-                        0,
-                        0,
-                        0.0,
-                        "ORACLE",
-                    )
-                else:
-                    # Both k=4 (Star Packing) and k=1 (w/o Star Packing) use identical prompt richness & rules
-                    if anonymizer is not None:
-                        _, raw_star_user = build_star_merge_prompt(anchor_summ, cand_summs, ds)
-                        q_star = QueryItem(
-                            query_id=qid_star,
-                            query_type="star_merge",
-                            primary_nodes=list(anchor_summ.medoids[:2])
-                            + [m for cs in cand_summs for m in cs.medoids[:2]],
-                            candidate_clusters=[anchor_r] + cand_roots,
-                        )
-                        anon_texts, anon_summs, star_audit = anonymizer.build_query_anonymized_inputs(
-                            q_star, ds, comp_summs
-                        )
-                        sys_msg, user_msg = build_star_merge_prompt(
-                            anon_summs[anchor_r],
-                            [anon_summs[r2] for r2 in cand_roots],
-                            ds,
-                            text_override=anon_texts,
-                        )
-                        sys_msg = sys_msg + _anon_note
-                    else:
-                        sys_msg, user_msg = build_star_merge_prompt(anchor_summ, cand_summs, ds)
-                        if pre_anonymized:
-                            sys_msg = sys_msg + _anon_note
-                            if orig_ds_for_audit is not None:
-                                star_shown = list(anchor_summ.medoids[:2]) + [
-                                    m for cs in cand_summs for m in cs.medoids[:2]
-                                ]
-                                shown_kws = list(anchor_summ.top_keywords[:5]) + [
-                                    kw for cs in cand_summs for kw in cs.top_keywords[:5]
-                                ]
-                                star_audit = audit_pre_anonymized_query(
-                                    query_id=qid_star,
-                                    shown_medoids=star_shown,
-                                    shown_keywords=shown_kws,
-                                    orig_ds=orig_ds_for_audit,
-                                    anon_ds=ds,
-                                )
-                                if audit_store is not None:
-                                    _, raw_star_user = build_star_merge_prompt(
-                                        anchor_summ, cand_summs, orig_ds_for_audit
-                                    )
-                    assert client is not None
-                    t_api0 = time.perf_counter()
-                    res_tuple = client.call_json(
-                        request_id=qid_star,
-                        block_id=block_id,
-                        strategy=strategy_tag,
-                        query_type="star_merge" if use_star_packing else "merge_pair",
-                        sys_msg=sys_msg,
-                        user_msg=user_msg,
-                        bucket=bucket,
-                        est_completion_tokens=105 if use_star_packing else 85,
-                    )
-                    api_wall_sec += time.perf_counter() - t_api0
+        # --- Stage 4: Two-Tier Contrastive Star-Merge with Online Component Refresh ---
+        if max_star_calls > 0:
+            eff_k_nb = int(k_nb) if use_star_packing else 1
+            eff_max_star_calls = max_star_calls if use_star_packing else max(80, max_star_calls * 3)
+            rng = np.random.default_rng(seed)
 
-                if res_tuple is None:
-                    budget_exhausted = True
+            def _components_queried(r1: int, r2: int) -> bool:
+                return r2 in queried_root_nbrs[r1]
+
+            if not use_bayes_band:
+                tiers: List[Tuple[float, float, int]] = [(0.35, eff_tau_auto, 1)]
+            else:
+                tiers = [(float(tau_lo), eff_tau_auto, 2), (float(tier2_lo), eff_tau_auto, 1)]
+
+            step_idx = 0
+            budget_exhausted = False
+            for tier_lo, tier_hi, min_sz in tiers:
+                if budget_exhausted or step_idx >= eff_max_star_calls:
                     break
+                while step_idx < eff_max_star_calls:
+                    live_roots = sorted(active_roots)
+                    if len(live_roots) < 2:
+                        break
+                    live_pos = np.asarray([cid_to_pos[r] for r in live_roots], dtype=np.int64)
+                    live_sizes = np.asarray([comp_summs[r].size for r in live_roots], dtype=np.int64)
 
-                if star_audit is not None and audit_store is not None:
-                    audit_store.record(ds.name, qid_star, star_audit, raw_star_user, user_msg)
-
-                step_idx += 1
-                parsed, pt, ct, lat, _st = res_tuple
-                prompt_tok += pt
-                comp_tok += ct
-                llm_api_sec += lat
-                total_calls += 1
-                star_calls += 1
-                star_edges_checked += len(cand_roots)
-
-                # Strict all_shown marking: anchor medoids + every shown candidate medoid!
-                for m in anchor_summ.medoids[:2]:
-                    all_shown[int(m)] = True
-                for cs in cand_summs:
-                    for m in cs.medoids[:2]:
-                        all_shown[int(m)] = True
-
-                for r2 in cand_roots:
-                    queried_root_nbrs[anchor_r].add(r2)
-                    queried_root_nbrs[r2].add(anchor_r)
-
-                if "error" in parsed:
-                    parse_errors += 1
-                    continue
-                if star_audit is not None:
-                    shared_evs = " ".join(
-                        str(it.get("shared_event", "")) for it in parsed.get("matches", []) if isinstance(it, dict)
-                    ) if isinstance(parsed.get("matches", []), list) else ""
-                    leaked = check_summary_reconstruction_leakage(
-                        str(parsed.get("anchor_event", "")),
-                        shared_evs,
-                        star_audit.get("masked_originals", []),
-                    )
-                    if leaked:
-                        anon_leak_queries += 1
-                        anon_leak_terms += len(leaked)
-
-                matched_pos: Set[int] = set()
-                parse_ok = True
-                if not use_star_packing and "matches" not in parsed and "same_event" in parsed:
-                    if _parse_bool(parsed.get("same_event", False)):
-                        matched_pos.add(1)
-                else:
-                    raw_matches = parsed.get("matches", None)
-                    if not isinstance(raw_matches, list):
-                        parse_ok = False
-                    else:
-                        for item in raw_matches:
-                            mid: Optional[int] = None
-                            if isinstance(item, int) and not isinstance(item, bool):
-                                mid = item
-                            elif isinstance(item, str) and item.strip().isdigit():
-                                mid = int(item.strip())
-                            elif isinstance(item, dict) and "id" in item:
-                                raw_id = item["id"]
-                                if isinstance(raw_id, int) and not isinstance(raw_id, bool):
-                                    mid = raw_id
-                                elif isinstance(raw_id, str) and raw_id.strip().isdigit():
-                                    mid = int(raw_id.strip())
-                            if mid is None or mid < 1 or mid > len(cand_roots):
-                                parse_ok = False
+                    candidates_for_step: List[Tuple[float, int, List[Tuple[float, int]]]] = []
+                    for idx1, r1 in enumerate(live_roots):
+                        s1 = int(live_sizes[idx1])
+                        if s1 < min_sz:
+                            continue
+                        row_sims = sim_mat[live_pos[idx1], live_pos]
+                        mask = (row_sims >= tier_lo) & (row_sims < tier_hi) & (live_sizes >= min_sz)
+                        mask[idx1] = False
+                        js = np.where(mask)[0]
+                        if len(js) == 0:
+                            continue
+                        js = js[np.argsort(-row_sims[js])]
+                        pack: List[Tuple[float, int]] = []
+                        for j in js:
+                            r2 = live_roots[int(j)]
+                            s2 = int(live_sizes[int(j)])
+                            sim_val = float(row_sims[int(j)])
+                            if s1 == 1 and s2 == 1 and sim_val < 0.55:
+                                continue
+                            if _components_queried(r1, r2):
+                                continue
+                            if uf._ekey(r1, r2) in failed_root_pairs:
+                                continue
+                            if not uf.can_merge(r1, r2):
+                                continue
+                            pack.append((sim_val, r2))
+                            if len(pack) >= eff_k_nb:
                                 break
-                            matched_pos.add(mid)
+                        if not pack:
+                            continue
+                        # Size-weighted expected-yield utility over LIVE component sizes & similarities
+                        utility = sum(
+                            (s**2) * (1.0 + 0.25 * math.log1p(min(s1, comp_summs[r2].size)))
+                            for s, r2 in pack
+                        )
+                        candidates_for_step.append((utility, r1, pack))
 
-                if not parse_ok:
-                    parse_errors += 1
-                    continue
+                    if not candidates_for_step:
+                        break
 
-                # Apply CANNOT-LINK first on unmatched candidates, then GUARDED MERGE with live component refresh
-                for pos, r2 in enumerate(cand_roots, start=1):
-                    if pos not in matched_pos:
-                        uf.add_cannot_link(anchor_r, r2)
+                    if random_order:
+                        pick_pos = int(rng.integers(0, len(candidates_for_step)))
+                        _u, anchor_r, pack = candidates_for_step[pick_pos]
+                    else:
+                        candidates_for_step.sort(key=lambda x: -x[0])
+                        _u, anchor_r, pack = candidates_for_step[0]
 
-                cur_anchor = anchor_r
-                for pos, r2 in enumerate(cand_roots, start=1):
-                    if pos not in matched_pos:
+                    cand_roots = [r2 for _s, r2 in pack]
+                    cand_summs = [comp_summs[r2] for r2 in cand_roots]
+                    anchor_summ = comp_summs[anchor_r]
+                    star_audit = None
+                    raw_star_user = ""
+                    qid_star = (
+                        f"star_s{step_idx}_c{anchor_r}_n{len(cand_roots)}"
+                        if use_star_packing
+                        else f"pair_s{step_idx}_c{anchor_r}_c{cand_roots[0]}"
+                    )
+
+                    if dry_run_oracle:
+                        matched_indices = [
+                            idx for idx, r2 in enumerate(cand_roots, start=1) if maj_true[anchor_r] == maj_true[r2]
+                        ]
+                        res_tuple = (
+                            {"matches": [{"id": idx, "shared_event": "oracle"} for idx in matched_indices]},
+                            0,
+                            0,
+                            0.0,
+                            "ORACLE",
+                        )
+                    else:
+                        # Both k=4 (Star Packing) and k=1 (w/o Star Packing) use identical prompt richness & rules
+                        if anonymizer is not None:
+                            _, raw_star_user = build_star_merge_prompt(anchor_summ, cand_summs, ds)
+                            q_star = QueryItem(
+                                query_id=qid_star,
+                                query_type="star_merge",
+                                primary_nodes=list(anchor_summ.medoids[:2])
+                                + [m for cs in cand_summs for m in cs.medoids[:2]],
+                                candidate_clusters=[anchor_r] + cand_roots,
+                            )
+                            anon_texts, anon_summs, star_audit = anonymizer.build_query_anonymized_inputs(
+                                q_star, ds, comp_summs
+                            )
+                            sys_msg, user_msg = build_star_merge_prompt(
+                                anon_summs[anchor_r],
+                                [anon_summs[r2] for r2 in cand_roots],
+                                ds,
+                                text_override=anon_texts,
+                            )
+                            sys_msg = sys_msg + _anon_note
+                        else:
+                            sys_msg, user_msg = build_star_merge_prompt(anchor_summ, cand_summs, ds)
+                            if pre_anonymized:
+                                sys_msg = sys_msg + _anon_note
+                                if orig_ds_for_audit is not None:
+                                    star_shown = list(anchor_summ.medoids[:2]) + [
+                                        m for cs in cand_summs for m in cs.medoids[:2]
+                                    ]
+                                    shown_kws = list(anchor_summ.top_keywords[:5]) + [
+                                        kw for cs in cand_summs for kw in cs.top_keywords[:5]
+                                    ]
+                                    star_audit = audit_pre_anonymized_query(
+                                        query_id=qid_star,
+                                        shown_medoids=star_shown,
+                                        shown_keywords=shown_kws,
+                                        orig_ds=orig_ds_for_audit,
+                                        anon_ds=ds,
+                                    )
+                                    if audit_store is not None:
+                                        _, raw_star_user = build_star_merge_prompt(
+                                            anchor_summ, cand_summs, orig_ds_for_audit
+                                        )
+                        assert client is not None
+                        t_api0 = time.perf_counter()
+                        res_tuple = client.call_json(
+                            request_id=qid_star,
+                            block_id=block_id,
+                            strategy=strategy_tag,
+                            query_type="star_merge" if use_star_packing else "merge_pair",
+                            sys_msg=sys_msg,
+                            user_msg=user_msg,
+                            bucket=bucket,
+                            est_completion_tokens=105 if use_star_packing else 85,
+                        )
+                        api_wall_sec += time.perf_counter() - t_api0
+
+                    if res_tuple is None:
+                        budget_exhausted = True
+                        break
+
+                    if star_audit is not None and audit_store is not None:
+                        audit_store.record(ds.name, qid_star, star_audit, raw_star_user, user_msg)
+
+                    step_idx += 1
+                    parsed, pt, ct, lat, _st = res_tuple
+                    prompt_tok += pt
+                    comp_tok += ct
+                    llm_api_sec += lat
+                    total_calls += 1
+                    star_calls += 1
+                    star_edges_checked += len(cand_roots)
+
+                    # Strict all_shown marking: anchor medoids + every shown candidate medoid!
+                    for m in anchor_summ.medoids[:2]:
+                        all_shown[int(m)] = True
+                    for cs in cand_summs:
+                        for m in cs.medoids[:2]:
+                            all_shown[int(m)] = True
+
+                    if "error" in parsed:
+                        parse_errors += 1
+                        for r2 in cand_roots:
+                            failed_root_pairs.add(uf._ekey(anchor_r, r2))
                         continue
-                    cur_anchor = uf.root(cur_anchor)
-                    cur_r2 = uf.root(r2)
-                    if cur_anchor == cur_r2:
+                    if star_audit is not None:
+                        shared_evs = " ".join(
+                            str(it.get("shared_event", "")) for it in parsed.get("matches", []) if isinstance(it, dict)
+                        ) if isinstance(parsed.get("matches", []), list) else ""
+                        leaked = check_summary_reconstruction_leakage(
+                            str(parsed.get("anchor_event", "")),
+                            shared_evs,
+                            star_audit.get("masked_originals", []),
+                        )
+                        if leaked:
+                            anon_leak_queries += 1
+                            anon_leak_terms += len(leaked)
+
+                    matched_pos: Set[int] = set()
+                    parse_ok = True
+                    if not use_star_packing and "matches" not in parsed and "same_event" in parsed:
+                        if _parse_bool(parsed.get("same_event", False)):
+                            matched_pos.add(1)
+                    else:
+                        raw_matches = parsed.get("matches", None)
+                        if not isinstance(raw_matches, list):
+                            parse_ok = False
+                        else:
+                            for item in raw_matches:
+                                mid: Optional[int] = None
+                                if isinstance(item, int) and not isinstance(item, bool):
+                                    mid = item
+                                elif isinstance(item, str) and item.strip().isdigit():
+                                    mid = int(item.strip())
+                                elif isinstance(item, dict) and "id" in item:
+                                    raw_id = item["id"]
+                                    if isinstance(raw_id, int) and not isinstance(raw_id, bool):
+                                        mid = raw_id
+                                    elif isinstance(raw_id, str) and raw_id.strip().isdigit():
+                                        mid = int(raw_id.strip())
+                                if mid is None or mid < 1 or mid > len(cand_roots):
+                                    parse_ok = False
+                                    break
+                                matched_pos.add(mid)
+
+                    if not parse_ok:
+                        parse_errors += 1
+                        for r2 in cand_roots:
+                            failed_root_pairs.add(uf._ekey(anchor_r, r2))
                         continue
-                    if uf.merge(cur_anchor, cur_r2):
-                        star_merges += 1
-                        new_r = uf.root(cur_anchor)
-                        old_r = cur_r2 if new_r == cur_anchor else cur_anchor
-                        merged_members = comp_summs[cur_anchor].members + comp_summs[cur_r2].members
-                        new_summ = _summarize_members(new_r, merged_members, ds, embeddings, term_idf=term_idf)
-                        comp_summs[new_r] = new_summ
-                        comp_summs.pop(old_r, None)
-                        active_roots.discard(old_r)
 
-                        old_q = queried_root_nbrs.pop(old_r, set())
-                        old_q.discard(new_r)
-                        for qnbr in old_q:
-                            if qnbr in queried_root_nbrs:
-                                queried_root_nbrs[qnbr].discard(old_r)
-                                queried_root_nbrs[qnbr].add(new_r)
-                                queried_root_nbrs[new_r].add(qnbr)
-                        queried_root_nbrs[new_r].discard(new_r)
+                    for r2 in cand_roots:
+                        queried_root_nbrs[anchor_r].add(r2)
+                        queried_root_nbrs[r2].add(anchor_r)
 
-                        uf.comp_vec[new_r] = embeddings[merged_members].sum(axis=0, dtype=np.float64)
-                        uf.comp_size[new_r] = len(merged_members)
+                    # Apply CANNOT-LINK first on unmatched candidates, then GUARDED MERGE with live component refresh
+                    for pos, r2 in enumerate(cand_roots, start=1):
+                        if pos not in matched_pos:
+                            uf.add_cannot_link(anchor_r, r2)
 
-                        pos_new = cid_to_pos[new_r]
-                        protos[pos_new] = new_summ.prototype
-                        new_row = protos @ new_summ.prototype
-                        sim_mat[pos_new, :] = new_row
-                        sim_mat[:, pos_new] = new_row
-
-                        if dry_run_oracle:
-                            vs, cs = np.unique(ds.labels[merged_members], return_counts=True)
-                            maj_true[new_r] = int(vs[int(np.argmax(cs))])
-                        cur_anchor = new_r
+                    cur_anchor = anchor_r
+                    for pos, r2 in enumerate(cand_roots, start=1):
+                        if pos not in matched_pos:
+                            continue
+                        cur_anchor = uf.root(cur_anchor)
+                        cur_r2 = uf.root(r2)
+                        if cur_anchor == cur_r2:
+                            continue
+                        new_r = _apply_merged_root_refresh(cur_anchor, cur_r2)
+                        if new_r is not None:
+                            star_merges += 1
+                            cur_anchor = new_r
 
         blocked_guards += uf.blocked_count
         labels = uf.apply_to_labels(labels)
@@ -1071,10 +1120,12 @@ def run_pure_star_meso(
                 cl_final.add((la, lb) if la < lb else (lb, la))
 
     total_wall = time.perf_counter() - t_cpu0
-    router_cpu_sec = max(0.0, total_wall - api_wall_sec)
+    thread_cpu = max(0.0, time.thread_time() - t_thread0)
+    router_cpu_sec = min(max(0.0, total_wall - api_wall_sec), thread_cpu)
     stats = {
         "total_calls": total_calls,
         "auto_merge_ops": auto_merge_ops,
+        "eff_tau_auto": round(eff_tau_auto, 4),
         "seam_calls": seam_calls,
         "seam_splits": seam_splits,
         "star_calls": star_calls,

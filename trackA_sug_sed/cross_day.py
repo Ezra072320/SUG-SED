@@ -35,6 +35,14 @@ class HistoricalEvent:
     top_keywords: List[str] = field(default_factory=list)
 
 
+def _update_rolling_rep_texts(rep_texts: List[str], new_txt: str, max_items: int = 3) -> List[str]:
+    if not new_txt or new_txt in rep_texts:
+        return rep_texts
+    if not rep_texts:
+        return [new_txt]
+    return ([rep_texts[0], new_txt] + [t for t in rep_texts[1:] if t != new_txt])[:max_items]
+
+
 class GlobalEventMemory:
     """Lightweight O(|E_active| * d) streaming memory over sliding W blocks."""
 
@@ -95,9 +103,8 @@ class GlobalEventMemory:
         ev.total_count += int(summ.size)
         ev.last_block = int(block_id)
         new_txt = ds.texts[summ.medoids[0]].replace("\n", " ").strip()[:140] if summ.medoids else ""
-        if new_txt and new_txt not in ev.rep_texts:
-            ev.rep_texts = (ev.rep_texts[:2] + [new_txt])[:3]
-        ev.top_keywords = list(dict.fromkeys(ev.top_keywords[:3] + summ.top_keywords[:3]))[:5]
+        ev.rep_texts = _update_rolling_rep_texts(ev.rep_texts, new_txt, max_items=3)
+        ev.top_keywords = list(dict.fromkeys(ev.top_keywords[:2] + summ.top_keywords[:3] + ev.top_keywords[2:]))[:5]
 
 
 def _attr_jaccard(kw_a: Sequence[str], kw_b: Sequence[str]) -> float:
@@ -124,12 +131,18 @@ def evaluate_cross_day_stream(
     client: Optional[BudgetedLLMClient] = None,
     budget_per_block: int = 6000,
     strategy_tag: str = "sug_cross_star",
-    enforce_block_uniqueness: bool = True,
+    enforce_block_uniqueness: Optional[bool] = None,
     block_cannot_links: Optional[Dict[int, Sequence[Tuple[int, int]]]] = None,
+    same_block_guard_sim: float = 0.40,
 ) -> Dict[str, Any]:
     """Evaluate a cross-day linking policy chronologically over `(block_id, ds, emb, labels)`."""
     mem = GlobalEventMemory(window_blocks=window_blocks)
     oracle_hist_maj: Dict[int, int] = {}
+    eff_enforce_unique = (
+        (block_cannot_links is None)
+        if enforce_block_uniqueness is None
+        else bool(enforce_block_uniqueness)
+    )
 
     eval_true: List[np.ndarray] = []
     eval_pred: List[np.ndarray] = []
@@ -142,6 +155,7 @@ def evaluate_cross_day_stream(
         "parse_errors": 0,
         "budget_skipped": 0,
         "blocked_same_block_collisions": 0,
+        "blocked_cannot_link_collisions": 0,
         "same_block_gid_collisions": 0,
         "cross_tokens": 0,
         "budget_per_block": int(budget_per_block),
@@ -175,17 +189,23 @@ def evaluate_cross_day_stream(
                 ca, cb = int(a), int(b)
                 bid_cl_set.add((ca, cb) if ca < cb else (cb, ca))
 
-        def _gid_allowed(cur_cid: int, target_gid: int) -> bool:
+        def _check_gid_allowed(cur_cid: int, target_gid: int) -> Tuple[bool, str]:
             prev_cids = gid_to_cids.get(target_gid)
             if not prev_cids:
-                return True
-            if enforce_block_uniqueness:
-                return False
+                return True, ""
+            if eff_enforce_unique:
+                return False, "same_block"
+            cur_proto = summaries[cur_cid].prototype
             for pc in prev_cids:
                 pair = (cur_cid, pc) if cur_cid < pc else (pc, cur_cid)
                 if pair in bid_cl_set:
-                    return False
-            return True
+                    return False, "cl"
+                if float(np.dot(cur_proto, summaries[pc].prototype)) < same_block_guard_sim:
+                    return False, "same_block"
+            return True, ""
+
+        def _gid_allowed(cur_cid: int, target_gid: int) -> bool:
+            return _check_gid_allowed(cur_cid, target_gid)[0]
 
         if bucket is not None and is_eval:
             bucket.start_block()
@@ -235,8 +255,13 @@ def evaluate_cross_day_stream(
 
             top_pos = np.argsort(-scores)
             allowed_positions = [int(p) for p in top_pos if _gid_allowed(cid, act_gids[int(p)])]
-            if len(top_pos) > 0 and not _gid_allowed(cid, act_gids[int(top_pos[0])]) and is_eval:
-                stats["blocked_same_block_collisions"] += 1
+            if len(top_pos) > 0 and is_eval:
+                ok_top, blk_reason = _check_gid_allowed(cid, act_gids[int(top_pos[0])])
+                if not ok_top:
+                    if blk_reason == "cl":
+                        stats["blocked_cannot_link_collisions"] += 1
+                    else:
+                        stats["blocked_same_block_collisions"] += 1
 
             if not allowed_positions:
                 _spawn_gid(cid, cur_maj)
@@ -327,29 +352,34 @@ def evaluate_cross_day_stream(
                         stats["llm_queried"] += 1
                         stats["cross_tokens"] += pt + ct
                         has_api_err = isinstance(parsed, dict) and "error" in parsed
-                        if has_api_err:
-                            stats["parse_errors"] += 1
+                        call_parse_err = bool(has_api_err)
                         matched_id = parsed.get("matched_id", None) if isinstance(parsed, dict) else None
                         chosen_gid: Optional[int] = None
-                        if matched_id is not None and not has_api_err:
-                            m_idx: Optional[int] = None
-                            if isinstance(matched_id, int) and not isinstance(matched_id, bool):
-                                m_idx = matched_id
-                            elif isinstance(matched_id, str) and matched_id.strip().isdigit():
-                                m_idx = int(matched_id.strip())
-                            if m_idx is not None and 1 <= m_idx <= len(cand_events):
-                                cand_gid = cand_events[m_idx - 1].global_id
-                                if _gid_allowed(cid, cand_gid):
-                                    chosen_gid = cand_gid
-                            else:
-                                stats["parse_errors"] += 1
+                        if not has_api_err:
+                            if not isinstance(parsed, dict):
+                                call_parse_err = True
+                            elif matched_id is not None:
+                                m_idx: Optional[int] = None
+                                if isinstance(matched_id, int) and not isinstance(matched_id, bool):
+                                    m_idx = matched_id
+                                elif isinstance(matched_id, str) and matched_id.strip().isdigit():
+                                    m_idx = int(matched_id.strip())
+                                if m_idx is not None and 1 <= m_idx <= len(cand_events):
+                                    cand_gid = cand_events[m_idx - 1].global_id
+                                    if _gid_allowed(cid, cand_gid):
+                                        chosen_gid = cand_gid
+                                else:
+                                    call_parse_err = True
+                        if call_parse_err:
+                            stats["parse_errors"] += 1
 
                         if chosen_gid is not None:
                             _link_to_gid(cid, chosen_gid)
                             stats["llm_linked"] += 1
                         else:
                             _spawn_gid(cid, cur_maj)
-                            stats["llm_rejected"] += 1
+                            if not call_parse_err:
+                                stats["llm_rejected"] += 1
                             stats["spawned_new"] += 1
                 else:
                     if best_cos >= tau_fb:

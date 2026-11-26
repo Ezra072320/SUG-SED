@@ -40,7 +40,7 @@ ABLATION_META: List[Tuple[str, str, str]] = [
     ("abl_no_star_packing", "w/o Star Packing (k=1 Pair)", "Core Universal Engine"),
     ("abl_no_seam_split", "w/o Seam Split", "Core Universal Engine"),
     ("abl_no_automerge", "w/o AutoMerge (>=0.85)", "Efficiency & Risk Guardrail"),
-    ("abl_no_bayes_band", "w/o Bayes Band & AutoMerge", "Efficiency & Risk Guardrail"),
+    ("abl_no_bayes_band", "w/o Two-Tier Band", "Efficiency & Risk Guardrail"),
     ("abl_no_guarded_uf", "w/o Guarded UF", "Efficiency & Risk Guardrail"),
 ]
 
@@ -196,7 +196,7 @@ def compute_factor_attribution(s0: Dict[str, Any], main: Dict[str, Any]) -> Dict
 
     return {
         "code_isolation": {
-            "source": "trackA_sug_sed/star_meso.py (L399-405, L635-700)",
+            "source": "trackA_sug_sed/star_meso.py (detect_clean_seams & run_pure_star_meso)",
             "shared_in_random_meso": [
                 "Pure 2D-SE initialization (knn_k=15, tau=0.50, alpha=0.5)",
                 "AutoMerge (>=0.85 cosine) + GuardedUnionFind (guard_sim=0.40)",
@@ -283,16 +283,26 @@ def compute_encoder_cosine_calibration(abl: Dict[str, Any], main: Dict[str, Any]
         for bid in block_ids:
             _, idxs = daily_blocks[bid]
             sub = ds_full.subset(idxs, name_suffix=f"_M{bid:02d}")
-            emb_path = EMB_CACHE_DIR / f"{ds_name}_M{bid:02d}_{model_slug}.npy"
-            if not emb_path.exists():
-                raise FileNotFoundError(f"Missing embedding cache: {emb_path}")
-            emb = np.load(emb_path, allow_pickle=False)
-            if emb.shape[0] != len(sub):
-                raise ValueError(f"Embedding cache shape mismatch for {emb_path.name}: {emb.shape[0]} vs {len(sub)}")
+            from trackA_sug_sed.embed_cache import load_or_extract_block_embeddings
 
-            part_path = PART_CACHE_DIR / f"{ds_name}_M{bid:02d}_k15_tau0.500_a0.500_ref1.npz"
-            if not part_path.exists():
-                raise FileNotFoundError(f"Missing Pure 2D-SE partition cache: {part_path}")
+            emb = load_or_extract_block_embeddings(
+                ds_name, bid, sub.texts, model_name=model_name, cache_dir=EMB_CACHE_DIR
+            )
+            if emb.shape[0] != len(sub):
+                raise ValueError(f"Embedding cache shape mismatch for {ds_name} M_{bid:02d}: {emb.shape[0]} vs {len(sub)}")
+
+            part_prefix = f"{ds_name}_M{bid:02d}_k15_tau0.500_a0.500_ref1"
+            enc_part_matches = sorted(PART_CACHE_DIR.glob(f"{part_prefix}_enc_{model_slug}_g*.npz"))
+            legacy_part = PART_CACHE_DIR / f"{part_prefix}.npz"
+            if enc_part_matches:
+                part_path = enc_part_matches[-1]
+            elif legacy_part.exists():
+                part_path = legacy_part
+            else:
+                any_matches = sorted(PART_CACHE_DIR.glob(f"{part_prefix}*.npz"))
+                if not any_matches:
+                    raise FileNotFoundError(f"Missing Pure 2D-SE partition cache for {part_prefix} in {PART_CACHE_DIR}")
+                part_path = any_matches[-1]
             with np.load(part_path, allow_pickle=False) as z:
                 labels = np.asarray(z["labels"], dtype=np.int64)
             if len(labels) != len(sub):

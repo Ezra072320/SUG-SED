@@ -1,4 +1,0 @@
-{"request_hash": "ceb89ff7d1f54ffa232ae13ed258ce03da10a3ca1d267a19062f08643e7d6f73", "request_id": "seam_c12", "model": "Qwen/Qwen3-8B", "prompt_tokens": 458, "completion_tokens": 18, "response": {"action": "KEEP_MERGED", "confidence": 0.95}}
-{"request_hash": "930a4a5f9431915df238ee27c69f4adb14c21a377a43f4590b80969957ab83e3", "request_id": "seam_c4", "model": "Qwen/Qwen3-8B", "prompt_tokens": 522, "completion_tokens": 18, "response": {"action": "KEEP_MERGED", "confidence": 0.95}}
-{"request_hash": "2c95654ee403c1b9c93c7ef2d368893641bff089ad49ad03b6b76722615dbea2", "request_id": "seam_c34", "model": "Qwen/Qwen3-8B", "prompt_tokens": 508, "completion_tokens": 18, "response": {"action": "KEEP_MERGED", "confidence": 0.95}}
-{"request_hash": "fd7e3ea0d882549186564541881528d6e5213b5436f24dce870c852c3e863f02", "request_id": "seam_c27", "model": "Qwen/Qwen3-8B", "prompt_tokens": 551, "completion_tokens": 18, "response": {"action": "KEEP_MERGED", "confidence": 0.95}}

@@ -20,7 +20,7 @@ from scipy import sparse
 from sklearn.cluster import AgglomerativeClustering
 
 from core_shared.data_loader import SocialDataset
-from core_shared.graph_builder import MessageGraph, build_message_graph
+from core_shared.graph_builder import MessageGraph, _ensure_l2_normalized, build_message_graph
 from core_shared.partition_cache import load_or_solve_2d_se
 from core_shared.se_solver import solve_2d_se
 from trackA_sug_sed.star_meso import _spherical_kmeans_deterministic
@@ -63,7 +63,10 @@ def run_eventx(
             continue
         idf = math.log((n + 1.0) / (df + 1.0)) + 1.0
         base = idf * (1.4 if term.startswith(("e:", "h:")) else 0.7) / math.log2(2.0 + df)
-        nodes_sorted = sorted(nodes, key=lambda idx: ts[idx])
+        nodes_sorted = sorted(
+            nodes,
+            key=lambda idx: (bool(np.isnan(ts[idx])), 0.0 if np.isnan(ts[idx]) else float(ts[idx])),
+        )
         half_win = 6
         for pos, u in enumerate(nodes_sorted):
             for pos2 in range(pos + 1, min(df, pos + half_win + 1)):
@@ -94,18 +97,24 @@ def run_sbert_agglom(
     distance_threshold: float = 0.55,
 ) -> Tuple[np.ndarray, Dict[str, Any]]:
     """Average-linkage cosine agglomerative clustering on frozen SBERT embeddings."""
-    t0 = time.time()
-    n = len(embeddings)
+    t0 = time.perf_counter()
+    emb = _ensure_l2_normalized(embeddings)
+    n = len(emb)
     if n <= 1:
-        return np.zeros(n, dtype=np.int64), {"runtime_sec": 0.0, "distance_threshold": distance_threshold}
+        return np.zeros(n, dtype=np.int64), {
+            "runtime_sec": 0.0,
+            "e2e_local_sec": 0.0,
+            "distance_threshold": distance_threshold,
+        }
     cl = AgglomerativeClustering(
         n_clusters=None,
         metric="cosine",
         linkage="average",
         distance_threshold=float(distance_threshold),
     )
-    labels = cl.fit_predict(embeddings).astype(np.int64)
-    return labels, {"runtime_sec": round(time.time() - t0, 3), "distance_threshold": distance_threshold}
+    labels = cl.fit_predict(emb).astype(np.int64)
+    rt = round(time.perf_counter() - t0, 3)
+    return labels, {"runtime_sec": rt, "e2e_local_sec": rt, "distance_threshold": distance_threshold}
 
 
 # ---------------------------------------------------------------------------
@@ -123,15 +132,17 @@ def run_hisevent(
     embed_model: Optional[str] = None,
 ) -> Tuple[np.ndarray, Dict[str, Any]]:
     """Heterogeneous semantic + attribute message graph 2D Structural Entropy (HiSEvent)."""
-    t0 = time.time()
+    t0 = time.perf_counter()
+    emb = _ensure_l2_normalized(embeddings)
     graph = build_message_graph(
         ds,
-        embeddings,
+        emb,
         knn_k=knn_k,
         knn_sim_threshold=knn_sim_threshold,
         attr_alpha=attr_alpha,
         compute_non_entity_tfidf=False,
     )
+    graph_build_sec = round(time.perf_counter() - t0, 3)
     labels, se_sec = load_or_solve_2d_se(
         dataset_name=dataset_name,
         block_id=block_id,
@@ -143,8 +154,10 @@ def run_hisevent(
         embed_model=embed_model,
     )
     return labels, {
-        "runtime_sec": round(time.time() - t0, 3),
+        "runtime_sec": round(time.perf_counter() - t0, 3),
+        "graph_build_sec": graph_build_sec,
         "se_solve_sec": se_sec,
+        "e2e_local_sec": round(graph_build_sec + se_sec, 3),
         "knn_sim_threshold": knn_sim_threshold,
         "attr_alpha": attr_alpha,
     }
@@ -188,6 +201,7 @@ def run_hypersed(
     embeddings: np.ndarray,
     graph: Optional[MessageGraph] = None,
     anchor_ratio: float = 0.12,
+    max_anchors: int = 800,
     hyp_dim: int = 32,
     epochs: int = 60,
     lr: float = 0.03,
@@ -197,25 +211,33 @@ def run_hypersed(
     """Faithful PyTorch HyperSED (Yu et al., AAAI 2025): SAMG + Hyperbolic Anchor Tree."""
     import torch
 
-    t0 = time.time()
+    t0 = time.perf_counter()
+    emb = _ensure_l2_normalized(embeddings)
     n = len(ds)
     if n <= 32:
-        return np.zeros(n, dtype=np.int64), {"runtime_sec": 0.0}
+        return np.zeros(n, dtype=np.int64), {"runtime_sec": 0.0, "e2e_local_sec": 0.0}
 
     if graph is None:
-        graph = build_message_graph(ds, embeddings, knn_k=15, knn_sim_threshold=0.40, attr_alpha=0.5)
+        graph = build_message_graph(
+            ds,
+            emb,
+            knn_k=15,
+            knn_sim_threshold=0.40,
+            attr_alpha=0.5,
+            compute_non_entity_tfidf=False,
+        )
 
     # 1. Semantic-based Anchor Message Graph (SAMG)
-    n_anchors = int(min(360, max(24, round(n * float(anchor_ratio)))))
+    n_anchors = int(min(max_anchors, max(24, round(n * float(anchor_ratio)))))
     n_anchors = min(n_anchors, n - 1)
-    anchor_assign = _spherical_kmeans_deterministic(embeddings, k=n_anchors, n_iters=10)
+    anchor_assign = _spherical_kmeans_deterministic(emb, k=n_anchors, n_iters=10)
     # Reindex dense active anchors
     uniq_a, anchor_assign = np.unique(anchor_assign, return_inverse=True)
     A = len(uniq_a)
 
-    anchor_emb = np.zeros((A, embeddings.shape[1]), dtype=np.float32)
+    anchor_emb = np.zeros((A, emb.shape[1]), dtype=np.float32)
     for a in range(A):
-        mu = embeddings[anchor_assign == a].mean(axis=0)
+        mu = emb[anchor_assign == a].mean(axis=0)
         nm = float(np.linalg.norm(mu))
         anchor_emb[a] = mu / max(nm, 1e-12)
 
@@ -228,7 +250,7 @@ def run_hypersed(
     W_anchor.setdiag(0.0)
     W_anchor.eliminate_zeros()
 
-    # Add semantic anchor k-NN edges so disconnected tail anchors stay structured
+    # Add semantic anchor k-NN edges cleanly without double-counting mutual pairs
     sim_aa = anchor_emb @ anchor_emb.T
     np.fill_diagonal(sim_aa, -2.0)
     k_eff = min(knn_anchor, A - 1)
@@ -238,9 +260,9 @@ def run_hypersed(
         for v in top_idx[u].tolist():
             s = float(sim_aa[u, v])
             if s >= 0.45:
-                rows_k.extend([u, v])
-                cols_k.extend([v, u])
-                vals_k.extend([s, s])
+                rows_k.append(u)
+                cols_k.append(v)
+                vals_k.append(s)
     W_sem = sparse.csr_matrix((vals_k, (rows_k, cols_k)), shape=(A, A), dtype=np.float64)
     W_sem = W_sem.maximum(W_sem.T)
     W_samg = (W_anchor + W_sem).tocsr()
@@ -320,9 +342,12 @@ def run_hypersed(
     anchor_labels, _ = solve_2d_se(adj_hyp, refine_moves=True)
     msg_labels = anchor_labels[anchor_assign]
     _, clean = np.unique(msg_labels, return_inverse=True)
+    rt = round(time.perf_counter() - t0, 3)
     return clean.astype(np.int64), {
-        "runtime_sec": round(time.time() - t0, 3),
+        "runtime_sec": rt,
+        "e2e_local_sec": rt,
         "n_anchors": A,
+        "max_anchors": max_anchors,
         "device": device,
         "anchor_ratio": anchor_ratio,
     }

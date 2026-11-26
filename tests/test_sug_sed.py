@@ -1219,6 +1219,401 @@ def test_trackA_round2_audit_fixes() -> None:
     assert len(split_daily_blocks(ds_unk, min_block_size=1, drop_unknown_dates=True)) == 1
 
 
+def test_trackA_spec_v21_alignment() -> None:
+    """Regression tests for Track A v2.1 finalized pipeline & audit fixes (T1-T7)."""
+    import pandas as pd
+    from core_shared.data_loader import load_socialed_npy
+    from core_shared.token_ledger import canonical_request_hash
+    from trackA_sug_sed.cross_day import GlobalEventMemory
+    from trackA_sug_sed.llm_client import BudgetedLLMClient, estimate_tokens
+
+    rng = np.random.default_rng(2028)
+    dim = 32
+    u0 = rng.normal(size=dim).astype(np.float32)
+    u0 /= np.linalg.norm(u0)
+    u1 = rng.normal(size=dim).astype(np.float32)
+    u1 -= float(np.dot(u1, u0)) * u0
+    u1 /= np.linalg.norm(u1)
+    u2 = rng.normal(size=dim).astype(np.float32)
+    u2 -= float(np.dot(u2, u0)) * u0 + float(np.dot(u2, u1)) * u1
+    u2 /= np.linalg.norm(u2)
+
+    # T1: Stage 2 Seam Split -> Stage 3 AutoMerge order + Seam CANNOT-LINK blocks AutoMerge
+    v_pock = 0.86 * u0 + np.sqrt(1.0 - 0.86**2) * u1
+    emb_t1 = np.vstack([
+        u0 + 0.015 * rng.normal(size=(12, dim)).astype(np.float32),
+        v_pock + 0.005 * rng.normal(size=(6, dim)).astype(np.float32),
+    ])
+    emb_t1 /= np.linalg.norm(emb_t1, axis=1, keepdims=True)
+    ds_t1 = SocialDataset(
+        name="t1_seam_am",
+        tweet_ids=np.arange(18, dtype=np.int64),
+        texts=[f"t1 post {i}" for i in range(18)],
+        labels=np.array([0] * 12 + [1] * 6, dtype=np.int64),
+        tokens_lemma=[["post"] for _ in range(18)],
+        entities=[[] for _ in range(18)],
+        hashtags=[[] for _ in range(18)],
+        user_ids=["u"] * 18,
+        mentioned_users=[[] for _ in range(18)],
+        timestamps=np.arange(18, dtype=np.float64) + 1e9,
+        dates=["2026-01-01"] * 18,
+    )
+    g_t1 = build_message_graph(ds_t1, emb_t1, knn_k=6, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+
+    class _SeamOnlySplitClient:
+        def call_json(self, *, query_type, **_kw):
+            if query_type == "seam":
+                return {"event_a": "main", "event_b": "pock", "different_events": True}, 60, 15, 0.0, "MOCK"
+            return {"anchor_event": "x", "matches": []}, 60, 15, 0.0, "MOCK"
+
+    pred_t1, _, _, st_t1 = run_pure_star_meso(
+        "t1", 0, ds_t1, emb_t1, _SeamOnlySplitClient(), graph=g_t1,
+        labels_init=np.zeros(18, dtype=np.int64), max_star_calls=0, auto_calibrate_tau=False,
+    )
+    assert st_t1["seam_splits"] == 1, st_t1
+    assert st_t1["auto_merge_ops"] == 0, f"Seam CANNOT-LINK failed to block AutoMerge: {st_t1}"
+    assert st_t1["blocked_by_guard"] >= 1, st_t1
+    assert len(set(pred_t1.tolist())) == 2
+
+    # T2: GuardedUnionFind(comp_vecs=...) exact centroid + unsupervised auto_calibrate_tau
+    c_vecs = [np.array([10.0, 1.0], dtype=np.float64), np.array([0.0, 1.0], dtype=np.float64)]
+    p_tmp = np.vstack([v / np.linalg.norm(v) for v in c_vecs]).astype(np.float32)
+    uf_cv = GuardedUnionFind([0, 1], p_tmp @ p_tmp.T, protos=p_tmp, sizes=[11, 1], comp_vecs=c_vecs)
+    assert np.allclose(uf_cv.comp_vec[0], np.array([10.0, 1.0]), atol=1e-12)
+
+    # Build 12 clusters of size 2: orthogonal (p95 low) vs anisotropic drift (p95 ~ 0.67 -> eff_tau=0.90)
+    def _run_am_calib(aniso_weight: float, auto_cal: bool):
+        embs_list, labs_list, init_list = [], [], []
+        orths = []
+        for k in range(12):
+            v = rng.normal(size=dim).astype(np.float32)
+            v -= float(np.dot(v, u0)) * u0
+            for prev in orths:
+                v -= float(np.dot(v, prev)) * prev
+            v /= max(float(np.linalg.norm(v)), 1e-9)
+            orths.append(v)
+        for k in range(12):
+            if k == 1:
+                # Place cluster 1 at cosine ~ 0.87 to cluster 0
+                c_vec = 0.87 * (aniso_weight * u0 + np.sqrt(1.0 - aniso_weight**2) * orths[0]) + np.sqrt(1.0 - 0.87**2) * orths[1]
+            else:
+                c_vec = aniso_weight * u0 + np.sqrt(1.0 - aniso_weight**2) * orths[k]
+            c_vec /= np.linalg.norm(c_vec)
+            for _ in range(2):
+                embs_list.append(c_vec)
+                labs_list.append(0 if k in (0, 1) else k)
+                init_list.append(k)
+        em_cal = np.vstack(embs_list).astype(np.float32)
+        ds_cal = SocialDataset(
+            name="cal", tweet_ids=np.arange(24, dtype=np.int64), texts=[f"p{i}" for i in range(24)],
+            labels=np.array(labs_list, dtype=np.int64), tokens_lemma=[["p"] for _ in range(24)],
+            entities=[[] for _ in range(24)], hashtags=[[] for _ in range(24)],
+            user_ids=["u"] * 24, mentioned_users=[[] for _ in range(24)],
+            timestamps=np.arange(24, dtype=np.float64) + 1e9, dates=["2026-01-01"] * 24,
+        )
+        g_cal = build_message_graph(ds_cal, em_cal, knn_k=2, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+        _, _, _, st_cal = run_pure_star_meso(
+            "cal", 0, ds_cal, em_cal, None, dry_run_oracle=True, graph=g_cal,
+            labels_init=np.array(init_list, dtype=np.int64), max_seam_calls=0, max_star_calls=0,
+            auto_calibrate_tau=auto_cal,
+        )
+        return st_cal
+
+    st_iso = _run_am_calib(0.0, True)
+    assert abs(st_iso["eff_tau_auto"] - 0.85) < 1e-6 and st_iso["auto_merge_ops"] == 1, st_iso
+    st_aniso_cal = _run_am_calib(0.82, True)
+    st_aniso_nocal = _run_am_calib(0.82, False)
+    assert st_aniso_cal["eff_tau_auto"] >= 0.89 and st_aniso_cal["auto_merge_ops"] == 0, st_aniso_cal
+    assert st_aniso_nocal["auto_merge_ops"] == 1, st_aniso_nocal
+
+    # T3: random_order=True preserves Two-Tier Band (Tier-1 size>=2 precedes Tier-2 size==1)
+    c0_t3 = u0
+    c1_t3 = 0.70 * u0 + np.sqrt(1.0 - 0.70**2) * u1
+    c2_t3 = 0.50 * u0 + np.sqrt(1.0 - 0.50**2) * u2
+    emb_t3 = np.vstack([np.tile(c0_t3, (3, 1)), np.tile(c1_t3, (3, 1)), np.tile(c2_t3, (1, 1))]).astype(np.float32)
+    ds_t3 = ds_t1.subset(list(range(7)))
+    ds_t3.labels = np.zeros(7, dtype=np.int64)
+    g_t3 = build_message_graph(ds_t3, emb_t3, knn_k=2, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+    lab_t3 = np.array([0, 0, 0, 1, 1, 1, 2], dtype=np.int64)
+
+    class _MergeFirstClient:
+        def call_json(self, **_kw):
+            return {"anchor_event": "x", "matches": [{"id": 1, "shared_event": "same"}]}, 40, 10, 0.0, "OK"
+
+    for s_rand in (1, 7, 42):
+        p_t3, _, _, st_t3 = run_pure_star_meso(
+            "t3", 0, ds_t3, emb_t3, _MergeFirstClient(), graph=g_t3, labels_init=lab_t3,
+            random_order=True, seed=s_rand, max_seam_calls=0, max_star_calls=1,
+        )
+        assert st_t3["star_merges"] == 1 and p_t3[0] == p_t3[3] and p_t3[0] != p_t3[6], (s_rand, p_t3)
+
+    # T4: failed_root_pairs error isolation & unlock after root merge
+    c0_t4 = u0
+    c1_t4 = 0.75 * u0 + np.sqrt(1.0 - 0.75**2) * u1
+    c2_t4 = 0.70 * u0 + np.sqrt(1.0 - 0.70**2) * u2
+    emb_t4 = np.vstack([np.tile(c0_t4, (3, 1)), np.tile(c1_t4, (3, 1)), np.tile(c2_t4, (3, 1))]).astype(np.float32)
+    ds_t4 = ds_t1.subset(list(range(9)))
+    ds_t4.labels = np.zeros(9, dtype=np.int64)
+    g_t4 = build_message_graph(ds_t4, emb_t4, knn_k=2, knn_sim_threshold=0.50, compute_non_entity_tfidf=False)
+    lab_t4 = np.array([0] * 3 + [1] * 3 + [2] * 3, dtype=np.int64)
+
+    class _RecoverAfterMergeClient:
+        def __init__(self) -> None:
+            self.n = 0
+
+        def call_json(self, **_kw):
+            self.n += 1
+            if self.n == 1:
+                return {"anchor_event": "x", "matches": [{"id": 99}]}, 40, 10, 0.0, "OK"
+            return {"anchor_event": "x", "matches": [{"id": 1, "shared_event": "ok"}]}, 40, 10, 0.0, "OK"
+
+    p_t4, _, _, st_t4 = run_pure_star_meso(
+        "t4", 0, ds_t4, emb_t4, _RecoverAfterMergeClient(), graph=g_t4, labels_init=lab_t4,
+        max_seam_calls=0, k_nb=1, max_star_calls=4,
+    )
+    assert st_t4["parse_errors"] == 1 and st_t4["star_merges"] == 2 and len(set(p_t4.tolist())) == 1, st_t4
+
+    # T5: cross_day rolling rep_texts, block_cannot_links + 0.40 same-block guard, parse_errors vs llm_rejected
+    mem = GlobalEventMemory(window_blocks=14)
+    ds_m0 = ds_t1.subset([0, 1, 2])
+    ds_m0.texts = ["day0 anchor post", "day0 second post", "day0 third post"]
+    s_m0 = build_cluster_summaries(ds_m0, emb_t4[:3], np.zeros(3, dtype=np.int64))[0]
+    gid0 = mem.spawn_event(0, s_m0, ds_m0)
+    ds_m1 = ds_t1.subset([0])
+    ds_m1.texts = ["day1 evolution post"]
+    mem.update_event(gid0, 1, build_cluster_summaries(ds_m1, emb_t4[:1], np.zeros(1, dtype=np.int64))[0], ds_m1)
+    ds_m2 = ds_t1.subset([0])
+    ds_m2.texts = ["day2 latest post"]
+    mem.update_event(gid0, 2, build_cluster_summaries(ds_m2, emb_t4[:1], np.zeros(1, dtype=np.int64))[0], ds_m2)
+    assert mem.events[gid0].rep_texts[:2] == ["day0 anchor post", "day2 latest post"], mem.events[gid0].rep_texts
+
+    # Same-block double guard in cross_day (cos(c0, c3) = 0.20 < 0.40, both cos(., hist) = 0.775 in [0.65, 0.90))
+    c_left = u0
+    c_right = 0.20 * u0 + np.sqrt(1.0 - 0.20**2) * u1
+    hist_mid = (c_left + c_right) / np.linalg.norm(c_left + c_right)
+    emb_cd_blk0 = np.tile(hist_mid, (4, 1)).astype(np.float32)
+    # Block 2: clus 0 (c_left, sz 5), clus 1 (c_left, sz 4, same event!), clus 2 (c_left, sz 3, CL with 0), clus 3 (c_right, sz 2 -> no, sz 3 so in band!)
+    emb_cd_blk2 = np.vstack([
+        np.tile(c_left, (5, 1)),
+        np.tile(c_left, (4, 1)),
+        np.tile(c_left, (3, 1)),
+        np.tile(c_right, (3, 1)),
+    ]).astype(np.float32)
+    lab_cd_blk2 = np.array([0] * 5 + [1] * 4 + [2] * 3 + [3] * 3, dtype=np.int64)
+    ds_cd_b0 = ds_t1.subset(list(range(4)))
+    ds_cd_b0.labels = np.zeros(4, dtype=np.int64)
+    ds_cd_b2 = ds_t1.subset(list(range(15)))
+    ds_cd_b2.labels = np.array([0] * 5 + [0] * 4 + [1] * 3 + [2] * 3, dtype=np.int64)
+
+    class _Match1CrossClient:
+        def call_json(self, **_kw):
+            return {"daily_event": "x", "matched_id": 1, "reason": "same"}, 40, 10, 0.0, "OK"
+
+    res_cd_guard = evaluate_cross_day_stream(
+        [(0, ds_cd_b0, emb_cd_blk0, np.zeros(4, dtype=np.int64)), (2, ds_cd_b2, emb_cd_blk2, lab_cd_blk2)],
+        "sug_cross_star", eval_start_block=2, tau_lo=0.65, tau_hi=0.90, tau_fb=0.90, min_cross_size=3,
+        client=_Match1CrossClient(), budget_per_block=5000, block_cannot_links={2: [(0, 2)]},
+    )
+    assert res_cd_guard["n_pred_events"] == 3, res_cd_guard
+    assert res_cd_guard["stats"]["blocked_cannot_link_collisions"] >= 1, res_cd_guard["stats"]
+    assert res_cd_guard["stats"]["blocked_same_block_collisions"] >= 1, res_cd_guard["stats"]
+
+    # Error responses must NOT inflate llm_rejected
+    class _ErrOnlyCrossClient:
+        def __init__(self) -> None:
+            self.i = 0
+
+        def call_json(self, **_kw):
+            self.i += 1
+            if self.i == 1:
+                return {"error": "http 500"}, 40, 0, 0.0, "HTTP_ERROR"
+            return {"daily_event": "x", "matched_id": 99, "reason": "oob"}, 40, 10, 0.0, "OK"
+
+    res_cd_err = evaluate_cross_day_stream(
+        [(0, ds_cd_b0, emb_cd_blk0, np.zeros(4, dtype=np.int64)), (2, ds_cd_b2.subset(list(range(5)) + list(range(12, 15))), np.vstack([emb_cd_blk2[:5], emb_cd_blk2[12:15]]), np.array([0]*5 + [1]*3))],
+        "sug_cross_star", eval_start_block=2, tau_lo=0.65, tau_hi=0.90, tau_fb=0.90, min_cross_size=3,
+        client=_ErrOnlyCrossClient(), budget_per_block=5000,
+    )
+    assert res_cd_err["stats"]["parse_errors"] == 2 and res_cd_err["stats"]["llm_rejected"] == 0, res_cd_err["stats"]
+
+    # T6: estimate_tokens & legacy 3-field cache fallback
+    assert estimate_tokens("a" * 34, "b" * 34, 20) == 40
+    with tempfile.TemporaryDirectory() as tmp:
+        led_leg = TokenLedger(log_dir=Path(tmp))
+        msgs = [{"role": "system", "content": "sys"}, {"role": "user", "content": "usr"}]
+        leg_h = canonical_request_hash({"model": "Qwen/Qwen3-8B", "temperature": 0.0, "messages": msgs})
+        led_leg.log_call(
+            request_id="leg", block_id=0, strategy="s", query_type="t", model="Qwen/Qwen3-8B",
+            request_hash=leg_h, prompt_tokens=11, completion_tokens=7, latency_sec=0.1,
+            status="OK", response_payload={"ok": True}, from_cache=False,
+        )
+        http_count = []
+
+        class _CountHTTPClient(BudgetedLLMClient):
+            def _call_http(self, messages, max_retries=10, use_json_mode=None, max_tokens_override=None):
+                http_count.append(max_tokens_override)
+                return '{"ok": true}', 12, 8, 0.01, "stop", False
+
+        c_def = _CountHTTPClient("Qwen/Qwen3-8B", led_leg, max_tokens=384, use_json_mode=True)
+        r_hit = c_def.call_json("q1", 0, "s", "t", "sys", "usr")
+        assert r_hit is not None and r_hit[4] == "CACHED_REPLAY" and len(http_count) == 0
+        c_mod = _CountHTTPClient("Qwen/Qwen3-8B", led_leg, max_tokens=128, use_json_mode=True)
+        r_miss = c_mod.call_json("q2", 0, "s", "t", "sys", "usr")
+        assert r_miss is not None and r_miss[4] == "OK" and len(http_count) == 1
+
+    # T7: data_loader resolution-safe timestamps
+    with tempfile.TemporaryDirectory() as tmp:
+        arr_npy = np.empty((2, 11), dtype=object)
+        ts_us = pd.Timestamp("2026-01-01 00:00:00", tz="UTC")
+        arr_npy[0] = [0, "txt 0", 0, "0", ["tok"], [], "u0", ts_us.isoformat(), "d", [], []]
+        arr_npy[1] = [1, "txt 1", 0, "0", ["tok"], [], "u1", None, "d", [], []]
+        np.save(Path(tmp) / "MockTS.npy", arr_npy, allow_pickle=True)
+        ds_ts = load_socialed_npy("MockTS", dataset_dir=Path(tmp), sort_chronologically=True)
+        assert abs(ds_ts.timestamps[0] - ts_us.timestamp()) < 1e-6 and np.isnan(ds_ts.timestamps[1])
+
+
+def test_seven_baselines_fairness_adaptations() -> None:
+    """Unit tests verifying fair adaptations across the 7 selected SED baselines."""
+    from trackA_sug_sed.llm_client import (
+        build_pairwise_same_event_prompt,
+        build_post_assign_prompt,
+        select_display_medoids,
+    )
+
+    rng = np.random.default_rng(777)
+    dim = 32
+    u0 = rng.normal(size=dim).astype(np.float32)
+    u0 /= np.linalg.norm(u0)
+    u1 = rng.normal(size=dim).astype(np.float32)
+    u1 -= float(np.dot(u1, u0)) * u0
+    u1 /= np.linalg.norm(u1)
+    u2 = rng.normal(size=dim).astype(np.float32)
+    u2 -= float(np.dot(u2, u0)) * u0 + float(np.dot(u2, u1)) * u1
+    u2 /= np.linalg.norm(u2)
+
+    # 1. select_display_medoids & build_post_assign_prompt: no self-leakage and max_medoids=2
+    ds_b, emb_b = _make_synthetic_dataset(n_per_ev=5, n_ev=3)
+    lab_b = np.array([0] * 5 + [1] * 5 + [2] * 4 + [3], dtype=np.int64)
+    summs_b = build_cluster_summaries(ds_b, emb_b, lab_b, max_medoids=3)
+    # Exclude target medoid 0 from cluster 0 -> still gets 2 non-self medoids
+    meds_no0 = select_display_medoids(summs_b[0], exclude_idx=0, max_medoids=2)
+    assert len(meds_no0) == 2 and 0 not in meds_no0, meds_no0
+    # Singleton cluster 3 has only node 14 -> excluded when target_idx=14
+    assert select_display_medoids(summs_b[3], exclude_idx=14, max_medoids=2) == []
+
+    sys_pw, _ = build_pairwise_same_event_prompt("a", "b")
+    assert "SAME EVENT ONLY" in sys_pw and "DIFFERENT EVENTS" in sys_pw
+
+    _sys_pa, usr_pa = build_post_assign_prompt(
+        target_idx=14,
+        cand_cids=[3, 0, 1],
+        summaries=summs_b,
+        ds=ds_b,
+        rag_context=["r1", "r2", "r3"],
+        max_medoids=2,
+        max_rag=2,
+    )
+    assert "[Cluster 3]" not in usr_pa, f"Singleton self-cluster leaked into prompt:\n{usr_pa}"
+    assert "[Cluster 0]" in usr_pa and "r3" not in usr_pa, usr_pa
+    assert "EXACT SAME" in _sys_pa
+
+    # 2. Few-Shot LLM-Post & RagSEDE: singleton affinity ranking, no singleton cur_c, strict all_shown alignment
+    # Cluster 0 (size 5, u0), Cluster 1 (size 5, u1), Singleton 10 (near u0), Singleton 11 (near 0.6*u0 + 0.8*u2)
+    emb_s = np.vstack([
+        np.tile(u0, (5, 1)),
+        np.tile(u1, (5, 1)),
+        (0.95 * u0 + np.sqrt(1.0 - 0.95**2) * u2).reshape(1, -1),
+        (0.55 * u0 + np.sqrt(1.0 - 0.55**2) * u2).reshape(1, -1),
+    ]).astype(np.float32)
+    emb_s /= np.linalg.norm(emb_s, axis=1, keepdims=True)
+    ds_s = ds_b.subset(list(range(12)))
+    ds_s.texts = [f"fair post {i}" for i in range(12)]
+    ds_s.labels = np.array([0] * 5 + [1] * 5 + [0, 0], dtype=np.int64)
+    lab_init_s = np.array([0] * 5 + [1] * 5 + [2, 3], dtype=np.int64)
+    g_s = build_message_graph(ds_s, emb_s, knn_k=4, knn_sim_threshold=0.45, compute_non_entity_tfidf=False)
+
+    seen_prompts: list[tuple[int, str]] = []
+
+    class _AssignCluster0Client:
+        def call_json(self, *, request_id="", user_msg="", query_type="", bucket=None, **_kw):
+            if bucket is not None:
+                if not bucket.can_spend(120):
+                    return None
+                bucket.record_spend(100, 20)
+            if query_type in {"post_correct", "ragsede_node"}:
+                nid = int(request_id.split("_n")[-1])
+                seen_prompts.append((nid, user_msg))
+                return {"event_cue": "c0", "action": "ASSIGN", "target_cluster": 0}, 100, 20, 0.0, "MOCK"
+            if query_type == "lsed_rewrite":
+                return {"rewritten_event": "fair post 0 incident"}, 80, 15, 0.0, "MOCK"
+            return {}, 10, 5, 0.0, "MOCK"
+
+    bk_fs = CausalUniformBucket(tokens_per_block=500, allow_carryover=False)
+    bk_fs.start_block()
+    pred_fs, shown_fs, st_fs = run_fewshot_llm_post(0, ds_s, emb_s, g_s, lab_init_s, _AssignCluster0Client(), bk_fs)
+    assert st_fs["reassigned"] >= 1, st_fs
+    assert pred_fs[seen_prompts[0][0]] == pred_fs[0], (seen_prompts[0][0], pred_fs)
+    for nid, ptxt in seen_prompts:
+        assert f"[Cluster {lab_init_s[nid]}]" not in ptxt if lab_init_s[nid] >= 2 else True
+    assert shown_fs.sum() <= st_fs["total_calls"] * (1 + 2 * 4), (shown_fs.sum(), st_fs)
+
+    seen_prompts.clear()
+    bk_rag = CausalUniformBucket(tokens_per_block=500, allow_carryover=False)
+    bk_rag.start_block()
+    pred_rag, shown_rag, st_rag = run_ragsede_budgeted(0, ds_s, emb_s, g_s, lab_init_s, _AssignCluster0Client(), bk_rag)
+    assert st_rag["reassigned"] >= 1 and st_rag["movable_nodes"] >= 1, st_rag
+    assert all("[Cluster 2]" not in pt and "[Cluster 3]" not in pt for _, pt in seen_prompts)
+    assert shown_rag.sum() <= st_rag["total_calls"] * (1 + 2 + 2 * 4), (shown_rag.sum(), st_rag)
+
+    # 3. LSED singleton prioritization (singleton node 10/11 shouldn't be skipped as 1.0 confident)
+    import trackA_sug_sed.baselines_llm as bl_mod
+
+    emb_lsed = emb_s.copy()
+    emb_lsed[0] = 0.70 * u0 + np.sqrt(1.0 - 0.70**2) * u1
+    emb_lsed /= np.linalg.norm(emb_lsed, axis=1, keepdims=True)
+    bk_ls = CausalUniformBucket(tokens_per_block=250, allow_carryover=False)
+    bk_ls.start_block()
+    orig_bl_enc = bl_mod.encode_texts_hf
+    try:
+        bl_mod.encode_texts_hf = lambda txts, **_kw: np.tile(u0, (len(txts), 1)).astype(np.float32)
+        _pl, shown_ls, st_ls = run_lsed_budgeted(0, ds_s, emb_lsed, lab_init_s, "dummy", _AssignCluster0Client(), bk_ls)
+    finally:
+        bl_mod.encode_texts_hf = orig_bl_enc
+    # With budget 250 (2 calls), isolated singletons (margin=0) must outrank cohesive core members of Cluster 0/1
+    assert st_ls["total_calls"] >= 2 and (shown_ls[10] or shown_ls[11]), (shown_ls, st_ls)
+
+    # 4. ClusterLLM GuardedUF guard + fine_cut peel-off + HyperSED max_anchors=800
+    ds_hyp, emb_hyp = _make_synthetic_dataset(n_per_ev=12, n_ev=3)
+    _hyp_p, st_hyp = run_hypersed(ds_hyp, emb_hyp, anchor_ratio=0.5, max_anchors=800, epochs=5)
+    assert st_hyp["max_anchors"] == 800 and "e2e_local_sec" in st_hyp
+
+    # ClusterLLM fine_cut peel-off test: C0 and C1 at cos=0.70 (cut at 0.45 merges, fine_cut=0.40 separates)
+    c_a = u0
+    c_b = 0.70 * u0 + np.sqrt(1.0 - 0.70**2) * u1  # cos_dist=0.30 (<0.45, >0.40? Wait 1-0.70=0.30<0.40, use cos=0.58->dist=0.42!)
+    c_b = 0.58 * u0 + np.sqrt(1.0 - 0.58**2) * u1
+    emb_fc = np.vstack([
+        np.tile(c_a, (6, 1)),
+        np.tile(c_b, (4, 1)),
+        np.tile(u2, (4, 1)),
+    ]).astype(np.float32)
+    ds_fc = ds_b.subset(list(range(14)))
+    ds_fc.texts = [f"fc post {i}" for i in range(14)]
+
+    class _FinePeelClient:
+        def call_json(self, *, request_id="", bucket=None, **_kw):
+            parts = request_id.split("_")
+            u, v = int(parts[-2][1:]), int(parts[-1][1:])
+            # Merge c_a & c_b on d=0.45? No: say (u<6, v in 6..9) is FALSE while picking d=0.45 so labels merge them,
+            # forcing fine_cut peel-off of the whole 4-node subgroup rather than a single post!
+            cu = 0 if u < 6 else (1 if u < 10 else 2)
+            cv = 0 if v < 6 else (1 if v < 10 else 2)
+            same = (cu == cv)
+            return {"same_event": same}, 40, 10, 0.0, "MOCK"
+
+    pred_fc, _, st_fc = run_clusterllm(0, ds_fc, emb_fc, np.zeros(14, dtype=np.int64), _FinePeelClient(), None)
+    assert len(set(pred_fc[6:10].tolist())) == 1 and pred_fc[0] != pred_fc[6], (pred_fc, st_fc)
+
+
 if __name__ == "__main__":
     test_core_se_and_guarded_uf()
     test_star_meso_and_zero_llm_baselines()
@@ -1229,4 +1624,6 @@ if __name__ == "__main__":
     test_priority2_clusterllm_imbalance_and_dynamic_cannot_link()
     test_trackA_audit_bugfixes_and_refinements()
     test_trackA_round2_audit_fixes()
+    test_trackA_spec_v21_alignment()
+    test_seven_baselines_fairness_adaptations()
     print("ALL SUG-SED UNIT TESTS PASSED cleanly.")

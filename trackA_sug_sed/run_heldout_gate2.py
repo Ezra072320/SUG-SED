@@ -427,7 +427,7 @@ def _prepare_context(dataset_name: str, block_ids: Sequence[int], need_tuned_dif
     stats_tun_map: Dict[int, Dict[str, Any]] = {}
 
     def _hisev_stat(st: Dict[str, Any]) -> Dict[str, Any]:
-        sec = float(st.get("se_solve_sec", st.get("runtime_sec", 0.0)))
+        sec = float(st.get("e2e_local_sec", st.get("se_solve_sec", st.get("runtime_sec", 0.0))))
         return {"runtime_sec": round(sec, 3), "router_cpu_sec": round(sec, 3), "total_wall_sec": round(sec, 3)}
 
     print(f"\n[Prepare Held-Out Context] {dataset_name} blocks={list(block_ids)} ({embed_model})", flush=True)
@@ -678,6 +678,12 @@ def run_stage_qwen3_main(contexts: Dict[str, Dict[str, Any]], max_workers: int =
             _attach_recorded_live_api_sec(_sub_journal("pure_star_meso"), agg_main, live_lat_index)
             ds_out["our_pure_star_meso"] = agg_main
             _save_preds(pred_path, bids, main_preds)
+            cl_path = pred_path.with_suffix(".cl.json")
+            cl_payload = {
+                str(b): agg_main["per_block"].get(f"M_{b:02d}", {}).get("stats", {}).get("intra_cannot_link_pairs", [])
+                for b in bids
+            }
+            cl_path.write_text(json.dumps(cl_payload, indent=2), encoding="utf-8")
             _ckpt()
 
         if not (resume and "our_star_meso_on_hisevent_def" in ds_out):
@@ -920,12 +926,20 @@ def run_stage_qwen3_abl(contexts: Dict[str, Dict[str, Any]], max_workers: int = 
 # Stage 4: Full Chronological Cross-Day Evaluation (M_00..M_end, eval M_06+)
 # ---------------------------------------------------------------------------
 
+def _load_block_cl(path: Path) -> Optional[Dict[int, List[Tuple[int, int]]]]:
+    if not path.exists():
+        return None
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return {int(k): [(int(a), int(b)) for a, b in v] for k, v in raw.items()}
+
+
 def _eval_crossday_for_model(
     ds_name: str,
     ctx: Dict[str, Any],
     held_preds: Sequence[np.ndarray],
     client: BudgetedLLMClient,
     full_sweep: bool = True,
+    block_cannot_links: Optional[Dict[int, Sequence[Tuple[int, int]]]] = None,
 ) -> Dict[str, Any]:
     held_bids = HELDOUT_BLOCKS[ds_name]
     pred_map: Dict[int, np.ndarray] = {b: ctx["init_pure"][b] for b in WARMUP_BLOCKS}
@@ -944,10 +958,11 @@ def _eval_crossday_for_model(
             out[f"proto_attr_{tau_pa:.2f}"] = evaluate_cross_day_stream(stream, "proto_attr_only", eval_start_block=6, tau_proto=tau_pa, attr_weight=0.15)
     out["sug_cross_star"] = evaluate_cross_day_stream(
         stream, "sug_cross_star", eval_start_block=6, tau_lo=0.65, tau_hi=0.90, tau_fb=0.90, min_cross_size=3,
-        client=client, budget_per_block=6000,
+        client=client, budget_per_block=6000, block_cannot_links=block_cannot_links,
     )
     out["oracle_band"] = evaluate_cross_day_stream(
         stream, "oracle_band", eval_start_block=6, tau_lo=0.65, tau_hi=0.90, tau_fb=0.90, min_cross_size=3,
+        block_cannot_links=block_cannot_links,
     )
     return out
 
@@ -967,9 +982,10 @@ def run_stage_qwen3_crossday(contexts: Dict[str, Dict[str, Any]], resume: bool =
         held_preds = _load_preds(PRED_DIR / f"qwen3_{ds_name}.npz", bids)
         if held_preds is None:
             raise RuntimeError(f"Missing saved Qwen3 held-out predictions at {PRED_DIR / f'qwen3_{ds_name}.npz'}; run qwen3_main first.")
+        block_cl = _load_block_cl(PRED_DIR / f"qwen3_{ds_name}.cl.json")
         print(f"\n=== [Gate 2 Qwen3-8B Cross-Day] {ds_name} (warmup M_00..M_05, eval M_{bids[0]:02d}..M_{bids[-1]:02d}) ===", flush=True)
         cl = _make_client("siliconflow", model_name, OUT_DIR / "ledgers" / "qwen3_8b" / ds_name / "cross_star", shared_cache)
-        results[ds_name] = _eval_crossday_for_model(ds_name, ctx, held_preds, cl, full_sweep=True)
+        results[ds_name] = _eval_crossday_for_model(ds_name, ctx, held_preds, cl, full_sweep=True, block_cannot_links=block_cl)
         out_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
         for ck in ["no_link", "proto_0.80", "proto_0.88", "proto_0.90", "proto_attr_0.90", "sug_cross_star", "oracle_band"]:
             r = results[ds_name][ck]
@@ -1018,6 +1034,12 @@ def run_stage_qwen25_full(contexts: Dict[str, Dict[str, Any]], max_workers: int 
                 max_workers=max_workers,
             )
             _save_preds(pred_path, bids, q25_preds)
+            cl_q25_path = pred_path.with_suffix(".cl.json")
+            cl_q25 = {
+                str(b): ds_out["our_pure_star_meso"]["per_block"].get(f"M_{b:02d}", {}).get("stats", {}).get("intra_cannot_link_pairs", [])
+                for b in bids
+            }
+            cl_q25_path.write_text(json.dumps(cl_q25, indent=2), encoding="utf-8")
             _ckpt()
 
         if not (resume and "clusterllm_emnlp23" in ds_out):
@@ -1101,8 +1123,9 @@ def run_stage_qwen25_full(contexts: Dict[str, Dict[str, Any]], max_workers: int 
         if not (resume and "cross_day" in ds_out):
             q25_held = _load_preds(pred_path, bids)
             assert q25_held is not None
+            q25_cl = _load_block_cl(pred_path.with_suffix(".cl.json"))
             cl_cd = _cl("cross_star")
-            ds_out["cross_day"] = _eval_crossday_for_model(ds_name, ctx, q25_held, cl_cd, full_sweep=False)
+            ds_out["cross_day"] = _eval_crossday_for_model(ds_name, ctx, q25_held, cl_cd, full_sweep=False, block_cannot_links=q25_cl)
             for ck in ["no_link", "proto_0.88", "proto_0.90", "sug_cross_star", "oracle_band"]:
                 r = ds_out["cross_day"][ck]
                 print(f"  [q25 CrossDay {ck:14s}] G-AMI={r['g_ami']:5.2f} G-Mac={r['g_mac_b3']:5.2f} Q={r['stats']['llm_queried']}", flush=True)
@@ -1764,7 +1787,7 @@ def build_gate2_report() -> None:
             lines.append(f"| **Full Pure-Star-Meso** | {rf['total_calls']} | {rf['total_tokens']} | {rf['ami']:.2f} | {rf['macro_b3']:.2f} | {rf['micro_b3']:.2f} | {rf['tail_b3']:.2f} | {rf.get('unq_net_mean',0):+.1f} |")
             for ak, albl in [
                 ("abl_no_automerge", "w/o AutoMerge (>=0.85)"),
-                ("abl_no_bayes_band", "w/o Bayes Band & AutoMerge"),
+                ("abl_no_bayes_band", "w/o Two-Tier Band"),
                 ("abl_no_star_packing", "w/o Star Packing (k=1 Pair)"),
                 ("abl_no_guarded_uf", "w/o Guarded UF"),
                 ("abl_no_seam_split", "w/o Seam Split"),

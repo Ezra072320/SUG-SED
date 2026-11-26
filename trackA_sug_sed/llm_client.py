@@ -26,6 +26,13 @@ _PACE_NEXT_TS: Dict[str, float] = {}
 _PACE_INTERVAL: Dict[str, float] = {}
 _PACE_OK_STREAK: Dict[str, int] = {}
 
+EST_CHARS_PER_TOKEN: float = 3.4
+
+
+def estimate_tokens(sys_msg: str, user_msg: str, est_completion_tokens: int = 90) -> int:
+    """Unified character-based preflight token estimator matching `CausalUniformBucket` gating."""
+    return int((len(sys_msg) + len(user_msg)) / EST_CHARS_PER_TOKEN) + int(est_completion_tokens)
+
 
 def _pace_acquire(pace_key: str) -> None:
     """Serialize request dispatches across worker threads to avoid RPM bursts."""
@@ -204,8 +211,7 @@ class BudgetedLLMClient:
         Returns None if `bucket.can_spend(est_tokens)` refuses before spending;
         otherwise returns `(parsed_dict, prompt_tokens, completion_tokens, latency_sec, status)`.
         """
-        est_prompt = int((len(sys_msg) + len(user_msg)) / 3.4)
-        est_tokens = est_prompt + est_completion_tokens
+        est_tokens = estimate_tokens(sys_msg, user_msg, est_completion_tokens)
         if bucket is not None and not bucket.can_spend(est_tokens):
             return None
 
@@ -222,6 +228,21 @@ class BudgetedLLMClient:
         }
         req_hash = canonical_request_hash(req_payload)
         cached = self.ledger.lookup_cache(req_hash)
+        if cached is None:
+            default_thinking = False if "qwen3" in self.model.lower() else None
+            if (
+                self.max_tokens == 384
+                and self.use_json_mode
+                and self.enable_thinking == default_thinking
+            ):
+                legacy_hash = canonical_request_hash(
+                    {
+                        "model": self.model,
+                        "temperature": self.temperature,
+                        "messages": req_payload["messages"],
+                    }
+                )
+                cached = self.ledger.lookup_cache(legacy_hash)
 
         if cached is not None:
             parsed = cached["response"]
@@ -255,9 +276,9 @@ class BudgetedLLMClient:
                     max_tokens_override=self.max_tokens,
                 )
                 if pt == 0:
-                    pt = max(1, int((len(sys_msg) + len(user_msg)) / 3.8))
+                    pt = max(1, int((len(sys_msg) + len(user_msg)) / EST_CHARS_PER_TOKEN))
                 if ct == 0 and raw_text:
-                    ct = max(1, int(len(raw_text) / 3.8))
+                    ct = max(1, int(len(raw_text) / EST_CHARS_PER_TOKEN))
                 try:
                     parsed = _extract_json(raw_text)
                     status = "OK"
@@ -413,6 +434,35 @@ def build_cross_star_prompt(
 # Prompt Builders: Published Same-Budget LLM Baselines
 # ---------------------------------------------------------------------------
 
+def select_display_medoids(
+    summ: Any,
+    exclude_idx: Optional[int] = None,
+    max_medoids: int = 2,
+) -> List[int]:
+    """Select up to `max_medoids` non-excluded representative post indices for a cluster."""
+    meds: List[int] = []
+    seen: Set[int] = set()
+    for m in getattr(summ, "medoids", []):
+        mi = int(m)
+        if exclude_idx is not None and mi == exclude_idx:
+            continue
+        if mi not in seen:
+            seen.add(mi)
+            meds.append(mi)
+            if len(meds) >= max_medoids:
+                return meds
+    for m in getattr(summ, "members", []):
+        mi = int(m)
+        if exclude_idx is not None and mi == exclude_idx:
+            continue
+        if mi not in seen:
+            seen.add(mi)
+            meds.append(mi)
+            if len(meds) >= max_medoids:
+                return meds
+    return meds
+
+
 def build_pairwise_same_event_prompt(
     text_1: str,
     text_2: str,
@@ -422,6 +472,11 @@ def build_pairwise_same_event_prompt(
     """Pairwise event equivalence prompt (ClusterLLM / Cequel)."""
     sys_msg = (
         "You decide whether two social-media posts refer to the EXACT SAME specific real-world event.\n"
+        "Rules:\n"
+        "- SAME EVENT ONLY when both posts cover the same specific incident, match, announcement, disaster, or developing story "
+        "(e.g., match scores and player goal reactions from the same fixture; resignation report and immediate fallout).\n"
+        "- DIFFERENT EVENTS when they cover distinct fixtures, distinct locations/victims, recurring generic topics, "
+        "or loosely related celebrities/teams on separate occasions.\n"
         "Summarize each post's event in 4-8 words first, then return same_event (true/false) in strict JSON."
     )
     d1 = f" ({date_1})" if date_1 else ""
@@ -440,11 +495,16 @@ def build_post_assign_prompt(
     summaries: Dict[int, Any],
     ds: SocialDataset,
     rag_context: Optional[Sequence[str]] = None,
+    max_medoids: int = 2,
+    max_rag: int = 2,
 ) -> Tuple[str, str]:
     """Target post assignment prompt (Few-Shot LLM-Post / RagSEDE-Budgeted / Random)."""
     sys_msg = (
         "You assign a social-media post to one of the candidate event clusters, or mark NEW_EVENT / NOISE.\n"
-        "Assign ONLY if the post refers to the exact same specific real-world event as that candidate cluster.\n"
+        "Rules:\n"
+        "- ASSIGN ONLY when the post refers to the EXACT SAME specific real-world incident, match, announcement, disaster, or developing story "
+        "as that candidate cluster.\n"
+        "- Do NOT assign to a candidate that merely shares a broad theme or celebrity/team on a separate occasion.\n"
         "Respond strictly in JSON."
     )
     t_str = _clean_snippet(ds.texts[target_idx], 190)
@@ -453,15 +513,18 @@ def build_post_assign_prompt(
     for cid in cand_cids:
         if cid not in summaries:
             continue
-        valid_cids.append(cid)
         s = summaries[cid]
+        meds = select_display_medoids(s, exclude_idx=target_idx, max_medoids=max_medoids)
+        if not meds:
+            continue
+        valid_cids.append(cid)
         kw = ", ".join(s.top_keywords[:5])
-        med_lines = "\n".join(f"  - {_clean_snippet(ds.texts[m], 125)}" for m in s.medoids[:3])
+        med_lines = "\n".join(f"  - {_clean_snippet(ds.texts[m], 125)}" for m in meds)
         c_blocks.append(f"[Cluster {cid}] (size={s.size}, keywords: {kw}):\n{med_lines}")
 
     rag_sec = ""
-    if rag_context:
-        rag_lines = "\n".join(f"  * {_clean_snippet(r, 125)}" for r in rag_context[:3])
+    if rag_context and max_rag > 0:
+        rag_lines = "\n".join(f"  * {_clean_snippet(r, 125)}" for r in rag_context[:max_rag])
         rag_sec = f"\nRetrieved Neighbor Context:\n{rag_lines}\n"
 
     user_msg = (

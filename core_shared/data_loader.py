@@ -126,9 +126,10 @@ def load_socialed_npy(
     user_ids = [_normalize_user(x) for x in arr[:, 6]]
 
     ts_series = pd.to_datetime(arr[:, 7], utc=True, errors="coerce")
-    is_na_ts = np.asarray(pd.isna(ts_series), dtype=bool)
-    ts_ns = np.asarray(ts_series.astype("int64"), dtype=np.int64)
-    timestamps = np.where(is_na_ts, np.nan, (ts_ns // 10**9).astype(np.float64))
+    epoch = pd.Timestamp("1970-01-01", tz="UTC")
+    diff = ts_series - epoch
+    secs = diff.dt.total_seconds() if hasattr(diff, "dt") else diff.total_seconds()
+    timestamps = np.asarray(secs, dtype=np.float64)
     dates = [t.strftime("%Y-%m-%d") if pd.notna(t) else "unknown" for t in ts_series]
 
     hashtags = [_normalize_str_list(x, strip_prefix="#") for x in arr[:, 9]]

@@ -161,8 +161,10 @@ def _prepare_dev_context(dataset_name: str, block_ids: Sequence[int]) -> Dict[st
     emb_map: Dict[int, np.ndarray] = {}
     graph_pure_map: Dict[int, MessageGraph] = {}
     init_pure_map: Dict[int, np.ndarray] = {}
+    stats_pure_map: Dict[int, Dict[str, Any]] = {}
     graph_def_map: Dict[int, MessageGraph] = {}
     init_def_map: Dict[int, np.ndarray] = {}
+    stats_def_map: Dict[int, Dict[str, Any]] = {}
 
     print(f"\n[Prepare Dev Context] {dataset_name} blocks={list(block_ids)} ({embed_model})", flush=True)
     for bid in block_ids:
@@ -172,13 +174,13 @@ def _prepare_dev_context(dataset_name: str, block_ids: Sequence[int]) -> Dict[st
         g_pure = build_message_graph(
             sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5, compute_non_entity_tfidf=False
         )
-        l_pure, _ = run_hisevent(
+        l_pure, st_pure = run_hisevent(
             dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.50, attr_alpha=0.5, embed_model=embed_model
         )
         g_def = build_message_graph(
             sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5, compute_non_entity_tfidf=False
         )
-        l_def, _ = run_hisevent(
+        l_def, st_def = run_hisevent(
             dataset_name, bid, sd, em, knn_k=15, knn_sim_threshold=0.35, attr_alpha=0.5, embed_model=embed_model
         )
 
@@ -186,8 +188,10 @@ def _prepare_dev_context(dataset_name: str, block_ids: Sequence[int]) -> Dict[st
         emb_map[bid] = em
         graph_pure_map[bid] = g_pure
         init_pure_map[bid] = l_pure
+        stats_pure_map[bid] = st_pure
         graph_def_map[bid] = g_def
         init_def_map[bid] = l_def
+        stats_def_map[bid] = st_def
         print(f"  M_{bid:02d} n={len(sd)} events={len(set(sd.labels.tolist()))} | K_pure={len(set(l_pure.tolist()))} K_def={len(set(l_def.tolist()))}", flush=True)
 
     return {
@@ -197,8 +201,10 @@ def _prepare_dev_context(dataset_name: str, block_ids: Sequence[int]) -> Dict[st
         "emb": emb_map,
         "graph_pure": graph_pure_map,
         "init_pure": init_pure_map,
+        "stats_pure": stats_pure_map,
         "graph_def": graph_def_map,
         "init_def": init_def_map,
+        "stats_def": stats_def_map,
     }
 
 
@@ -261,7 +267,9 @@ def run_stage_0tok(contexts: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
         print(f"  [2] SBERT-Agg (EMNLP'19)  | AMI={best_sbert['ami']:5.2f} Mac={best_sbert['macro_b3']:5.2f} Mic={best_sbert['micro_b3']:5.2f} Tail={best_sbert['tail_b3']:5.2f}")
 
         # Paper 3: HiSEvent Default & Dev-Tuned
-        agg_his_def = _aggregate_block_metrics(bids, dss, inits_def)
+        agg_his_def = _aggregate_block_metrics(
+            bids, dss, inits_def, stats_list=[ctx["stats_def"][b] for b in bids]
+        )
         ds_res["hisevent_default"] = agg_his_def
         print(f"  [3a] HiSEvent Default     | AMI={agg_his_def['ami']:5.2f} Mac={agg_his_def['macro_b3']:5.2f} Mic={agg_his_def['micro_b3']:5.2f} Tail={agg_his_def['tail_b3']:5.2f}")
 
@@ -282,7 +290,13 @@ def run_stage_0tok(contexts: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
             (0.60, 0.8),
             (0.60, 1.0),
         ]:
-            preds, sts = zip(*[run_hisevent(ds_name, b, ctx["ds"][b], ctx["emb"][b], knn_sim_threshold=tsim, attr_alpha=aa) for b in bids])
+            preds, sts = zip(*[
+                run_hisevent(
+                    ds_name, b, ctx["ds"][b], ctx["emb"][b],
+                    knn_sim_threshold=tsim, attr_alpha=aa, embed_model=ctx["embed_model"],
+                )
+                for b in bids
+            ])
             agg = _aggregate_block_metrics(bids, dss, preds, stats_list=sts)
             his_sweep.append({"tau_sim": tsim, "attr_alpha": aa, "ami": agg["ami"], "macro_b3": agg["macro_b3"], "tail_b3": agg["tail_b3"]})
             if best_his_tuned is None or (agg["ami"] + agg["macro_b3"]) > (best_his_tuned["ami"] + best_his_tuned["macro_b3"]):
@@ -294,8 +308,11 @@ def run_stage_0tok(contexts: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
         # Paper 4: HyperSED (AAAI 2025)
         best_hyp = None
         hyp_sweep = []
-        for ar in [0.10, 0.14, 0.18, 0.22, 0.26]:
-            preds, sts = zip(*[run_hypersed(ds, em, graph=g, anchor_ratio=ar, epochs=60) for ds, em, g in zip(dss, embs, graphs_pure)])
+        for ar in [0.10, 0.14, 0.18, 0.22, 0.26, 0.30]:
+            preds, sts = zip(*[
+                run_hypersed(ds, em, graph=g, anchor_ratio=ar, max_anchors=800, epochs=60)
+                for ds, em, g in zip(dss, embs, graphs_pure)
+            ])
             agg = _aggregate_block_metrics(bids, dss, preds, stats_list=sts)
             hyp_sweep.append({"anchor_ratio": ar, "ami": agg["ami"], "macro_b3": agg["macro_b3"], "tail_b3": agg["tail_b3"], "wall": agg["total_wall_sec"]})
             if best_hyp is None or (agg["ami"] + agg["macro_b3"]) > (best_hyp["ami"] + best_hyp["macro_b3"]):
@@ -305,11 +322,13 @@ def run_stage_0tok(contexts: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
         print(f"  [4] HyperSED (AAAI'25)    | AMI={best_hyp['ami']:5.2f} Mac={best_hyp['macro_b3']:5.2f} Mic={best_hyp['micro_b3']:5.2f} Tail={best_hyp['tail_b3']:5.2f} ({best_hyp['total_wall_sec']}s)")
 
         # Internal 0-LLM baselines on Pure 2D-SE (0.50, 0.5)
-        agg_pure = _aggregate_block_metrics(bids, dss, inits_pure)
+        agg_pure = _aggregate_block_metrics(
+            bids, dss, inits_pure, stats_list=[ctx["stats_pure"][b] for b in bids]
+        )
         ds_res["ctrl_pure_2dse_0tok"] = agg_pure
         print(f"  [C0] Pure 2D-SE Base(0.5) | AMI={agg_pure['ami']:5.2f} Mac={agg_pure['macro_b3']:5.2f} Mic={agg_pure['micro_b3']:5.2f} Tail={agg_pure['tail_b3']:5.2f}")
 
-        am_preds, am_sts = zip(*[run_automerge_only(ds, em, lp, tau_auto=0.85, guard_sim=0.45) for ds, em, lp in zip(dss, embs, inits_pure)])
+        am_preds, am_sts = zip(*[run_automerge_only(ds, em, lp, tau_auto=0.85, guard_sim=0.40) for ds, em, lp in zip(dss, embs, inits_pure)])
         agg_am = _aggregate_block_metrics(bids, dss, am_preds, init_list=inits_pure, stats_list=am_sts)
         ds_res["ctrl_automerge_only"] = agg_am
         print(f"  [C1] AutoMerge-Only(0.85) | AMI={agg_am['ami']:5.2f} Mac={agg_am['macro_b3']:5.2f} Mic={agg_am['micro_b3']:5.2f} Tail={agg_am['tail_b3']:5.2f}")
@@ -493,6 +512,13 @@ def run_stage_qwen3(contexts: Dict[str, Dict[str, Any]], reuse_baselines: bool =
             for b, pr in zip(bids, main_dev_preds):
                 pred_by_bid[b] = pr
             stream = [(b, ctx["ds"][b], ctx["emb"][b], pred_by_bid[b]) for b in ALL_DEV_STREAM_BLOCKS]
+            dev_pb = ds_out["our_pure_star_meso"].get("per_block", {})
+            has_cl = any("intra_cannot_link_pairs" in dev_pb.get(f"M_{b:02d}", {}).get("stats", {}) for b in bids)
+            block_cl = (
+                {b: dev_pb.get(f"M_{b:02d}", {}).get("stats", {}).get("intra_cannot_link_pairs", []) for b in bids}
+                if has_cl
+                else None
+            )
 
             cd_res: Dict[str, Any] = {}
             cd_res["no_link"] = evaluate_cross_day_stream(stream, "no_link", eval_start_block=2)
@@ -502,10 +528,11 @@ def run_stage_qwen3(contexts: Dict[str, Dict[str, Any]], reuse_baselines: bool =
                 cd_res[f"proto_attr_{tau_pa:.2f}"] = evaluate_cross_day_stream(stream, "proto_attr_only", eval_start_block=2, tau_proto=tau_pa, attr_weight=0.15)
             cd_res["sug_cross_star"] = evaluate_cross_day_stream(
                 stream, "sug_cross_star", eval_start_block=2, tau_lo=0.65, tau_hi=0.90, tau_fb=0.90, min_cross_size=3,
-                client=_client("cross_star"), budget_per_block=6000,
+                client=_client("cross_star"), budget_per_block=6000, block_cannot_links=block_cl,
             )
             cd_res["oracle_band"] = evaluate_cross_day_stream(
                 stream, "oracle_band", eval_start_block=2, tau_lo=0.65, tau_hi=0.90, tau_fb=0.90, min_cross_size=3,
+                block_cannot_links=block_cl,
             )
             ds_out["cross_day_dev"] = cd_res
             for ck in ["no_link", "proto_0.60", "proto_0.80", "proto_0.85", "proto_0.88", "proto_0.90", "proto_0.92", "proto_attr_0.90", "sug_cross_star", "oracle_band"]:
@@ -890,9 +917,189 @@ def build_gate1_report() -> None:
     print(f"\nSaved Gate 1 report -> {OUT_DIR / 'dev_gate1_report.md'}")
 
 
+def run_stage_baselines7(contexts: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+    """Run clean 7-baseline fairness benchmark + Pure-Star-Meso v2.1 strictly on Dev M_02..M_05."""
+    model_name = "Qwen/Qwen3-8B"
+    shared_cache = OUT_DIR / "ledgers" / "qwen3_8b_shared_responses.jsonl"
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    results: Dict[str, Any] = {
+        "protocol": "SUG-SED v2.1 Fairness Benchmark (7 Baselines, Dev M_02..M_05)",
+        "model": model_name,
+        "provider": "siliconflow",
+        "budget_per_block": BUDGET_PER_DEV_BLOCK,
+        "datasets": {},
+    }
+
+    for ds_name, ctx in contexts.items():
+        print(f"\n=== [Stage Baselines-7] {ds_name} Dev (M_02..M_05) ===", flush=True)
+        bids = DEV_EVAL_BLOCKS
+        _assert_dev_only(bids)
+        dss = [ctx["ds"][b] for b in bids]
+        embs = [ctx["emb"][b] for b in bids]
+        graphs_p = [ctx["graph_pure"][b] for b in bids]
+        inits_p = [ctx["init_pure"][b] for b in bids]
+        inits_d = [ctx["init_def"][b] for b in bids]
+        embed_model = ctx["embed_model"]
+        ds_out: Dict[str, Any] = {}
+
+        # --- 0-LLM Published Baselines (3) + Internal References (2) ---
+        best_sbert = None
+        sb_sweep = []
+        for dth in [0.45, 0.50, 0.55, 0.60, 0.65]:
+            preds, sts = zip(*[run_sbert_agglom(em, distance_threshold=dth) for em in embs])
+            agg = _aggregate_block_metrics(bids, dss, preds, stats_list=sts)
+            sb_sweep.append({"distance_threshold": dth, "ami": agg["ami"], "macro_b3": agg["macro_b3"], "tail_b3": agg["tail_b3"]})
+            if best_sbert is None or (agg["ami"] + agg["macro_b3"]) > (best_sbert["ami"] + best_sbert["macro_b3"]):
+                best_sbert = agg
+                best_sbert["best_distance_threshold"] = dth
+        best_sbert["dev_sweep"] = sb_sweep
+        ds_out["sbert_emnlp19"] = best_sbert
+        print(f"  [1] SBERT-Agg (EMNLP'19)  | AMI={best_sbert['ami']:5.2f} Mac={best_sbert['macro_b3']:5.2f} Mic={best_sbert['micro_b3']:5.2f} Tail={best_sbert['tail_b3']:5.2f} (d={best_sbert['best_distance_threshold']})")
+
+        agg_his_def = _aggregate_block_metrics(
+            bids, dss, inits_d, stats_list=[ctx["stats_def"][b] for b in bids]
+        )
+        ds_out["hisevent_default"] = agg_his_def
+        print(f"  [2a] HiSEvent Default     | AMI={agg_his_def['ami']:5.2f} Mac={agg_his_def['macro_b3']:5.2f} Mic={agg_his_def['micro_b3']:5.2f} Tail={agg_his_def['tail_b3']:5.2f}")
+
+        best_his_tuned = None
+        his_sweep = []
+        for (tsim, aa) in [
+            (0.35, 0.5),
+            (0.45, 0.5),
+            (0.45, 0.8),
+            (0.50, 0.5),
+            (0.50, 0.8),
+            (0.50, 1.0),
+            (0.55, 0.5),
+            (0.55, 0.8),
+            (0.55, 1.0),
+            (0.55, 1.2),
+            (0.60, 0.5),
+            (0.60, 0.8),
+            (0.60, 1.0),
+        ]:
+            preds, sts = zip(*[
+                run_hisevent(
+                    ds_name, b, ctx["ds"][b], ctx["emb"][b],
+                    knn_sim_threshold=tsim, attr_alpha=aa, embed_model=embed_model,
+                )
+                for b in bids
+            ])
+            agg = _aggregate_block_metrics(bids, dss, preds, stats_list=sts)
+            his_sweep.append({"tau_sim": tsim, "attr_alpha": aa, "ami": agg["ami"], "macro_b3": agg["macro_b3"], "tail_b3": agg["tail_b3"]})
+            if best_his_tuned is None or (agg["ami"] + agg["macro_b3"]) > (best_his_tuned["ami"] + best_his_tuned["macro_b3"]):
+                best_his_tuned = agg
+                best_his_tuned["best_cfg"] = {"tau_sim": tsim, "attr_alpha": aa}
+        best_his_tuned["dev_sweep"] = his_sweep
+        ds_out["hisevent_dev_tuned"] = best_his_tuned
+        print(f"  [2b] HiSEvent Dev-Tuned   | AMI={best_his_tuned['ami']:5.2f} Mac={best_his_tuned['macro_b3']:5.2f} Mic={best_his_tuned['micro_b3']:5.2f} Tail={best_his_tuned['tail_b3']:5.2f} cfg={best_his_tuned['best_cfg']}")
+
+        best_hyp = None
+        hyp_sweep = []
+        for ar in [0.10, 0.14, 0.18, 0.22, 0.26, 0.30]:
+            preds, sts = zip(*[
+                run_hypersed(ds, em, graph=g, anchor_ratio=ar, max_anchors=800, epochs=60)
+                for ds, em, g in zip(dss, embs, graphs_p)
+            ])
+            agg = _aggregate_block_metrics(bids, dss, preds, stats_list=sts)
+            hyp_sweep.append({"anchor_ratio": ar, "ami": agg["ami"], "macro_b3": agg["macro_b3"], "tail_b3": agg["tail_b3"], "wall": agg["total_wall_sec"]})
+            if best_hyp is None or (agg["ami"] + agg["macro_b3"]) > (best_hyp["ami"] + best_hyp["macro_b3"]):
+                best_hyp = agg
+                best_hyp["best_anchor_ratio"] = ar
+        best_hyp["dev_sweep"] = hyp_sweep
+        ds_out["hypersed_aaai25"] = best_hyp
+        print(f"  [3] HyperSED (AAAI'25)    | AMI={best_hyp['ami']:5.2f} Mac={best_hyp['macro_b3']:5.2f} Mic={best_hyp['micro_b3']:5.2f} Tail={best_hyp['tail_b3']:5.2f} (ar={best_hyp['best_anchor_ratio']}, {best_hyp['total_wall_sec']:.1f}s)")
+
+        agg_pure = _aggregate_block_metrics(
+            bids, dss, inits_p, stats_list=[ctx["stats_pure"][b] for b in bids]
+        )
+        ds_out["ctrl_pure_2dse_0tok"] = agg_pure
+        print(f"  [R0] Pure 2D-SE Base(0.5) | AMI={agg_pure['ami']:5.2f} Mac={agg_pure['macro_b3']:5.2f} Mic={agg_pure['micro_b3']:5.2f} Tail={agg_pure['tail_b3']:5.2f}")
+
+        am_preds, am_sts = zip(*[run_automerge_only(ds, em, lp, tau_auto=0.85, guard_sim=0.40) for ds, em, lp in zip(dss, embs, inits_p)])
+        agg_am = _aggregate_block_metrics(bids, dss, am_preds, init_list=inits_p, stats_list=am_sts)
+        ds_out["ctrl_automerge_only"] = agg_am
+        print(f"  [R1] AutoMerge-Only(0.85) | AMI={agg_am['ami']:5.2f} Mac={agg_am['macro_b3']:5.2f} Mic={agg_am['micro_b3']:5.2f} Tail={agg_am['tail_b3']:5.2f}")
+
+        # --- Same-Budget LLM Baselines (4) + Pure-Star-Meso v2.1 (Ours) ---
+        def _cl_v21(sub: str) -> BudgetedLLMClient:
+            return _make_client("siliconflow", model_name, OUT_DIR / "ledgers" / "qwen3_8b_v21" / ds_name / sub, shared_cache)
+
+        sbert_d060 = [run_sbert_agglom(em, distance_threshold=0.60)[0] for em in embs]
+        ds_out["clusterllm_emnlp23"], _ = _eval_llm_runner_across_dev(
+            "4.ClusterLLM-NoFT(23)",
+            bids, dss, sbert_d060,
+            lambda i, b, bk, _c=_cl_v21("clusterllm"), _si=sbert_d060: run_clusterllm(b, dss[i], embs[i], _si[i], _c, bk),
+        )
+        ds_out["fewshot_post_tacl24"], _ = _eval_llm_runner_across_dev(
+            "5.FewShotPost(TACL24)",
+            bids, dss, inits_p,
+            lambda i, b, bk, _c=_cl_v21("fewshot"): run_fewshot_llm_post(b, dss[i], embs[i], graphs_p[i], inits_p[i], _c, bk),
+        )
+        ds_out["lsed_acl25"], _ = _eval_llm_runner_across_dev(
+            "6.LSED-Bud(ACL25)",
+            bids, dss, inits_p,
+            lambda i, b, bk, _c=_cl_v21("lsed"): run_lsed_budgeted(b, dss[i], embs[i], inits_p[i], embed_model, _c, bk, knn_sim_threshold=0.50),
+        )
+        ds_out["ragsede_www26"], _ = _eval_llm_runner_across_dev(
+            "7.RagSEDE-Bud(WWW26)",
+            bids, dss, inits_p,
+            lambda i, b, bk, _c=_cl_v21("ragsede"): run_ragsede_budgeted(b, dss[i], embs[i], graphs_p[i], inits_p[i], _c, bk),
+        )
+        ds_out["our_pure_star_meso"], _ = _eval_llm_runner_across_dev(
+            "OUR.Pure-Star-Meso v2.1",
+            bids, dss, inits_p,
+            lambda i, b, bk, _c=_cl_v21("pure_star_meso"): (lambda r: (r[0], r[2], r[3]))(
+                run_pure_star_meso(
+                    ds_name, b, dss[i], embs[i], _c, bk,
+                    strategy_tag="pure_star_meso_v21",
+                    graph=graphs_p[i], labels_init=inits_p[i],
+                )
+            ),
+        )
+        results["datasets"][ds_name] = ds_out
+
+    ds_keys = list(contexts.keys())
+    stem = f"{ds_keys[0].lower()}_v21_7baselines" if len(ds_keys) == 1 else "baselines7_v21_dev"
+    json_p = OUT_DIR / f"{stem}.json"
+    md_p = OUT_DIR / f"{stem}.md"
+    json_p.write_text(json.dumps(results, indent=2), encoding="utf-8")
+
+    md_lines = [f"# Track A v2.1 Fairness Benchmark (7 Baselines, `M_02..M_05`, `{model_name}`)\n"]
+    for ds_name, ds_out in results["datasets"].items():
+        md_lines.append(f"## {ds_name} Dev (`M_02..M_05`)\n")
+        md_lines.append("| Group | Method | Calls | Tok | Show% | Err | AMI | Mac-$B^3$ | Mic-$B^3$ | Tail-$B^3$ | UnqNet | CPU(s) |")
+        md_lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|")
+        ordered = [
+            ("0-LLM Ref", "Pure 2D-SE Base (0.50, 0.5)", "ctrl_pure_2dse_0tok"),
+            ("0-LLM Ref", "AutoMerge-Only (0-Tok)", "ctrl_automerge_only"),
+            ("0-LLM Paper 1", "SBERT-Agglom (EMNLP'19)", "sbert_emnlp19"),
+            ("0-LLM Paper 2a", "HiSEvent Default (AAAI'24)", "hisevent_default"),
+            ("0-LLM Paper 2b", "HiSEvent Dev-Tuned (AAAI'24)", "hisevent_dev_tuned"),
+            ("0-LLM Paper 3", "HyperSED (AAAI'25)", "hypersed_aaai25"),
+            ("LLM Paper 4", "ClusterLLM-NoFT (EMNLP'23)", "clusterllm_emnlp23"),
+            ("LLM Paper 5", "Few-Shot LLM-Post (TACL'24)", "fewshot_post_tacl24"),
+            ("LLM Paper 6", "LSED (ACL'25)", "lsed_acl25"),
+            ("LLM Paper 7", "RagSEDE (WWW'26)", "ragsede_www26"),
+            ("**OUR METHOD**", "**Pure-Star-Meso v2.1**", "our_pure_star_meso"),
+        ]
+        for grp, label, key in ordered:
+            r = ds_out[key]
+            md_lines.append(
+                f"| {grp} | {label} | {r['total_calls']} | {r['total_tokens']} | {r['shown_pct']:.2f}% | {r['parse_errors']} | "
+                f"{r['ami']:.2f} | {r['macro_b3']:.2f} | {r['micro_b3']:.2f} | {r['tail_b3']:.2f} | {r.get('unq_net_mean', 0.0):+.1f} | {r['router_cpu_sec']:.2f} |"
+            )
+        md_lines.append("")
+    md_p.write_text("\n".join(md_lines), encoding="utf-8")
+    print(f"\nSaved 7-baseline Dev report -> {md_p}")
+    return results
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run Gate 1 DEV-only SUG-SED Benchmark")
-    parser.add_argument("--stage", choices=["0tok", "qwen3", "cross_model", "report", "all"], default="all")
+    parser.add_argument("--stage", choices=["0tok", "qwen3", "cross_model", "baselines7", "report", "all"], default="all")
+    parser.add_argument("--datasets", type=str, default="Event2012,Event2018", help="Comma-separated Dev datasets")
     parser.add_argument("--reuse-baselines", action="store_true", help="Reuse cached published baselines in stage_qwen3.json")
     parser.add_argument(
         "--cross-models",
@@ -902,13 +1109,14 @@ def main() -> None:
     )
     args = parser.parse_args()
     cross_tags = [t.strip() for t in args.cross_models.split(",") if t.strip()]
+    dataset_names = [d.strip() for d in args.datasets.split(",") if d.strip()]
 
     t_start = time.time()
     if args.stage != "report":
         need_blocks = ALL_DEV_STREAM_BLOCKS if args.stage in {"qwen3", "all"} else DEV_EVAL_BLOCKS
         contexts = {
-            "Event2012": _prepare_dev_context("Event2012", need_blocks),
-            "Event2018": _prepare_dev_context("Event2018", need_blocks),
+            ds_name: _prepare_dev_context(ds_name, need_blocks)
+            for ds_name in dataset_names
         }
         if args.stage in {"0tok", "all"}:
             run_stage_0tok(contexts)
@@ -916,7 +1124,10 @@ def main() -> None:
             run_stage_qwen3(contexts, reuse_baselines=args.reuse_baselines)
         if args.stage in {"cross_model", "all"}:
             run_stage_cross_model(contexts, model_tags=cross_tags, reuse_existing=args.reuse_baselines)
-    build_gate1_report()
+        if args.stage == "baselines7":
+            run_stage_baselines7(contexts)
+    if args.stage != "baselines7":
+        build_gate1_report()
     print(f"\n[Gate 1 finished in {time.time() - t_start:.1f}s]")
 
 

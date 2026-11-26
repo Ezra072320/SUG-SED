@@ -1,3 +1,0 @@
-{"request_hash": "b10ff02aa179babb0cf2b34a1f63fbfcd9fbc8edfe6b678e1a02948e16018f1f", "request_id": "merge_c7_c14", "model": "Qwen/Qwen3-8B", "prompt_tokens": 550, "completion_tokens": 17, "response": {"action": "SEPARATE", "confidence": 0.95}}
-{"request_hash": "f4b7733bf15e51fb9ca0de5aef611384009dbb2c2ac6a42d8e73b082f23a4087", "request_id": "seam_c12", "model": "Qwen/Qwen3-8B", "prompt_tokens": 477, "completion_tokens": 18, "response": {"action": "KEEP_MERGED", "confidence": 0.95}}
-{"request_hash": "bac4ce0b4ac755a0636c8d11b363f00fd54ffb110b3e6a965dd7674afe2dd8d1", "request_id": "merge_c6_c7", "model": "Qwen/Qwen3-8B", "prompt_tokens": 564, "completion_tokens": 17, "response": {"action": "SEPARATE", "confidence": 0.95}}

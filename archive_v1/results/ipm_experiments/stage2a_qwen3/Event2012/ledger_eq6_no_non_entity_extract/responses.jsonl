@@ -1,1 +1,0 @@
-{"request_hash": "92eb553dc9885a85972438020aa1c89b6ac2f37da375748a98720fd8ae07c0f6", "request_id": "seam_c15", "model": "Qwen/Qwen3-8B", "prompt_tokens": 532, "completion_tokens": 37, "response": {"event_a": "Body of missing NJ girl found in recycling container", "event_b": "Body found may be missing NJ girl, police confirm", "same_event": true}}
