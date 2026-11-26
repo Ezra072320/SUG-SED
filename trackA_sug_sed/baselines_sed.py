@@ -1,4 +1,7 @@
-"""Published Zero-LLM Social Event Detection (SED) Paper Baselines:
+"""Published Zero-LLM Social Event Detection (SED) Paper Baselines (Legacy SUG-SED Proxies):
+
+Note: These are legacy SUG-SED v2.0/v2.1 proxies using shared unified graph/embedding pipelines.
+Strict original-paper/repo implementations live in `trackA_sug_sed/baselines_official.py`.
 
   1. EventX    (Liu et al., Story Forest, ACM TKDD 2020): keyword/entity co-occurrence Louvain community detection
   2. SBERT     (Reimers & Gurevych, EMNLP 2019): frozen Sentence-BERT + cosine average-linkage agglomerative clustering

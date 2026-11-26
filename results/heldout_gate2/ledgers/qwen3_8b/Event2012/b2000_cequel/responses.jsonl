@@ -1,1 +1,0 @@
-{"request_hash": "ad64fd95cee196792801d4982730e00e2a63bd8b3974afd8b3372d0cc2a8e338", "request_id": "ceq_M10_u393_v411", "model": "Qwen/Qwen3-8B", "prompt_tokens": 206, "completion_tokens": 36, "response": {"event_a": "Suicide bomb attack at Afghan mosque", "event_b": "Suicide blast at Afghan mosque", "same_event": true}}

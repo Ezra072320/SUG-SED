@@ -11,7 +11,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -37,6 +37,7 @@ class SocialDataset:
     mentioned_users: List[List[str]]
     timestamps: np.ndarray           # float64 unix epoch seconds
     dates: List[str]                 # YYYY-MM-DD strings
+    raw_entities: Optional[List[List[str]]] = None
 
     def __len__(self) -> int:
         return len(self.texts)
@@ -55,7 +56,24 @@ class SocialDataset:
             mentioned_users=[self.mentioned_users[i] for i in idx],
             timestamps=self.timestamps[idx],
             dates=[self.dates[i] for i in idx],
+            raw_entities=[self.raw_entities[i] for i in idx] if self.raw_entities is not None else None,
         )
+
+
+def _extract_raw_entities(raw: Any) -> List[str]:
+    """Extract raw entity surface strings preserving case and all types (for HISEvent)."""
+    if raw is None or (isinstance(raw, float) and np.isnan(raw)):
+        return []
+    out: List[str] = []
+    if isinstance(raw, (list, tuple, np.ndarray)):
+        for item in raw:
+            if isinstance(item, (list, tuple)) and len(item) >= 1:
+                ent = str(item[0]).strip()
+            else:
+                ent = str(item).strip()
+            if ent:
+                out.append(ent)
+    return out
 
 
 def _normalize_entities(raw: Any) -> List[str]:
@@ -123,6 +141,7 @@ def load_socialed_npy(
     labels = np.array([int(x) for x in arr[:, 2]], dtype=np.int64)
     tokens_lemma = [_normalize_str_list(x) for x in arr[:, 4]]
     entities = [_normalize_entities(x) for x in arr[:, 5]]
+    raw_entities = [_extract_raw_entities(x) for x in arr[:, 5]]
     user_ids = [_normalize_user(x) for x in arr[:, 6]]
 
     ts_series = pd.to_datetime(arr[:, 7], utc=True, errors="coerce")
@@ -147,6 +166,7 @@ def load_socialed_npy(
         mentioned_users=mentioned_users,
         timestamps=timestamps,
         dates=dates,
+        raw_entities=raw_entities,
     )
 
     if sort_chronologically:

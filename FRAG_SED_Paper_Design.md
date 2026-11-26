@@ -382,33 +382,20 @@ Output: Intra-block partition labels y_hat_t, prompt exposure mask all_shown
   - 全部预算受限方法共享同一 `CausalUniformBucket(tokens_per_block=10000, allow_carryover=False)`（预算曲线实验同步扫描 `1k, 2k, 5k, 10k, 20k`）；
   - 调用前统一执行 `int((len(sys_msg) + len(user_msg)) / 3.4) + est_completion_tokens` 前检门控，调用后按 API 真实计费扣减并写入只追加 `TokenLedger`（缓存命中同样全额计费；先导 `v2.0` 审计证实该门控在 `10k` 下的实测最大单块溢出仅为 `+0.35%`，即 `10,035` tokens）。
 
-### 7.3 四组系统对比基线矩阵
+### 7.3 锁定三类基线对比矩阵
 
-为全面评估 `FRAG-SED` 在“零 LLM 图方法”、“LLM 增强 SED”、“主动约束与预算 LLM 聚类”及“内部控制归因”四个维度的相对优势，设计如下四组基线矩阵：
+为严格对齐各基线论文原设置并在统一 LLM 底座（`Qwen/Qwen3-8B`、`temperature=0.0`、`enable_thinking=False`）与有限 Token 预算前提下进行公平对照，系统评测矩阵锁定为以下**三类基线 + 内部消融**：
 
 | 组别 | 基线名称（出处） | 运行口径与说明 | 实现/集成状态 |
 |---|---|---|---|
-| **Group A：零 LLM SED** | `HISEvent-Default`（Cao et al., AAAI 2024） | 默认无监督 2D-SE（$\tau_{\text{sim}}=0.35, \alpha=0.5$） | 已有（`baselines_sed.py`） |
-| | `HISEvent Dev-Tuned`（Cao et al., AAAI 2024） | Dev 调优 2D-SE（注：在 `Event2012` 上经 Dev 网格确认为 `(0.50, 0.5)`，与 `Pure 2D-SE Base` 恒等；`Event2018` 为独立调优参数） | 已有（`baselines_sed.py`） |
-| | `HyperSED`（Yu et al., AAAI 2025） | 优先运行官方原生双曲代码（`github.com/XiaoyanWork/HyperSED`），辅以本地 SAMG+Poincaré 对照核验 | 已有本地复现；**需补充官方原生运行** |
-| | `ADP-SEMEvent`（Yang et al., CIKM 2024，可选） | 自适应差分隐私结构熵无监督参照 | **可选补充** |
-| | `SBERT-Agglom`（Reimers & Gurevych, EMNLP-IJCNLP 2019） | 冻结句向量余弦凝聚聚类（Dev 调优距离阈值 `0.60`） | 已有（`baselines_sed.py`） |
-| | `EventX`（Liu et al., ACM TKDD 2020） | 关键词社区图聚类（Louvain） | 已有（`baselines_sed.py`） |
-| | *有监督文献参照（仅作 Full-Stream 参考，非同口径）*：`KPGNN`（WWW'21）、`QSGNN`（CIKM'22）、`FinEvent`（IEEE TPAMI'23） | 需在带标签 `M_00` 上训练，仅在 Full-Stream 表格中单独分区引用原论文发表值 | 文献对照引用 |
-| **Group B：LLM 增强 SED** | `LSED`（Qiu et al., ACL 2025） | **同预算适配版**（`10k`/块因果预算，标注 `budget-adapted`）+ **原生无约束参照**（披露总 Token 消耗以量化成本–精度前沿） | 预算适配版已有；**需补原生无约束参照** |
-| | `RagSEDE`（Liu et al., WWW 2026） | **同预算适配版**（`10k`/块，`budget-adapted`）+ **原生无约束参照** | 预算适配版已有；**需补原生无约束参照** |
-| | `LHG`（Qiu et al., WWW 2026） | **同预算适配版**（`10k`/块，`budget-adapted`） | 已有（`baselines_llm.py`） |
-| **Group C：预算 LLM 与主动约束聚类** | **`COBRAS + LLM Oracle`**（Van Craenendonck et al., IDA 2018） | **最直接算法前驱基线**：以同一 `Qwen3-8B` 作为二元神谕并在同等 `10k` 因果 Token 预算下运行 COBRAS 自顶向下 2-means 拆分与 COBRA 合并 | **待新增实现（高优先级）** |
-| | `Cequel`（`EdgeLLM` / `Transitive`，Wang et al., CIKM 2025） | 预算受限文档对生成树中心性查询 + 传递闭包约束聚类 | 已有（`baselines_llm.py`） |
-| | `Few-Shot LLM-Post`（Viswanathan et al., TACL 2024） | 同预算帖子级后处理纠错基线 | 已有（`baselines_llm.py`） |
-| | `ClusterLLM-NoFT`（Zhang et al., EMNLP 2023） | 同预算免微调层次粒度校准（含抗负偏斜平衡准确率校准与动态 `cannot_link`） | 已有（`baselines_llm.py`） |
-| **Group D：内部诊断对照与消融** | `Random Post-Level`（3 种子） | 同基础分区上的帖子级随机成对 LLM 查询 | 已有（`baselines_llm.py`） |
-| | `Fragment Random Order`（3 种子） | 将 `FRAG-SED` 效用排序替换为均匀随机选取（剥离“碎片粒度增益”与“效用调度增益”） | 需适配至精简 `FRAG-SED` |
-| | `0-Token Cosine Heuristic`（同候选池） | 相同碎片候选池上以 Dev 最优余弦阈值替代 LLM（验证 LLM 语义推理相对纯几何的净贡献） | 需适配至精简 `FRAG-SED` |
-| | `FRAG-SED (k=1 Pairwise)` | 退化为二元成对查询（验证 $k$-way 摊销与横向语境价值） | 精简 `FRAG-SED` 配置开关 |
-| | `FRAG-SED w/o Split Verification`（$\rho = 0$） | 关闭 Step 1 拆分验证（量化其对 Macro-$B^3$、Tail-$B^3$ 与 FM 的净贡献） | 精简 `FRAG-SED` 配置开关 |
-| | `Oracle-Answered Upper Bound` | 保持相同候选调度与预算，将 $\mathcal{Q}$ 的返回替换为真实标签（测度轻量 LLM 决策与理论上限的差距） | 需适配至精简 `FRAG-SED` |
-| | `Plug-and-Play Backbones` | 将 Steps 1–3 叠加于 `HISEvent-Default`、`HyperSED`、`SBERT-Agglom`（验证底座无关性） | 需运行接入 |
+| **Group 1：0-LLM 原版基线（0 Tokens）** | `SBERT*`（Reimers & Gurevych, EMNLP-IJCNLP 2019） | 预处理文本 + 冻结 SBERT(`max_length=256`, `float32`) + `KMeans(Oracle-K)` | **已对齐实现并验证**（`baselines_official.py`） |
+| | `HISEvent Official`（Cao et al., AAAI 2024） | 原版文本清洗 + `SBERT(256)` + Pearson 相关图 + 未过滤原始属性（`user_id`/`mentioned_users`/`hashtags.lower()`/raw entities）+ 1D/2D-SE（并输出无监督 `Est-K`） | **已对齐实现并验证**（`baselines_official.py`） |
+| **Group 2：不限预算 LLM-SED 原版（按原设置运行并统计总 Token）** | `RagSEDE Official`（Liu et al., WWW 2026） | 严格原版文本清洗 + Agglom(0.40/0.30) 锚簇 + MMR top-3 采样（$\lambda=0.7$）+ 内存混合 Event KB（去模板词检索）+ 原文 Evaluator/Detector Prompt，全程统计实际消耗 Token | **已对齐实现**（`baselines_official.py`），待在线全量评测 |
+| | `LSED Official`（Qiu et al., ACL 2025, `w=∞`） | 全量 `N` 条推文原版改写 Prompt（Colab GPU 批推理）+ `SBERT(256)` + OLE 2D TIME（386-d）+ 三层 HGCN Poincaré 双曲 MLP（`M_00` 训练），`Oracle-K` 与 `HISEvent Est-K` 双口径 `KMeans` 聚类，全程统计总 Token | **已对齐实现**（`baselines_official.py` / `colab_batch_qwen3_8b.ipynb`），待全量推理评测 |
+| **Group 3：限预算 LLM 基线（20k Tokens / 块）** | `COBRAS Official`（Van Craenendonck et al., IDA 2018） | 原版 `COBRAS_kmeans` 自顶向下 2-means 拆分与自底向上成对合并，二元 `Yes/No` LLM 神谕，受 `20k` 因果 Token 预算严格门控 | **已对齐实现**（`baselines_official.py`），待 20k 全量评测 |
+| | `Cequel Official`（Wang et al., CIKM 2025） | 原版 `TriangleExploreConsolidate` + 不截断推文五选一三元组 Prompt，受 `20k` 因果 Token 预算门控；运行主算法 `WCSC`（`Oracle-K` / `HISEvent Est-K`）及 `WCKMeans` 对照 | **已对齐实现**（`baselines_official.py`），待 20k 全量评测 |
+| **Group 4：本文方法与内部消融** | `FRAG-SED (20k Budget/Blk & Unbounded)` | 3 步统一精简框架（Step 1 成对边界检验 → Step 2 多簇星形锚点介观重分配 → Step 3 跨簇边界合并） | **已实现并验证**（`frag_sed.py`） |
+| | 内部消融（待运行）：`Fragment Random Order`、`0-Token Cosine Heuristic`、`FRAG-SED (k=1 Pairwise)`、`w/o Split Verification`、`Oracle-Answered Upper Bound`、`Plug-and-Play Backbones` | 在确定 `M_01..M_05` 主验证对照后补充完整消融与留出集全量扫描 | **规划就绪，待执行** |
 
 ### 7.4 评测指标体系与统计检验
 
@@ -467,23 +454,23 @@ Output: Intra-block partition labels y_hat_t, prompt exposure mask all_shown
 
 ### 8.4 事实边界总表与工程实验落地路线图
 
-#### 表 8-1：已验证先导事实与待执行 `FRAG-SED` 实验的严格边界
+#### 表 8-1：当前仓库实证边界总表（严禁混用过时 `v2.0/v2.1` 记录与当前对齐版本）
 
 | 类别 | 具体条目 | 当前真实状态 |
 |---|---|---|
-| **A. 已 100% 磁盘核验的既有数据与先导实证（`SUG-SED v2.0/v2.1`）** | `Event2012` / `Event2018` 原始 `.npy` 与 39 个冻结嵌入缓存全块统计及 `M_00/M_01/Dev/Held-Out` 精确划分 | **已核验完成**（第 7.1 节） |
-| | 2D-SE 结构误差非对称性（EN `63.47x` / FR `12.23x`）与帖子级预算基线停滞诊断（`v2.0` 27 留出块 & `v2.1` Dev） | **已核验完成**（第 3.1 节，先导诊断证据） |
-| | 三因子归因、五支柱消融、跨天 `sug_cross_star` vs `proto_0.95/proto_attr_0.95`、预算曲线（2k–20k）、三级脱敏 + `LeakQ` 审计与 `+0.35%` 溢出校验（`v2.0` 留出集） | **已核验完成**（第 6.9 / 8.1 / 8.2 节，仅作精简与先导依据） |
-| | 现有代码库相对 `protocol_v2.json` 已有 `17/20` 文件演进（`v2.1` 未重冻结） | **已核验完成**（SHA-256 校验） |
-| **B. 尚未运行的 `FRAG-SED` 新方法与新增基线/指标（严禁预填分数）** | 精简版 `FRAG-SED`（3 步 + 统一 $\mathcal{Q}$ + 球面 2-means + 干净互斥 DSU + 6 超参）代码重构与全链路测试 | **待实施**（见下表 Phase 1） |
-| | `COBRAS + LLM Oracle` 基线、`Unseen-Subset AMI` 指标、`NMI/ARI` 聚合与报告补全、`HyperSED`/`LSED`/`RagSEDE` 官方原生参照运行 | **待实施**（见下表 Phase 2） |
-| | `FRAG-SED` Gate 1 Dev 调参/敏感性曲线、`protocol_v3.json` 冻结、Gate 2 27 留出块主表、Full-Stream（`M_01+`）表、因果预算曲线（1k–20k）与 AUC、即插即用底座、跨 LLM 迁移、三级脱敏复测及 Wilcoxon/Holm 统计表 | **待执行**（见下表 Phase 3–4） |
+| **A. 已完成代码对齐、单元测试与局部验证的模块** | 精简版 `FRAG-SED` 核心实现（`trackA_sug_sed/frag_sed.py`、`star_meso.py`）及 4 项单元测试（`tests/test_frag_sed.py`） | **已完成并通过** |
+| | 6 篇基线严格对齐实现（`trackA_sug_sed/baselines_official.py`）与 7 项对齐契约单测（`tests/test_baselines_official.py`） | **已完成并通过** |
+| | `Event2012 (M_01..M_05)` 上 0-LLM 原版基线（`SBERT*`、`HISEvent Official`）及 `FRAG-SED (20k / Unbounded)` 基准结果 | **已运行核验并落盘**（`results/val_m01_m05_benchmark/`） |
+| | 三类基线统一评测入口（`run_val_benchmark.py`）与 `LSED` Colab GPU 批推理 Notebook（`colab_batch_qwen3_8b.ipynb`） | **已锁定并就绪**（无监督 `Est-K` 统一接入 `HISEvent Official`） |
+| | 历史 `SUG-SED v2.0/v2.1` 冲突代码、旧实验目录与对齐前旧账本/报告快照 | **已隔离至 `_deprecated_to_delete/`**（附 `MANIFEST.md` 待用户确认删除） |
+| **B. 待执行的正式对比与全流扩展实验（当前报告中标为 `*Pending Run*`）** | `RagSEDE Official`（无约束，含 Token 统计）与 `LSED Official (w=∞)`（Colab 全量推理 + HGCN 训练评测，含 Token 统计）在 `M_01..M_05` 上重跑 | **待在线/GPU 运行** |
+| | `COBRAS Official`（20k/块）与 `Cequel Official`（20k/块，`WCSC` + `WCKMeans`）在 `M_01..M_05` 上重跑 | **待在线运行** |
+| | 留出集全量块（`Event2012 M_06..M_21`、`Event2018 M_01..M_16`）、内部消融、因果预算曲线与跨模型/脱敏扩展验证 | **待下一阶段执行** |
 
-#### 表 8-2：从当前 `v2.1` 代码库迈向 `FRAG-SED` 正式论文产出的工程路线图
+#### 表 8-2：当前锁定协议后的后续实验执行路线图
 
-| 阶段 | 核心工程与实验任务 | 涉及模块与交付产物 | 验收门控 |
+| 阶段 | 核心工程与实验任务 | 涉及模块与产物 | 验收门控 |
 |---|---|---|---|
-| **Phase 1：核心代码精简重构** | 1. 保留可零改复用的底层模块（`data_loader.py`、`graph_builder.py`、`se_solver.py`、`partition_cache.py`、`embed_cache.py`、`token_ledger.py`、`anonymizer.py`、`cross_day.py`）；<br>2. 重构 `star_meso.py` 与 `llm_client.py` 为精简 `FRAG-SED`：移除 Stage 3 `AutoMerge+p95`、移除 `Two-Tier Band`、将 `GuardedUnionFind` 剥离 `guard_sim=0.40` 为干净互斥 DSU、以确定性球面 2-means 替代 `Fiedler` 谱二分与转发豁免、以单一 $\mathcal{Q}$ 统一拆分与合并 Prompt；<br>3. 更新 `tests/test_sug_sed.py` 覆盖新不变量（错误隔离、互斥优先、预算门控、`all_shown` 完整追踪）。 | `trackA_sug_sed/star_meso.py`（或新增 `frag_sed.py`）、`llm_client.py`、`tests/test_sug_sed.py` | 单元测试 100% PASS；代码参数严格对应 6 超参表 |
-| **Phase 2：关键基线与指标补齐** | 1. 在 `baselines_llm.py` 中实现严格同预算的 `COBRAS + LLM Oracle`（IDA 2018）；<br>2. 在 `metrics_audit.py` 中实现 `Unseen-Subset AMI`（严格限定 `all_shown == False`）；<br>3. 修复 `run_dev_gate1.py` 与 `run_heldout_gate2.py` 中的 `_aggregate_block_metrics`，完整聚合与输出 `NMI`、`AMI`、`ARI`、Micro/Macro/Tail $B^3$、FS/FM、LLM P/R；<br>4. 接入官方原生 `HyperSED` 并记录原生无约束 `LSED` / `RagSEDE` 参照与真实成本。 | `baselines_llm.py`、`metrics_audit.py`、`run_dev_gate1.py`、`run_heldout_gate2.py` | 新增基线与指标单元测试通过；零解析/预算溢出漏洞 |
-| **Phase 3：Gate 1 Dev 验证与协议冻结** | 1. 在 `M_02..M_05` 上运行 `FRAG-SED` 6 超参网格与 1D 敏感性曲线；<br>2. 检验去掉 `AutoMerge` 后 `Event2012` Dev 波动是否 $> 1.0$ AMI 点（决定是否在附录增加可选高置信效率开关）；<br>3. 复核 `Qwen/Qwen2.5-7B-Instruct` 跨模型稳定性；<br>4. 运行冻结脚本生成 100% SHA-256 匹配的 **`protocol_v3.json`**。 | `results/dev_gate1_v3/`、`trackA_sug_sed/protocol_v3.json` | 20/20（或全核心文件）SHA-256 校验 100% 一致；锁定全部超参 |
-| **Phase 4：Gate 2 留出集、全流表与论文成稿** | 1. 在严格未见的 27 个留出块（`M_06+`）运行四组基线全量评测、消融、`1k..20k` 因果预算曲线、即插即用底座、`Qwen2.5-7B-Instruct` 跨模型、三级脱敏 + `LeakQ` 审计与零 Token 跨天流式链接；<br>2. 补跑 Full-Stream（`M_01..M_21` / `M_01..M_16`，显式阴影标注 `M_02..M_05`）以便与文献直接对照；<br>3. 产出配对双侧 Wilcoxon + Holm–Bonferroni 检验表、效应量与出版级矢量图，完成 IP&M 正式 LaTeX 成稿。 | `results/heldout_gate2_v3/`、`results/full_stream_v3/`、论文 LaTeX 与图表 | 全部主/副表数据可由只追加 `TokenLedger` 与冻结脚本一键复现 |
+| **Phase 1：代码对齐与仓库清理（当前已完成）** | 1. 锁定三类对比基线与 `FRAG-SED`，清理 `baselines_official.py`、`run_val_benchmark.py` 与 `colab_batch_qwen3_8b.ipynb`；<br>2. 将过时 `v2.0/v2.1` 代码、冲突实验目录与对齐前日志隔离至 `_deprecated_to_delete/`；<br>3. 通过 `test_frag_sed.py`、`test_baselines_official.py` 与 `run_val_benchmark.py --dry-run`。 | `frag_sed.py`、`baselines_official.py`、`run_val_benchmark.py`、`test_*.py` | 单元测试 100% PASS；报告无过时冲突记录 |
+| **Phase 2：`M_01..M_05` 验证集三类基线全量重跑** | 1. Colab GPU 运行 `colab_batch_qwen3_8b.ipynb` 完成 `LSED` 推文改写，回传结果并评测 `LSED Official (w=∞)`；<br>2. 在线运行 `RagSEDE Official`（记录完整 Token 成本）及 20k 预算版 `COBRAS Official`、`Cequel Official`；<br>3. 更新 `results/val_m01_m05_benchmark/val_benchmark_report.md`。 | `colab_inputs/lsed_*.jsonl`、`val_benchmark_results.json`、`val_benchmark_report.md` | 4 组结果均带完整 `TokenLedger` 成本审计 |
+| **Phase 3：全流扩展、消融与成稿** | 1. 扩展至 `Event2012 (M_06..M_21)` 与 `Event2018 (M_01..M_16)`，补充内部消融、因果预算曲线（1k–20k）、三级脱敏（`anonymizer.py`）与跨天流式链接（`cross_day.py`）；<br>2. 产出 Wilcoxon / Holm–Bonferroni 显著性检验表与出版级图表，完成论文 LaTeX 定稿。 | `results/full_stream/`、论文 LaTeX 与图表 | 全部主/副表数据可由只追加账本一键复现 |

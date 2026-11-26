@@ -3,3 +3,13 @@ __pycache__/
 *$py.class
 .pytest_cache/
 *.tmp
+
+# Quarantine folder pending manual user review & deletion
+_deprecated_to_delete/
+
+# Large auto-regenerated ML256/float32 embedding caches, Colab JSONLs, and checkpoints
+cache/embeddings/*_ml256_*.npy
+cache/embeddings/*_ragsede_prep_*.npy
+results/val_m01_m05_benchmark/colab_inputs/*.jsonl
+results/val_m01_m05_benchmark/*.zip
+results/val_m01_m05_benchmark/*.pt

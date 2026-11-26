@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import threading
 import time
 import warnings
 from pathlib import Path
@@ -14,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 EMBED_CACHE_DIR = ROOT / "cache" / "embeddings"
 
 _HF_MODEL_CACHE: Dict[Tuple[str, str], Tuple[Any, Any]] = {}
+_HF_ENCODE_LOCK = threading.Lock()
 
 
 def encode_texts_hf(
@@ -34,30 +36,31 @@ def encode_texts_hf(
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
     cache_key = (model_name, device)
-    if cache_key not in _HF_MODEL_CACHE:
-        tok = AutoTokenizer.from_pretrained(model_name)
-        mdl = AutoModel.from_pretrained(model_name)
-        mdl.eval().to(device)
-        _HF_MODEL_CACHE[cache_key] = (tok, mdl)
-    tok, mdl = _HF_MODEL_CACHE[cache_key]
-
     out_chunks = []
     texts_list = list(texts)
-    with torch.no_grad():
-        for start in range(0, len(texts_list), batch_size):
-            batch = texts_list[start : start + batch_size]
-            enc = tok(
-                batch,
-                padding=True,
-                truncation=True,
-                max_length=max_length,
-                return_tensors="pt",
-            ).to(device)
-            out = mdl(**enc)
-            mask = enc["attention_mask"].unsqueeze(-1).float()
-            pooled = (out.last_hidden_state * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1e-9)
-            pooled = torch.nn.functional.normalize(pooled, p=2, dim=-1)
-            out_chunks.append(pooled.cpu().numpy().astype(np.float32))
+    with _HF_ENCODE_LOCK:
+        if cache_key not in _HF_MODEL_CACHE:
+            tok = AutoTokenizer.from_pretrained(model_name)
+            mdl = AutoModel.from_pretrained(model_name)
+            mdl.eval().to(device)
+            _HF_MODEL_CACHE[cache_key] = (tok, mdl)
+        tok, mdl = _HF_MODEL_CACHE[cache_key]
+
+        with torch.no_grad():
+            for start in range(0, len(texts_list), batch_size):
+                batch = texts_list[start : start + batch_size]
+                enc = tok(
+                    batch,
+                    padding=True,
+                    truncation=True,
+                    max_length=max_length,
+                    return_tensors="pt",
+                ).to(device)
+                out = mdl(**enc)
+                mask = enc["attention_mask"].unsqueeze(-1).float()
+                pooled = (out.last_hidden_state * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1e-9)
+                pooled = torch.nn.functional.normalize(pooled, p=2, dim=-1)
+                out_chunks.append(pooled.cpu().numpy().astype(np.float32))
     return np.vstack(out_chunks)
 
 
@@ -80,19 +83,22 @@ def load_or_extract_block_embeddings(
     cache_dir: Optional[Path] = None,
     storage_dtype: str = "float32",
     allow_legacy_cache: bool = True,
+    max_length: int = 128,
 ) -> np.ndarray:
     """Load precomputed block embeddings from disk cache or extract on GPU/CPU."""
     cdir = Path(cache_dir) if cache_dir is not None else EMBED_CACHE_DIR
     cdir.mkdir(parents=True, exist_ok=True)
     safe_model = model_name.replace("/", "__")
     text_hash = _texts_fingerprint(texts)
-    cache_path = cdir / f"{dataset_name}_M{int(block_id):02d}_{safe_model}_{storage_dtype}_{text_hash}.npy"
+    eff_max_len = int(max_length)
+    ml_tag = "" if eff_max_len == 128 else f"_ml{eff_max_len}"
+    cache_path = cdir / f"{dataset_name}_M{int(block_id):02d}_{safe_model}_{storage_dtype}{ml_tag}_{text_hash}.npy"
     if cache_path.exists():
         emb = np.load(cache_path).astype(np.float32)
         if len(emb) == len(texts):
             return emb
 
-    if allow_legacy_cache:
+    if allow_legacy_cache and eff_max_len == 128:
         legacy_path = cdir / f"{dataset_name}_M{int(block_id):02d}_{safe_model}.npy"
         if legacy_path.exists():
             raw_legacy = np.load(legacy_path)
@@ -107,7 +113,7 @@ def load_or_extract_block_embeddings(
                 return raw_legacy.astype(np.float32)
 
     t0 = time.time()
-    emb = encode_texts_hf(texts, model_name=model_name, batch_size=64, max_length=128)
+    emb = encode_texts_hf(texts, model_name=model_name, batch_size=64, max_length=eff_max_len)
     save_dtype = np.float16 if storage_dtype == "float16" else np.float32
     emb_saved = emb.astype(save_dtype)
     np.save(cache_path, emb_saved)
