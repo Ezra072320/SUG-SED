@@ -112,7 +112,7 @@ def _aggregate_method(
     }
 
 
-def _prepare_context(dataset_name: str, val_blocks: Sequence[int]) -> Dict[str, Any]:
+def _prepare_context(dataset_name: str, val_blocks: Sequence[int], include_m0: bool = True) -> Dict[str, Any]:
     ds_full = load_socialed_npy(dataset_name, sort_chronologically=True)
     blocks = split_daily_blocks(ds_full, merge_initial_days=7, min_block_size=200)
     encs = _dataset_encoders(dataset_name)
@@ -122,7 +122,8 @@ def _prepare_context(dataset_name: str, val_blocks: Sequence[int]) -> Dict[str, 
     emb_raw_f32_map: Dict[int, np.ndarray] = {}
     init_2dse_map: Dict[int, np.ndarray] = {}
 
-    for bid in [0] + list(val_blocks):
+    block_ids = ([0] if include_m0 else []) + [b for b in val_blocks if not (include_m0 and b == 0)]
+    for bid in block_ids:
         _bname, bidx = blocks[bid]
         sd = ds_full.subset(bidx, name_suffix=f"_M{bid:02d}")
         prep_texts = [preprocess_for_dataset(t, dataset_name) for t in sd.texts]
@@ -330,6 +331,33 @@ def _render_report(
             f"{entry['total_calls']} | {entry['total_tokens']:,} | {entry['total_parse_errors']} |"
         )
 
+    held_blocks = [b for b in val_blocks if b >= 6]
+    if held_blocks and any(b < 6 for b in val_blocks):
+        h_lo, h_hi = min(held_blocks), max(held_blocks)
+        lines.extend([
+            "",
+            f"## Held-Out Test Split Summary (`M_{h_lo:02d}..M_{h_hi:02d}`, {len(held_blocks)} Blocks)",
+            "",
+            "| Group | Method | Setting | ARI | NMI | AMI | Calls | Tokens | Parse Errors |",
+            "|---|---|---|---:|---:|---:|---:|---:|---:|",
+        ])
+        for key, group, label, setting in method_order:
+            if key not in results:
+                continue
+            pb = results[key]["per_block"]
+            if not all(f"M_{b:02d}" in pb for b in held_blocks):
+                continue
+            h_ari = float(np.mean([pb[f"M_{b:02d}"]["ari"] for b in held_blocks]))
+            h_nmi = float(np.mean([pb[f"M_{b:02d}"]["nmi"] for b in held_blocks]))
+            h_ami = float(np.mean([pb[f"M_{b:02d}"]["ami"] for b in held_blocks]))
+            h_calls = sum(int(pb[f"M_{b:02d}"].get("calls", 0)) for b in held_blocks)
+            h_tok = sum(int(pb[f"M_{b:02d}"].get("tokens", 0)) for b in held_blocks)
+            h_err = sum(int(pb[f"M_{b:02d}"].get("parse_errors", 0)) for b in held_blocks)
+            lines.append(
+                f"| {group} | {label} | {setting} | {h_ari:.2f} | {h_nmi:.2f} | {h_ami:.2f} | "
+                f"{h_calls} | {h_tok:,} | {h_err} |"
+            )
+
     lsed_m0_cost = (results.get("lsed_unbounded_oracleK") or {}).get("m0_summary_cost")
     if lsed_m0_cost:
         lines.extend([
@@ -365,6 +393,7 @@ def main() -> None:
     parser.add_argument("--provider", type=str, default="siliconflow")
     parser.add_argument("--model", type=str, default=None)
     parser.add_argument("--pace-sec", type=float, default=0.15)
+    parser.add_argument("--max-workers", type=int, default=4)
     parser.add_argument(
         "--methods",
         type=str,
@@ -373,6 +402,7 @@ def main() -> None:
     parser.add_argument("--use-colab-outputs", type=str, default=None)
     parser.add_argument("--blocks", type=str, default=",".join(str(b) for b in VAL_BLOCKS))
     parser.add_argument("--out-dir", type=str, default=str(OUT_DIR))
+    parser.add_argument("--skip-export-colab", action="store_true")
     parser.add_argument("--allow-online-lsed", action="store_true")
     parser.add_argument("--allow-unsummarized-lsed-m0", action="store_true")
     args = parser.parse_args()
@@ -380,18 +410,21 @@ def main() -> None:
     dataset_name = args.dataset
     val_blocks = [int(x.strip()) for x in args.blocks.split(",") if x.strip()]
     out_dir = Path(args.out_dir)
+    methods = [m.strip() for m in args.methods.split(",") if m.strip()]
+    include_m0 = not (args.skip_export_colab and "lsed_unbounded" not in methods)
 
-    ctx = _prepare_context(dataset_name, val_blocks)
+    ctx = _prepare_context(dataset_name, val_blocks, include_m0=include_m0)
     encs = ctx["encoders"]
     colab_in = out_dir / "colab_inputs"
-    exp_counts = export_colab_prompts(ctx, val_blocks, colab_in)
 
     b_lo, b_hi = min(val_blocks), max(val_blocks)
-    print(f"=== {dataset_name} Blocks (M_00 + M_{b_lo:02d}..M_{b_hi:02d}) ===")
-    for bid in [0] + val_blocks:
+    print(f"=== {dataset_name} Blocks (M_{b_lo:02d}..M_{b_hi:02d}{', +M_00' if include_m0 else ''}) ===")
+    for bid in sorted(ctx["ds"].keys()):
         sd = ctx["ds"][bid]
         print(f"  M_{bid:02d}: N={len(sd)}, K*={len(set(sd.labels))}")
-    print(f"Exported Colab LSED prompts: {exp_counts} -> {colab_in}")
+    if not args.skip_export_colab and 0 in ctx["ds"]:
+        exp_counts = export_colab_prompts(ctx, val_blocks, colab_in)
+        print(f"Exported Colab LSED prompts: {exp_counts} -> {colab_in}")
 
     if args.dry_run:
         return
@@ -408,11 +441,11 @@ def main() -> None:
         res_json_path.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
         _render_report(results, res_md_path, val_blocks, dataset_name=dataset_name, encoders=encs)
 
-    methods = [m.strip() for m in args.methods.split(",") if m.strip()]
+    pool_workers = max(1, min(int(args.max_workers), len(val_blocks)))
 
     def _run_blocks_parallel(fn_block):
         pb_out: Dict[str, Any] = {}
-        with ThreadPoolExecutor(max_workers=max(1, len(val_blocks))) as ex:
+        with ThreadPoolExecutor(max_workers=pool_workers) as ex:
             futs = {ex.submit(fn_block, bid): bid for bid in val_blocks}
             for fut, bid in futs.items():
                 pb_out[f"M_{bid:02d}"] = fut.result()
@@ -559,7 +592,7 @@ def main() -> None:
 
             pb_ok: Dict[str, Any] = {}
             pb_ek: Dict[str, Any] = {}
-            with ThreadPoolExecutor(max_workers=max(1, len(val_blocks))) as ex:
+            with ThreadPoolExecutor(max_workers=pool_workers) as ex:
                 futs = {ex.submit(_do_lsed, bid): bid for bid in val_blocks}
                 for fut, bid in futs.items():
                     mo, me = fut.result()
@@ -654,7 +687,7 @@ def main() -> None:
         pb_ok = {}
         pb_ek = {}
         pb_wk: Dict[str, Any] = {}
-        with ThreadPoolExecutor(max_workers=max(1, len(val_blocks))) as ex:
+        with ThreadPoolExecutor(max_workers=pool_workers) as ex:
             futs = {ex.submit(_do_cequel, bid): bid for bid in val_blocks}
             for fut, bid in futs.items():
                 mo, me, mwk = fut.result()

@@ -11,5 +11,6 @@ _deprecated_to_delete/
 cache/embeddings/*_ml256_*.npy
 cache/embeddings/*_ragsede_prep_*.npy
 results/*/colab_inputs/*.jsonl
+results/*/colab_outputs/*.jsonl
 results/*/*.zip
 results/*/*.pt

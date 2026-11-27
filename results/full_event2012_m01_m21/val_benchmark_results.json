@@ -1,0 +1,9491 @@
+{
+  "sbert_kmeans": {
+    "mean": {
+      "ari": 45.88,
+      "nmi": 79.1,
+      "ami": 77.15
+    },
+    "total_calls": 0,
+    "total_tokens": 0,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_01": {
+        "ari": 3.16,
+        "nmi": 39.86,
+        "ami": 38.01,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 8.193,
+        "n_pred_clusters": 41
+      },
+      "M_02": {
+        "ari": 73.36,
+        "nmi": 86.86,
+        "ami": 85.68,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.63,
+        "n_pred_clusters": 30
+      },
+      "M_03": {
+        "ari": 65.71,
+        "nmi": 87.57,
+        "ami": 86.5,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.038,
+        "n_pred_clusters": 33
+      },
+      "M_04": {
+        "ari": 38.32,
+        "nmi": 81.26,
+        "ami": 79.29,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.248,
+        "n_pred_clusters": 38
+      },
+      "M_05": {
+        "ari": 72.82,
+        "nmi": 87.42,
+        "ami": 86.52,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.834,
+        "n_pred_clusters": 30
+      },
+      "M_06": {
+        "ari": 63.65,
+        "nmi": 86.22,
+        "ami": 83.78,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.763,
+        "n_pred_clusters": 44
+      },
+      "M_07": {
+        "ari": 10.35,
+        "nmi": 64.35,
+        "ami": 61.76,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 5.243,
+        "n_pred_clusters": 57
+      },
+      "M_08": {
+        "ari": 62.37,
+        "nmi": 87.77,
+        "ami": 85.3,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.081,
+        "n_pred_clusters": 53
+      },
+      "M_09": {
+        "ari": 45.05,
+        "nmi": 84.61,
+        "ami": 82.34,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.621,
+        "n_pred_clusters": 38
+      },
+      "M_10": {
+        "ari": 64.84,
+        "nmi": 87.61,
+        "ami": 85.92,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.433,
+        "n_pred_clusters": 33
+      },
+      "M_11": {
+        "ari": 43.32,
+        "nmi": 83.28,
+        "ami": 81.37,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.525,
+        "n_pred_clusters": 30
+      },
+      "M_12": {
+        "ari": 68.52,
+        "nmi": 86.24,
+        "ami": 85.23,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 2.266,
+        "n_pred_clusters": 42
+      },
+      "M_13": {
+        "ari": 18.81,
+        "nmi": 70.46,
+        "ami": 67.39,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.336,
+        "n_pred_clusters": 40
+      },
+      "M_14": {
+        "ari": 42.47,
+        "nmi": 78.92,
+        "ami": 77.3,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 2.05,
+        "n_pred_clusters": 43
+      },
+      "M_15": {
+        "ari": 17.28,
+        "nmi": 70.12,
+        "ami": 67.3,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.72,
+        "n_pred_clusters": 42
+      },
+      "M_16": {
+        "ari": 48.3,
+        "nmi": 80.44,
+        "ami": 78.11,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.392,
+        "n_pred_clusters": 27
+      },
+      "M_17": {
+        "ari": 36.88,
+        "nmi": 78.59,
+        "ami": 77.15,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.387,
+        "n_pred_clusters": 35
+      },
+      "M_18": {
+        "ari": 51.02,
+        "nmi": 81.34,
+        "ami": 79.89,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.896,
+        "n_pred_clusters": 32
+      },
+      "M_19": {
+        "ari": 60.34,
+        "nmi": 85.04,
+        "ami": 83.74,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.577,
+        "n_pred_clusters": 28
+      },
+      "M_20": {
+        "ari": 50.53,
+        "nmi": 81.56,
+        "ami": 77.95,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.404,
+        "n_pred_clusters": 34
+      },
+      "M_21": {
+        "ari": 26.42,
+        "nmi": 71.59,
+        "ami": 69.58,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.298,
+        "n_pred_clusters": 33
+      }
+    }
+  },
+  "hisevent_official": {
+    "mean": {
+      "ari": 61.7,
+      "nmi": 81.87,
+      "ami": 80.74
+    },
+    "total_calls": 0,
+    "total_tokens": 0,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_01": {
+        "ari": 9.31,
+        "nmi": 46.23,
+        "ami": 44.96,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 27.852,
+        "first_stable_k": 130,
+        "n_edges": 4016685,
+        "n_attr_edges": 3544934,
+        "n_pred_clusters": 27
+      },
+      "M_02": {
+        "ari": 77.43,
+        "nmi": 81.49,
+        "ami": 80.74,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.319,
+        "first_stable_k": 119,
+        "n_edges": 153664,
+        "n_attr_edges": 90760,
+        "n_pred_clusters": 11
+      },
+      "M_03": {
+        "ari": 81.57,
+        "nmi": 92.2,
+        "ami": 91.7,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.945,
+        "first_stable_k": 19,
+        "n_edges": 66992,
+        "n_attr_edges": 52235,
+        "n_pred_clusters": 24
+      },
+      "M_04": {
+        "ari": 49.15,
+        "nmi": 85.0,
+        "ami": 83.79,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.474,
+        "first_stable_k": 25,
+        "n_edges": 81909,
+        "n_attr_edges": 60239,
+        "n_pred_clusters": 28
+      },
+      "M_05": {
+        "ari": 61.96,
+        "nmi": 86.04,
+        "ami": 85.07,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.868,
+        "first_stable_k": 14,
+        "n_edges": 50127,
+        "n_attr_edges": 38855,
+        "n_pred_clusters": 29
+      },
+      "M_06": {
+        "ari": 91.82,
+        "nmi": 91.64,
+        "ami": 90.74,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.59,
+        "first_stable_k": 20,
+        "n_edges": 44374,
+        "n_attr_edges": 36349,
+        "n_pred_clusters": 23
+      },
+      "M_07": {
+        "ari": 29.17,
+        "nmi": 70.46,
+        "ami": 69.27,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 9.066,
+        "first_stable_k": 98,
+        "n_edges": 1333363,
+        "n_attr_edges": 1115314,
+        "n_pred_clusters": 23
+      },
+      "M_08": {
+        "ari": 65.16,
+        "nmi": 81.92,
+        "ami": 80.55,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.869,
+        "first_stable_k": 66,
+        "n_edges": 76969,
+        "n_attr_edges": 30416,
+        "n_pred_clusters": 15
+      },
+      "M_09": {
+        "ari": 67.8,
+        "nmi": 89.71,
+        "ami": 88.67,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.772,
+        "first_stable_k": 14,
+        "n_edges": 52613,
+        "n_attr_edges": 46726,
+        "n_pred_clusters": 24
+      },
+      "M_10": {
+        "ari": 89.01,
+        "nmi": 92.99,
+        "ami": 92.33,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.741,
+        "first_stable_k": 9,
+        "n_edges": 48263,
+        "n_attr_edges": 45889,
+        "n_pred_clusters": 22
+      },
+      "M_11": {
+        "ari": 60.28,
+        "nmi": 83.69,
+        "ami": 82.59,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.734,
+        "first_stable_k": 28,
+        "n_edges": 47664,
+        "n_attr_edges": 33763,
+        "n_pred_clusters": 15
+      },
+      "M_12": {
+        "ari": 88.53,
+        "nmi": 91.51,
+        "ami": 91.11,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 2.336,
+        "first_stable_k": 24,
+        "n_edges": 162339,
+        "n_attr_edges": 127286,
+        "n_pred_clusters": 25
+      },
+      "M_13": {
+        "ari": 44.74,
+        "nmi": 79.18,
+        "ami": 77.58,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.277,
+        "first_stable_k": 9,
+        "n_edges": 121079,
+        "n_attr_edges": 114484,
+        "n_pred_clusters": 28
+      },
+      "M_14": {
+        "ari": 74.9,
+        "nmi": 87.42,
+        "ami": 86.66,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 2.073,
+        "first_stable_k": 20,
+        "n_edges": 140064,
+        "n_attr_edges": 107200,
+        "n_pred_clusters": 34
+      },
+      "M_15": {
+        "ari": 15.55,
+        "nmi": 67.37,
+        "ami": 63.7,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.44,
+        "first_stable_k": 9,
+        "n_edges": 64408,
+        "n_attr_edges": 50107,
+        "n_pred_clusters": 57
+      },
+      "M_16": {
+        "ari": 84.31,
+        "nmi": 88.44,
+        "ami": 87.62,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.414,
+        "first_stable_k": 21,
+        "n_edges": 28273,
+        "n_attr_edges": 21004,
+        "n_pred_clusters": 14
+      },
+      "M_17": {
+        "ari": 58.65,
+        "nmi": 82.38,
+        "ami": 81.41,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 2.368,
+        "first_stable_k": 11,
+        "n_edges": 169506,
+        "n_attr_edges": 156564,
+        "n_pred_clusters": 29
+      },
+      "M_18": {
+        "ari": 67.16,
+        "nmi": 78.29,
+        "ami": 77.62,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.695,
+        "first_stable_k": 124,
+        "n_edges": 183229,
+        "n_attr_edges": 64394,
+        "n_pred_clusters": 10
+      },
+      "M_19": {
+        "ari": 64.31,
+        "nmi": 88.31,
+        "ami": 87.39,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.734,
+        "first_stable_k": 11,
+        "n_edges": 37300,
+        "n_attr_edges": 30805,
+        "n_pred_clusters": 26
+      },
+      "M_20": {
+        "ari": 68.62,
+        "nmi": 82.85,
+        "ami": 80.85,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.403,
+        "first_stable_k": 31,
+        "n_edges": 25589,
+        "n_attr_edges": 12734,
+        "n_pred_clusters": 18
+      },
+      "M_21": {
+        "ari": 46.33,
+        "nmi": 72.12,
+        "ami": 71.17,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 2.329,
+        "first_stable_k": 122,
+        "n_edges": 218114,
+        "n_attr_edges": 48650,
+        "n_pred_clusters": 13
+      }
+    }
+  },
+  "frag_sed_20k": {
+    "mean": {
+      "ari": 72.74,
+      "nmi": 87.85,
+      "ami": 86.7
+    },
+    "total_calls": 398,
+    "total_tokens": 149238,
+    "total_parse_errors": 2,
+    "per_block": {
+      "M_01": {
+        "ari": 3.73,
+        "nmi": 42.9,
+        "ami": 40.46,
+        "calls": 44,
+        "tokens": 19558,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            9
+          ],
+          [
+            0,
+            10
+          ],
+          [
+            0,
+            18
+          ],
+          [
+            0,
+            28
+          ],
+          [
+            0,
+            39
+          ],
+          [
+            0,
+            43
+          ],
+          [
+            0,
+            55
+          ],
+          [
+            0,
+            68
+          ],
+          [
+            0,
+            174
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            16
+          ],
+          [
+            2,
+            22
+          ],
+          [
+            2,
+            24
+          ],
+          [
+            2,
+            28
+          ],
+          [
+            2,
+            33
+          ],
+          [
+            2,
+            38
+          ],
+          [
+            2,
+            39
+          ],
+          [
+            2,
+            43
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            28
+          ],
+          [
+            4,
+            43
+          ],
+          [
+            8,
+            9
+          ],
+          [
+            8,
+            10
+          ],
+          [
+            8,
+            16
+          ],
+          [
+            8,
+            18
+          ],
+          [
+            8,
+            22
+          ],
+          [
+            8,
+            24
+          ],
+          [
+            8,
+            28
+          ],
+          [
+            8,
+            31
+          ],
+          [
+            8,
+            33
+          ],
+          [
+            8,
+            38
+          ],
+          [
+            8,
+            39
+          ],
+          [
+            8,
+            40
+          ],
+          [
+            8,
+            41
+          ],
+          [
+            8,
+            43
+          ],
+          [
+            8,
+            49
+          ],
+          [
+            8,
+            55
+          ],
+          [
+            8,
+            94
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            9,
+            16
+          ],
+          [
+            9,
+            18
+          ],
+          [
+            9,
+            22
+          ],
+          [
+            9,
+            24
+          ],
+          [
+            9,
+            28
+          ],
+          [
+            9,
+            29
+          ],
+          [
+            9,
+            33
+          ],
+          [
+            9,
+            38
+          ],
+          [
+            9,
+            39
+          ],
+          [
+            9,
+            40
+          ],
+          [
+            9,
+            41
+          ],
+          [
+            9,
+            43
+          ],
+          [
+            9,
+            55
+          ],
+          [
+            9,
+            68
+          ],
+          [
+            10,
+            13
+          ],
+          [
+            10,
+            16
+          ],
+          [
+            10,
+            31
+          ],
+          [
+            10,
+            39
+          ],
+          [
+            10,
+            68
+          ],
+          [
+            14,
+            16
+          ],
+          [
+            14,
+            24
+          ],
+          [
+            14,
+            40
+          ],
+          [
+            16,
+            18
+          ],
+          [
+            16,
+            22
+          ],
+          [
+            16,
+            24
+          ],
+          [
+            16,
+            28
+          ],
+          [
+            16,
+            31
+          ],
+          [
+            16,
+            33
+          ],
+          [
+            16,
+            34
+          ],
+          [
+            16,
+            38
+          ],
+          [
+            16,
+            39
+          ],
+          [
+            16,
+            40
+          ],
+          [
+            16,
+            41
+          ],
+          [
+            16,
+            43
+          ],
+          [
+            16,
+            49
+          ],
+          [
+            16,
+            55
+          ],
+          [
+            16,
+            68
+          ],
+          [
+            16,
+            94
+          ],
+          [
+            16,
+            173
+          ],
+          [
+            18,
+            24
+          ],
+          [
+            18,
+            33
+          ],
+          [
+            18,
+            38
+          ],
+          [
+            18,
+            39
+          ],
+          [
+            18,
+            55
+          ],
+          [
+            18,
+            68
+          ],
+          [
+            19,
+            49
+          ],
+          [
+            22,
+            24
+          ],
+          [
+            22,
+            33
+          ],
+          [
+            22,
+            39
+          ],
+          [
+            23,
+            31
+          ],
+          [
+            23,
+            175
+          ],
+          [
+            24,
+            33
+          ],
+          [
+            24,
+            34
+          ],
+          [
+            24,
+            38
+          ],
+          [
+            24,
+            40
+          ],
+          [
+            24,
+            43
+          ],
+          [
+            24,
+            49
+          ],
+          [
+            24,
+            94
+          ],
+          [
+            28,
+            33
+          ],
+          [
+            28,
+            43
+          ],
+          [
+            29,
+            68
+          ],
+          [
+            33,
+            38
+          ],
+          [
+            33,
+            39
+          ],
+          [
+            33,
+            40
+          ],
+          [
+            33,
+            41
+          ],
+          [
+            33,
+            43
+          ],
+          [
+            33,
+            68
+          ],
+          [
+            34,
+            49
+          ],
+          [
+            35,
+            39
+          ],
+          [
+            38,
+            39
+          ],
+          [
+            38,
+            68
+          ],
+          [
+            39,
+            43
+          ],
+          [
+            39,
+            55
+          ],
+          [
+            39,
+            68
+          ],
+          [
+            40,
+            43
+          ],
+          [
+            43,
+            55
+          ],
+          [
+            43,
+            172
+          ],
+          [
+            47,
+            171
+          ],
+          [
+            84,
+            170
+          ],
+          [
+            141,
+            176
+          ]
+        ],
+        "total_calls": 44,
+        "split_calls": 9,
+        "split_accepted": 7,
+        "merge_calls": 35,
+        "merge_ops": 12,
+        "blocked_by_cl": 2,
+        "total_tokens": 19558,
+        "prompt_tokens": 19310,
+        "completion_tokens": 248,
+        "shown_posts": 117,
+        "shown_pct": 1.3414354505847284,
+        "n_init_frags": 182,
+        "n_final_clusters": 177,
+        "router_cpu_sec": 1.0625,
+        "api_wall_sec": 102.6879,
+        "llm_api_sec": 56.569,
+        "total_wall_sec": 104.1582
+      },
+      "M_02": {
+        "ari": 92.87,
+        "nmi": 94.94,
+        "ami": 94.41,
+        "calls": 8,
+        "tokens": 2734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            8,
+            64
+          ],
+          [
+            14,
+            21
+          ],
+          [
+            14,
+            33
+          ],
+          [
+            14,
+            63
+          ],
+          [
+            15,
+            17
+          ],
+          [
+            16,
+            29
+          ]
+        ],
+        "total_calls": 8,
+        "split_calls": 3,
+        "split_accepted": 2,
+        "merge_calls": 5,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 2734,
+        "prompt_tokens": 2688,
+        "completion_tokens": 46,
+        "shown_posts": 31,
+        "shown_pct": 2.079141515761234,
+        "n_init_frags": 66,
+        "n_final_clusters": 65,
+        "router_cpu_sec": 0.0781,
+        "api_wall_sec": 0.0135,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.3032
+      },
+      "M_03": {
+        "ari": 95.99,
+        "nmi": 95.79,
+        "ami": 95.4,
+        "calls": 13,
+        "tokens": 4734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            55
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            7,
+            21
+          ],
+          [
+            7,
+            24
+          ],
+          [
+            7,
+            54
+          ],
+          [
+            8,
+            21
+          ],
+          [
+            8,
+            54
+          ],
+          [
+            10,
+            53
+          ],
+          [
+            16,
+            20
+          ],
+          [
+            21,
+            24
+          ],
+          [
+            22,
+            55
+          ],
+          [
+            30,
+            51
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 8,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 4734,
+        "prompt_tokens": 4663,
+        "completion_tokens": 71,
+        "shown_posts": 48,
+        "shown_pct": 2.6158038147138964,
+        "n_init_frags": 57,
+        "n_final_clusters": 56,
+        "router_cpu_sec": 0.1094,
+        "api_wall_sec": 0.0703,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.4815
+      },
+      "M_04": {
+        "ari": 58.68,
+        "nmi": 89.47,
+        "ami": 88.3,
+        "calls": 22,
+        "tokens": 7678,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            41
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            60
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            4,
+            58
+          ],
+          [
+            9,
+            57
+          ],
+          [
+            10,
+            56
+          ],
+          [
+            11,
+            21
+          ],
+          [
+            12,
+            60
+          ],
+          [
+            13,
+            58
+          ],
+          [
+            17,
+            55
+          ],
+          [
+            23,
+            26
+          ],
+          [
+            23,
+            30
+          ],
+          [
+            23,
+            59
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            30
+          ],
+          [
+            26,
+            31
+          ],
+          [
+            26,
+            33
+          ],
+          [
+            26,
+            36
+          ],
+          [
+            26,
+            59
+          ],
+          [
+            27,
+            30
+          ],
+          [
+            28,
+            30
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            28,
+            33
+          ],
+          [
+            28,
+            36
+          ],
+          [
+            30,
+            31
+          ],
+          [
+            30,
+            33
+          ],
+          [
+            30,
+            36
+          ],
+          [
+            30,
+            59
+          ],
+          [
+            33,
+            36
+          ],
+          [
+            33,
+            59
+          ],
+          [
+            36,
+            59
+          ],
+          [
+            40,
+            41
+          ],
+          [
+            40,
+            51
+          ],
+          [
+            41,
+            51
+          ]
+        ],
+        "total_calls": 22,
+        "split_calls": 7,
+        "split_accepted": 5,
+        "merge_calls": 15,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 7678,
+        "prompt_tokens": 7559,
+        "completion_tokens": 119,
+        "shown_posts": 71,
+        "shown_pct": 3.5323383084577116,
+        "n_init_frags": 61,
+        "n_final_clusters": 61,
+        "router_cpu_sec": 0.25,
+        "api_wall_sec": 0.0973,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.5679
+      },
+      "M_05": {
+        "ari": 86.41,
+        "nmi": 91.98,
+        "ami": 91.28,
+        "calls": 15,
+        "tokens": 5725,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            57
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            57
+          ],
+          [
+            5,
+            57
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            58
+          ],
+          [
+            7,
+            16
+          ],
+          [
+            7,
+            44
+          ],
+          [
+            7,
+            57
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            16,
+            57
+          ],
+          [
+            16,
+            59
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            29,
+            32
+          ],
+          [
+            29,
+            33
+          ],
+          [
+            29,
+            35
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            32,
+            35
+          ],
+          [
+            33,
+            35
+          ],
+          [
+            35,
+            45
+          ]
+        ],
+        "total_calls": 15,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 5725,
+        "prompt_tokens": 5639,
+        "completion_tokens": 86,
+        "shown_posts": 56,
+        "shown_pct": 3.053435114503817,
+        "n_init_frags": 62,
+        "n_final_clusters": 60,
+        "router_cpu_sec": 0.1719,
+        "api_wall_sec": 0.0655,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.5316
+      },
+      "M_06": {
+        "ari": 96.05,
+        "nmi": 95.39,
+        "ami": 94.7,
+        "calls": 13,
+        "tokens": 4895,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            8
+          ],
+          [
+            1,
+            46
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            46
+          ],
+          [
+            5,
+            47
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            8,
+            17
+          ],
+          [
+            8,
+            31
+          ],
+          [
+            8,
+            46
+          ],
+          [
+            13,
+            24
+          ],
+          [
+            15,
+            25
+          ],
+          [
+            17,
+            20
+          ],
+          [
+            17,
+            46
+          ],
+          [
+            20,
+            46
+          ],
+          [
+            29,
+            45
+          ],
+          [
+            31,
+            44
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 4,
+        "split_accepted": 4,
+        "merge_calls": 9,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 4895,
+        "prompt_tokens": 4822,
+        "completion_tokens": 73,
+        "shown_posts": 44,
+        "shown_pct": 3.4482758620689653,
+        "n_init_frags": 48,
+        "n_final_clusters": 48,
+        "router_cpu_sec": 0.2615,
+        "api_wall_sec": 47.5561,
+        "llm_api_sec": 16.6322,
+        "total_wall_sec": 47.8176
+      },
+      "M_07": {
+        "ari": 24.39,
+        "nmi": 73.35,
+        "ami": 71.26,
+        "calls": 45,
+        "tokens": 19797,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            23
+          ],
+          [
+            1,
+            25
+          ],
+          [
+            1,
+            26
+          ],
+          [
+            1,
+            27
+          ],
+          [
+            1,
+            28
+          ],
+          [
+            1,
+            29
+          ],
+          [
+            1,
+            34
+          ],
+          [
+            1,
+            36
+          ],
+          [
+            1,
+            37
+          ],
+          [
+            1,
+            38
+          ],
+          [
+            1,
+            41
+          ],
+          [
+            1,
+            46
+          ],
+          [
+            1,
+            47
+          ],
+          [
+            1,
+            102
+          ],
+          [
+            1,
+            109
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            23
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            23
+          ],
+          [
+            3,
+            25
+          ],
+          [
+            3,
+            28
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            3,
+            36
+          ],
+          [
+            3,
+            41
+          ],
+          [
+            3,
+            46
+          ],
+          [
+            3,
+            109
+          ],
+          [
+            3,
+            112
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            5,
+            17
+          ],
+          [
+            5,
+            71
+          ],
+          [
+            6,
+            15
+          ],
+          [
+            6,
+            23
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            28
+          ],
+          [
+            6,
+            34
+          ],
+          [
+            6,
+            36
+          ],
+          [
+            6,
+            106
+          ],
+          [
+            6,
+            108
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            15,
+            71
+          ],
+          [
+            17,
+            67
+          ],
+          [
+            17,
+            71
+          ],
+          [
+            17,
+            72
+          ],
+          [
+            22,
+            110
+          ],
+          [
+            23,
+            25
+          ],
+          [
+            23,
+            26
+          ],
+          [
+            23,
+            27
+          ],
+          [
+            23,
+            28
+          ],
+          [
+            23,
+            29
+          ],
+          [
+            23,
+            34
+          ],
+          [
+            23,
+            36
+          ],
+          [
+            23,
+            37
+          ],
+          [
+            23,
+            38
+          ],
+          [
+            23,
+            47
+          ],
+          [
+            23,
+            109
+          ],
+          [
+            25,
+            26
+          ],
+          [
+            25,
+            27
+          ],
+          [
+            25,
+            28
+          ],
+          [
+            25,
+            29
+          ],
+          [
+            25,
+            34
+          ],
+          [
+            25,
+            36
+          ],
+          [
+            25,
+            37
+          ],
+          [
+            25,
+            38
+          ],
+          [
+            25,
+            46
+          ],
+          [
+            25,
+            47
+          ],
+          [
+            25,
+            109
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            29
+          ],
+          [
+            26,
+            34
+          ],
+          [
+            26,
+            37
+          ],
+          [
+            26,
+            38
+          ],
+          [
+            26,
+            46
+          ],
+          [
+            27,
+            28
+          ],
+          [
+            27,
+            29
+          ],
+          [
+            27,
+            34
+          ],
+          [
+            27,
+            36
+          ],
+          [
+            27,
+            37
+          ],
+          [
+            27,
+            47
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            28,
+            34
+          ],
+          [
+            28,
+            36
+          ],
+          [
+            28,
+            37
+          ],
+          [
+            28,
+            38
+          ],
+          [
+            28,
+            46
+          ],
+          [
+            28,
+            47
+          ],
+          [
+            28,
+            106
+          ],
+          [
+            28,
+            109
+          ],
+          [
+            29,
+            34
+          ],
+          [
+            29,
+            37
+          ],
+          [
+            29,
+            38
+          ],
+          [
+            29,
+            46
+          ],
+          [
+            34,
+            36
+          ],
+          [
+            34,
+            37
+          ],
+          [
+            34,
+            38
+          ],
+          [
+            34,
+            46
+          ],
+          [
+            34,
+            47
+          ],
+          [
+            36,
+            37
+          ],
+          [
+            36,
+            38
+          ],
+          [
+            36,
+            46
+          ],
+          [
+            36,
+            47
+          ],
+          [
+            36,
+            102
+          ],
+          [
+            37,
+            38
+          ],
+          [
+            37,
+            46
+          ],
+          [
+            37,
+            47
+          ],
+          [
+            37,
+            102
+          ],
+          [
+            38,
+            46
+          ],
+          [
+            39,
+            109
+          ],
+          [
+            41,
+            109
+          ],
+          [
+            46,
+            47
+          ],
+          [
+            46,
+            109
+          ],
+          [
+            54,
+            107
+          ],
+          [
+            55,
+            103
+          ],
+          [
+            65,
+            101
+          ],
+          [
+            67,
+            71
+          ],
+          [
+            71,
+            104
+          ],
+          [
+            78,
+            105
+          ],
+          [
+            82,
+            111
+          ],
+          [
+            85,
+            87
+          ],
+          [
+            85,
+            89
+          ]
+        ],
+        "total_calls": 45,
+        "split_calls": 14,
+        "split_accepted": 12,
+        "merge_calls": 31,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 19797,
+        "prompt_tokens": 19563,
+        "completion_tokens": 234,
+        "shown_posts": 114,
+        "shown_pct": 2.159909056460781,
+        "n_init_frags": 106,
+        "n_final_clusters": 113,
+        "router_cpu_sec": 0.7188,
+        "api_wall_sec": 104.834,
+        "llm_api_sec": 57.1125,
+        "total_wall_sec": 105.5775
+      },
+      "M_08": {
+        "ari": 91.35,
+        "nmi": 95.5,
+        "ami": 94.74,
+        "calls": 16,
+        "tokens": 5448,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            3,
+            11
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            12,
+            35
+          ],
+          [
+            17,
+            56
+          ],
+          [
+            22,
+            60
+          ],
+          [
+            24,
+            57
+          ],
+          [
+            31,
+            59
+          ],
+          [
+            42,
+            58
+          ],
+          [
+            44,
+            45
+          ],
+          [
+            44,
+            47
+          ],
+          [
+            44,
+            61
+          ],
+          [
+            45,
+            47
+          ],
+          [
+            45,
+            61
+          ],
+          [
+            47,
+            61
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 9,
+        "split_accepted": 6,
+        "merge_calls": 7,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 5448,
+        "prompt_tokens": 5362,
+        "completion_tokens": 86,
+        "shown_posts": 56,
+        "shown_pct": 3.58974358974359,
+        "n_init_frags": 59,
+        "n_final_clusters": 62,
+        "router_cpu_sec": 0.2031,
+        "api_wall_sec": 57.9356,
+        "llm_api_sec": 21.3229,
+        "total_wall_sec": 58.1399
+      },
+      "M_09": {
+        "ari": 68.08,
+        "nmi": 91.85,
+        "ami": 90.61,
+        "calls": 20,
+        "tokens": 7003,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            7
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            3,
+            54
+          ],
+          [
+            4,
+            51
+          ],
+          [
+            5,
+            43
+          ],
+          [
+            6,
+            12
+          ],
+          [
+            6,
+            15
+          ],
+          [
+            6,
+            50
+          ],
+          [
+            6,
+            56
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            53
+          ],
+          [
+            10,
+            27
+          ],
+          [
+            11,
+            19
+          ],
+          [
+            12,
+            15
+          ],
+          [
+            12,
+            17
+          ],
+          [
+            12,
+            50
+          ],
+          [
+            12,
+            55
+          ],
+          [
+            12,
+            56
+          ],
+          [
+            15,
+            44
+          ],
+          [
+            15,
+            50
+          ],
+          [
+            16,
+            49
+          ],
+          [
+            18,
+            27
+          ],
+          [
+            19,
+            26
+          ],
+          [
+            21,
+            52
+          ],
+          [
+            24,
+            25
+          ]
+        ],
+        "total_calls": 20,
+        "split_calls": 8,
+        "split_accepted": 8,
+        "merge_calls": 12,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 7003,
+        "prompt_tokens": 6900,
+        "completion_tokens": 103,
+        "shown_posts": 70,
+        "shown_pct": 5.1357300073367576,
+        "n_init_frags": 52,
+        "n_final_clusters": 57,
+        "router_cpu_sec": 0.1093,
+        "api_wall_sec": 44.0785,
+        "llm_api_sec": 27.2952,
+        "total_wall_sec": 44.1879
+      },
+      "M_10": {
+        "ari": 96.04,
+        "nmi": 95.8,
+        "ami": 95.24,
+        "calls": 10,
+        "tokens": 3959,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            8,
+            17
+          ],
+          [
+            8,
+            46
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            13,
+            15
+          ],
+          [
+            13,
+            16
+          ],
+          [
+            13,
+            48
+          ],
+          [
+            33,
+            47
+          ],
+          [
+            34,
+            47
+          ],
+          [
+            38,
+            46
+          ]
+        ],
+        "total_calls": 10,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 5,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 3959,
+        "prompt_tokens": 3904,
+        "completion_tokens": 55,
+        "shown_posts": 38,
+        "shown_pct": 3.4671532846715327,
+        "n_init_frags": 49,
+        "n_final_clusters": 49,
+        "router_cpu_sec": 0.0673,
+        "api_wall_sec": 22.2667,
+        "llm_api_sec": 14.4569,
+        "total_wall_sec": 22.334
+      },
+      "M_11": {
+        "ari": 68.06,
+        "nmi": 90.46,
+        "ami": 89.37,
+        "calls": 15,
+        "tokens": 5779,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            13
+          ],
+          [
+            1,
+            25
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            18
+          ],
+          [
+            3,
+            37
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            6,
+            9
+          ],
+          [
+            6,
+            18
+          ],
+          [
+            8,
+            18
+          ],
+          [
+            9,
+            18
+          ],
+          [
+            16,
+            25
+          ],
+          [
+            18,
+            26
+          ],
+          [
+            25,
+            38
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            28,
+            39
+          ],
+          [
+            31,
+            36
+          ]
+        ],
+        "total_calls": 15,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 8,
+        "blocked_by_cl": 1,
+        "total_tokens": 5779,
+        "prompt_tokens": 5685,
+        "completion_tokens": 94,
+        "shown_posts": 65,
+        "shown_pct": 5.275974025974026,
+        "n_init_frags": 45,
+        "n_final_clusters": 40,
+        "router_cpu_sec": 0.0964,
+        "api_wall_sec": 20.6748,
+        "llm_api_sec": 18.7465,
+        "total_wall_sec": 20.7712
+      },
+      "M_12": {
+        "ari": 90.77,
+        "nmi": 93.19,
+        "ami": 92.62,
+        "calls": 22,
+        "tokens": 7671,
+        "parse_errors": 1,
+        "cannot_pairs": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            10
+          ],
+          [
+            0,
+            37
+          ],
+          [
+            1,
+            44
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            18
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            2,
+            84
+          ],
+          [
+            5,
+            17
+          ],
+          [
+            10,
+            25
+          ],
+          [
+            10,
+            84
+          ],
+          [
+            11,
+            66
+          ],
+          [
+            11,
+            85
+          ],
+          [
+            16,
+            17
+          ],
+          [
+            24,
+            26
+          ],
+          [
+            24,
+            28
+          ],
+          [
+            24,
+            29
+          ],
+          [
+            24,
+            31
+          ],
+          [
+            24,
+            34
+          ],
+          [
+            24,
+            48
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            31
+          ],
+          [
+            26,
+            34
+          ],
+          [
+            26,
+            48
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            28,
+            34
+          ],
+          [
+            28,
+            83
+          ],
+          [
+            31,
+            34
+          ],
+          [
+            52,
+            54
+          ],
+          [
+            52,
+            66
+          ],
+          [
+            54,
+            66
+          ],
+          [
+            54,
+            71
+          ],
+          [
+            54,
+            80
+          ],
+          [
+            54,
+            85
+          ],
+          [
+            66,
+            81
+          ],
+          [
+            71,
+            75
+          ],
+          [
+            71,
+            82
+          ]
+        ],
+        "total_calls": 22,
+        "split_calls": 8,
+        "split_accepted": 6,
+        "merge_calls": 14,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 7671,
+        "prompt_tokens": 7556,
+        "completion_tokens": 115,
+        "shown_posts": 77,
+        "shown_pct": 2.378745752239728,
+        "n_init_frags": 85,
+        "n_final_clusters": 86,
+        "router_cpu_sec": 0.2192,
+        "api_wall_sec": 28.2831,
+        "llm_api_sec": 27.1699,
+        "total_wall_sec": 28.5023
+      },
+      "M_13": {
+        "ari": 74.18,
+        "nmi": 88.04,
+        "ami": 86.81,
+        "calls": 13,
+        "tokens": 4796,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            9
+          ],
+          [
+            1,
+            31
+          ],
+          [
+            3,
+            21
+          ],
+          [
+            5,
+            38
+          ],
+          [
+            5,
+            43
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            10,
+            47
+          ],
+          [
+            10,
+            67
+          ],
+          [
+            13,
+            17
+          ],
+          [
+            17,
+            18
+          ],
+          [
+            17,
+            19
+          ],
+          [
+            21,
+            68
+          ],
+          [
+            29,
+            51
+          ],
+          [
+            36,
+            42
+          ],
+          [
+            41,
+            67
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 3,
+        "split_accepted": 2,
+        "merge_calls": 10,
+        "merge_ops": 6,
+        "blocked_by_cl": 0,
+        "total_tokens": 4796,
+        "prompt_tokens": 4718,
+        "completion_tokens": 78,
+        "shown_posts": 64,
+        "shown_pct": 3.2454361054766734,
+        "n_init_frags": 73,
+        "n_final_clusters": 69,
+        "router_cpu_sec": 0.1398,
+        "api_wall_sec": 16.3353,
+        "llm_api_sec": 16.2126,
+        "total_wall_sec": 16.4751
+      },
+      "M_14": {
+        "ari": 86.53,
+        "nmi": 91.85,
+        "ami": 91.19,
+        "calls": 16,
+        "tokens": 5402,
+        "parse_errors": 1,
+        "cannot_pairs": [
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            15
+          ],
+          [
+            0,
+            21
+          ],
+          [
+            0,
+            34
+          ],
+          [
+            0,
+            79
+          ],
+          [
+            2,
+            78
+          ],
+          [
+            8,
+            15
+          ],
+          [
+            8,
+            34
+          ],
+          [
+            8,
+            70
+          ],
+          [
+            8,
+            79
+          ],
+          [
+            9,
+            80
+          ],
+          [
+            15,
+            79
+          ],
+          [
+            22,
+            76
+          ],
+          [
+            28,
+            77
+          ],
+          [
+            43,
+            58
+          ],
+          [
+            44,
+            45
+          ],
+          [
+            44,
+            49
+          ],
+          [
+            44,
+            68
+          ],
+          [
+            45,
+            68
+          ],
+          [
+            49,
+            68
+          ],
+          [
+            61,
+            62
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 7,
+        "split_accepted": 5,
+        "merge_calls": 9,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 5402,
+        "prompt_tokens": 5317,
+        "completion_tokens": 85,
+        "shown_posts": 67,
+        "shown_pct": 2.266576454668471,
+        "n_init_frags": 80,
+        "n_final_clusters": 81,
+        "router_cpu_sec": 0.1633,
+        "api_wall_sec": 19.6543,
+        "llm_api_sec": 18.2807,
+        "total_wall_sec": 19.8176
+      },
+      "M_15": {
+        "ari": 53.42,
+        "nmi": 82.06,
+        "ami": 80.24,
+        "calls": 27,
+        "tokens": 9460,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            7
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            12
+          ],
+          [
+            0,
+            75
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            2,
+            12
+          ],
+          [
+            2,
+            35
+          ],
+          [
+            2,
+            36
+          ],
+          [
+            2,
+            74
+          ],
+          [
+            2,
+            75
+          ],
+          [
+            4,
+            52
+          ],
+          [
+            4,
+            58
+          ],
+          [
+            4,
+            62
+          ],
+          [
+            6,
+            77
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            12
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            8,
+            12
+          ],
+          [
+            11,
+            12
+          ],
+          [
+            15,
+            22
+          ],
+          [
+            18,
+            25
+          ],
+          [
+            18,
+            29
+          ],
+          [
+            19,
+            20
+          ],
+          [
+            20,
+            32
+          ],
+          [
+            20,
+            72
+          ],
+          [
+            27,
+            35
+          ],
+          [
+            27,
+            36
+          ],
+          [
+            27,
+            74
+          ],
+          [
+            27,
+            76
+          ],
+          [
+            33,
+            73
+          ],
+          [
+            35,
+            36
+          ],
+          [
+            35,
+            74
+          ],
+          [
+            35,
+            76
+          ],
+          [
+            36,
+            74
+          ],
+          [
+            36,
+            76
+          ],
+          [
+            52,
+            58
+          ],
+          [
+            52,
+            62
+          ],
+          [
+            52,
+            71
+          ],
+          [
+            54,
+            70
+          ],
+          [
+            58,
+            62
+          ],
+          [
+            58,
+            70
+          ],
+          [
+            62,
+            71
+          ],
+          [
+            74,
+            76
+          ]
+        ],
+        "total_calls": 27,
+        "split_calls": 9,
+        "split_accepted": 8,
+        "merge_calls": 18,
+        "merge_ops": 7,
+        "blocked_by_cl": 0,
+        "total_tokens": 9460,
+        "prompt_tokens": 9309,
+        "completion_tokens": 151,
+        "shown_posts": 83,
+        "shown_pct": 3.2561788936837974,
+        "n_init_frags": 77,
+        "n_final_clusters": 78,
+        "router_cpu_sec": 0.192,
+        "api_wall_sec": 36.6632,
+        "llm_api_sec": 36.1002,
+        "total_wall_sec": 36.8553
+      },
+      "M_16": {
+        "ari": 92.44,
+        "nmi": 94.52,
+        "ami": 93.94,
+        "calls": 6,
+        "tokens": 2454,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            9
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            7,
+            33
+          ],
+          [
+            9,
+            12
+          ],
+          [
+            15,
+            20
+          ]
+        ],
+        "total_calls": 6,
+        "split_calls": 2,
+        "split_accepted": 1,
+        "merge_calls": 4,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 2454,
+        "prompt_tokens": 2412,
+        "completion_tokens": 42,
+        "shown_posts": 32,
+        "shown_pct": 3.5164835164835164,
+        "n_init_frags": 38,
+        "n_final_clusters": 34,
+        "router_cpu_sec": 0.0698,
+        "api_wall_sec": 9.6117,
+        "llm_api_sec": 9.5423,
+        "total_wall_sec": 9.6816
+      },
+      "M_17": {
+        "ari": 84.07,
+        "nmi": 91.59,
+        "ami": 91.02,
+        "calls": 14,
+        "tokens": 4701,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            6,
+            66
+          ],
+          [
+            10,
+            65
+          ],
+          [
+            12,
+            64
+          ],
+          [
+            18,
+            19
+          ],
+          [
+            18,
+            21
+          ],
+          [
+            18,
+            22
+          ],
+          [
+            18,
+            49
+          ],
+          [
+            18,
+            53
+          ],
+          [
+            19,
+            21
+          ],
+          [
+            37,
+            39
+          ],
+          [
+            53,
+            57
+          ]
+        ],
+        "total_calls": 14,
+        "split_calls": 4,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 8,
+        "blocked_by_cl": 0,
+        "total_tokens": 4701,
+        "prompt_tokens": 4616,
+        "completion_tokens": 85,
+        "shown_posts": 58,
+        "shown_pct": 2.1674140508221225,
+        "n_init_frags": 72,
+        "n_final_clusters": 67,
+        "router_cpu_sec": 0.1576,
+        "api_wall_sec": 17.6372,
+        "llm_api_sec": 17.4294,
+        "total_wall_sec": 17.7948
+      },
+      "M_18": {
+        "ari": 80.6,
+        "nmi": 89.89,
+        "ami": 88.97,
+        "calls": 16,
+        "tokens": 5337,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            4,
+            65
+          ],
+          [
+            8,
+            10
+          ],
+          [
+            8,
+            14
+          ],
+          [
+            10,
+            14
+          ],
+          [
+            10,
+            55
+          ],
+          [
+            16,
+            21
+          ],
+          [
+            16,
+            55
+          ],
+          [
+            16,
+            57
+          ],
+          [
+            16,
+            58
+          ],
+          [
+            16,
+            60
+          ],
+          [
+            21,
+            55
+          ],
+          [
+            21,
+            57
+          ],
+          [
+            21,
+            58
+          ],
+          [
+            22,
+            66
+          ],
+          [
+            23,
+            63
+          ],
+          [
+            42,
+            46
+          ],
+          [
+            42,
+            47
+          ],
+          [
+            42,
+            48
+          ],
+          [
+            42,
+            50
+          ],
+          [
+            42,
+            64
+          ],
+          [
+            45,
+            46
+          ],
+          [
+            46,
+            64
+          ],
+          [
+            47,
+            48
+          ],
+          [
+            47,
+            50
+          ],
+          [
+            47,
+            64
+          ],
+          [
+            48,
+            64
+          ],
+          [
+            55,
+            57
+          ],
+          [
+            55,
+            58
+          ],
+          [
+            57,
+            58
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 4,
+        "split_accepted": 4,
+        "merge_calls": 12,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 5337,
+        "prompt_tokens": 5254,
+        "completion_tokens": 83,
+        "shown_posts": 52,
+        "shown_pct": 2.755696873343932,
+        "n_init_frags": 66,
+        "n_final_clusters": 67,
+        "router_cpu_sec": 0.119,
+        "api_wall_sec": 20.9229,
+        "llm_api_sec": 20.6083,
+        "total_wall_sec": 21.0419
+      },
+      "M_19": {
+        "ari": 81.37,
+        "nmi": 90.54,
+        "ami": 89.61,
+        "calls": 16,
+        "tokens": 5332,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            9
+          ],
+          [
+            1,
+            13
+          ],
+          [
+            5,
+            14
+          ],
+          [
+            5,
+            42
+          ],
+          [
+            6,
+            12
+          ],
+          [
+            6,
+            48
+          ],
+          [
+            7,
+            23
+          ],
+          [
+            11,
+            46
+          ],
+          [
+            12,
+            43
+          ],
+          [
+            12,
+            48
+          ],
+          [
+            14,
+            42
+          ],
+          [
+            27,
+            34
+          ],
+          [
+            38,
+            39
+          ],
+          [
+            38,
+            40
+          ],
+          [
+            38,
+            47
+          ],
+          [
+            43,
+            48
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 6,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 5332,
+        "prompt_tokens": 5244,
+        "completion_tokens": 88,
+        "shown_posts": 59,
+        "shown_pct": 4.2172980700500355,
+        "n_init_frags": 49,
+        "n_final_clusters": 49,
+        "router_cpu_sec": 0.0917,
+        "api_wall_sec": 21.1363,
+        "llm_api_sec": 20.6687,
+        "total_wall_sec": 21.2281
+      },
+      "M_20": {
+        "ari": 62.42,
+        "nmi": 86.88,
+        "ami": 83.58,
+        "calls": 14,
+        "tokens": 5060,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            24
+          ],
+          [
+            2,
+            72
+          ],
+          [
+            2,
+            81
+          ],
+          [
+            3,
+            24
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            28
+          ],
+          [
+            4,
+            31
+          ],
+          [
+            4,
+            81
+          ],
+          [
+            6,
+            83
+          ],
+          [
+            7,
+            31
+          ],
+          [
+            9,
+            19
+          ],
+          [
+            9,
+            20
+          ],
+          [
+            9,
+            55
+          ],
+          [
+            17,
+            84
+          ],
+          [
+            19,
+            20
+          ],
+          [
+            19,
+            32
+          ],
+          [
+            19,
+            66
+          ],
+          [
+            19,
+            67
+          ],
+          [
+            20,
+            32
+          ],
+          [
+            20,
+            59
+          ],
+          [
+            22,
+            31
+          ],
+          [
+            27,
+            39
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            31,
+            81
+          ],
+          [
+            32,
+            66
+          ],
+          [
+            32,
+            67
+          ],
+          [
+            48,
+            82
+          ]
+        ],
+        "total_calls": 14,
+        "split_calls": 4,
+        "split_accepted": 4,
+        "merge_calls": 10,
+        "merge_ops": 0,
+        "blocked_by_cl": 0,
+        "total_tokens": 5060,
+        "prompt_tokens": 4990,
+        "completion_tokens": 70,
+        "shown_posts": 51,
+        "shown_pct": 5.711086226203808,
+        "n_init_frags": 81,
+        "n_final_clusters": 85,
+        "router_cpu_sec": 0.0879,
+        "api_wall_sec": 17.328,
+        "llm_api_sec": 17.0959,
+        "total_wall_sec": 17.416
+      },
+      "M_21": {
+        "ari": 40.18,
+        "nmi": 78.85,
+        "ami": 76.87,
+        "calls": 33,
+        "tokens": 11715,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            10
+          ],
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            15
+          ],
+          [
+            0,
+            17
+          ],
+          [
+            0,
+            54
+          ],
+          [
+            0,
+            88
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            86
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            2,
+            15
+          ],
+          [
+            2,
+            17
+          ],
+          [
+            2,
+            32
+          ],
+          [
+            2,
+            54
+          ],
+          [
+            2,
+            88
+          ],
+          [
+            4,
+            22
+          ],
+          [
+            4,
+            28
+          ],
+          [
+            6,
+            30
+          ],
+          [
+            7,
+            28
+          ],
+          [
+            7,
+            59
+          ],
+          [
+            10,
+            11
+          ],
+          [
+            10,
+            14
+          ],
+          [
+            10,
+            17
+          ],
+          [
+            10,
+            54
+          ],
+          [
+            11,
+            14
+          ],
+          [
+            11,
+            15
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            11,
+            32
+          ],
+          [
+            11,
+            54
+          ],
+          [
+            13,
+            30
+          ],
+          [
+            13,
+            31
+          ],
+          [
+            14,
+            61
+          ],
+          [
+            15,
+            17
+          ],
+          [
+            15,
+            54
+          ],
+          [
+            15,
+            86
+          ],
+          [
+            15,
+            87
+          ],
+          [
+            15,
+            88
+          ],
+          [
+            22,
+            28
+          ],
+          [
+            23,
+            29
+          ],
+          [
+            30,
+            81
+          ],
+          [
+            31,
+            82
+          ],
+          [
+            36,
+            65
+          ],
+          [
+            42,
+            72
+          ],
+          [
+            44,
+            83
+          ],
+          [
+            54,
+            87
+          ],
+          [
+            65,
+            71
+          ],
+          [
+            65,
+            85
+          ],
+          [
+            71,
+            84
+          ],
+          [
+            71,
+            85
+          ]
+        ],
+        "total_calls": 33,
+        "split_calls": 11,
+        "split_accepted": 8,
+        "merge_calls": 22,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 11715,
+        "prompt_tokens": 11540,
+        "completion_tokens": 175,
+        "shown_posts": 95,
+        "shown_pct": 3.9402737453338865,
+        "n_init_frags": 86,
+        "n_final_clusters": 89,
+        "router_cpu_sec": 0.1928,
+        "api_wall_sec": 41.9126,
+        "llm_api_sec": 41.8407,
+        "total_wall_sec": 42.1054
+      }
+    }
+  },
+  "frag_sed_unbounded": {
+    "mean": {
+      "ari": 72.8,
+      "nmi": 87.92,
+      "ami": 86.77
+    },
+    "total_calls": 456,
+    "total_tokens": 174381,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_01": {
+        "ari": 4.79,
+        "nmi": 44.21,
+        "ami": 41.92,
+        "calls": 91,
+        "tokens": 40220,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            7
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            12
+          ],
+          [
+            0,
+            14
+          ],
+          [
+            0,
+            16
+          ],
+          [
+            0,
+            25
+          ],
+          [
+            0,
+            26
+          ],
+          [
+            0,
+            30
+          ],
+          [
+            0,
+            32
+          ],
+          [
+            0,
+            34
+          ],
+          [
+            0,
+            37
+          ],
+          [
+            0,
+            38
+          ],
+          [
+            0,
+            49
+          ],
+          [
+            0,
+            50
+          ],
+          [
+            0,
+            61
+          ],
+          [
+            0,
+            77
+          ],
+          [
+            0,
+            106
+          ],
+          [
+            0,
+            107
+          ],
+          [
+            0,
+            118
+          ],
+          [
+            0,
+            166
+          ],
+          [
+            0,
+            167
+          ],
+          [
+            0,
+            168
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            2,
+            16
+          ],
+          [
+            2,
+            20
+          ],
+          [
+            2,
+            21
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            2,
+            29
+          ],
+          [
+            2,
+            33
+          ],
+          [
+            2,
+            34
+          ],
+          [
+            2,
+            38
+          ],
+          [
+            2,
+            49
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            3,
+            14
+          ],
+          [
+            3,
+            16
+          ],
+          [
+            3,
+            20
+          ],
+          [
+            3,
+            21
+          ],
+          [
+            3,
+            25
+          ],
+          [
+            3,
+            26
+          ],
+          [
+            3,
+            28
+          ],
+          [
+            3,
+            29
+          ],
+          [
+            3,
+            30
+          ],
+          [
+            3,
+            32
+          ],
+          [
+            3,
+            33
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            3,
+            35
+          ],
+          [
+            3,
+            36
+          ],
+          [
+            3,
+            37
+          ],
+          [
+            3,
+            38
+          ],
+          [
+            3,
+            43
+          ],
+          [
+            3,
+            49
+          ],
+          [
+            3,
+            55
+          ],
+          [
+            3,
+            61
+          ],
+          [
+            3,
+            87
+          ],
+          [
+            3,
+            107
+          ],
+          [
+            3,
+            166
+          ],
+          [
+            3,
+            167
+          ],
+          [
+            3,
+            168
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            14
+          ],
+          [
+            7,
+            16
+          ],
+          [
+            7,
+            20
+          ],
+          [
+            7,
+            21
+          ],
+          [
+            7,
+            25
+          ],
+          [
+            7,
+            26
+          ],
+          [
+            7,
+            28
+          ],
+          [
+            7,
+            29
+          ],
+          [
+            7,
+            30
+          ],
+          [
+            7,
+            33
+          ],
+          [
+            7,
+            34
+          ],
+          [
+            7,
+            35
+          ],
+          [
+            7,
+            36
+          ],
+          [
+            7,
+            37
+          ],
+          [
+            7,
+            38
+          ],
+          [
+            7,
+            49
+          ],
+          [
+            7,
+            50
+          ],
+          [
+            7,
+            61
+          ],
+          [
+            7,
+            93
+          ],
+          [
+            7,
+            106
+          ],
+          [
+            7,
+            118
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            8,
+            14
+          ],
+          [
+            8,
+            16
+          ],
+          [
+            8,
+            20
+          ],
+          [
+            8,
+            25
+          ],
+          [
+            8,
+            26
+          ],
+          [
+            8,
+            28
+          ],
+          [
+            8,
+            29
+          ],
+          [
+            8,
+            30
+          ],
+          [
+            8,
+            33
+          ],
+          [
+            8,
+            34
+          ],
+          [
+            8,
+            37
+          ],
+          [
+            8,
+            38
+          ],
+          [
+            8,
+            47
+          ],
+          [
+            8,
+            49
+          ],
+          [
+            8,
+            50
+          ],
+          [
+            8,
+            61
+          ],
+          [
+            8,
+            93
+          ],
+          [
+            8,
+            165
+          ],
+          [
+            8,
+            166
+          ],
+          [
+            8,
+            167
+          ],
+          [
+            9,
+            146
+          ],
+          [
+            10,
+            13
+          ],
+          [
+            10,
+            138
+          ],
+          [
+            11,
+            14
+          ],
+          [
+            11,
+            15
+          ],
+          [
+            11,
+            16
+          ],
+          [
+            11,
+            20
+          ],
+          [
+            11,
+            25
+          ],
+          [
+            11,
+            26
+          ],
+          [
+            11,
+            28
+          ],
+          [
+            11,
+            29
+          ],
+          [
+            11,
+            30
+          ],
+          [
+            11,
+            32
+          ],
+          [
+            11,
+            33
+          ],
+          [
+            11,
+            35
+          ],
+          [
+            11,
+            37
+          ],
+          [
+            11,
+            38
+          ],
+          [
+            11,
+            49
+          ],
+          [
+            11,
+            55
+          ],
+          [
+            11,
+            168
+          ],
+          [
+            12,
+            14
+          ],
+          [
+            12,
+            21
+          ],
+          [
+            12,
+            29
+          ],
+          [
+            12,
+            35
+          ],
+          [
+            12,
+            38
+          ],
+          [
+            12,
+            118
+          ],
+          [
+            13,
+            138
+          ],
+          [
+            14,
+            16
+          ],
+          [
+            14,
+            20
+          ],
+          [
+            14,
+            21
+          ],
+          [
+            14,
+            25
+          ],
+          [
+            14,
+            26
+          ],
+          [
+            14,
+            28
+          ],
+          [
+            14,
+            29
+          ],
+          [
+            14,
+            33
+          ],
+          [
+            14,
+            34
+          ],
+          [
+            14,
+            35
+          ],
+          [
+            14,
+            36
+          ],
+          [
+            14,
+            37
+          ],
+          [
+            14,
+            38
+          ],
+          [
+            14,
+            43
+          ],
+          [
+            14,
+            49
+          ],
+          [
+            14,
+            50
+          ],
+          [
+            14,
+            61
+          ],
+          [
+            14,
+            87
+          ],
+          [
+            14,
+            166
+          ],
+          [
+            16,
+            20
+          ],
+          [
+            16,
+            21
+          ],
+          [
+            16,
+            25
+          ],
+          [
+            16,
+            26
+          ],
+          [
+            16,
+            29
+          ],
+          [
+            16,
+            33
+          ],
+          [
+            16,
+            34
+          ],
+          [
+            16,
+            36
+          ],
+          [
+            16,
+            37
+          ],
+          [
+            16,
+            38
+          ],
+          [
+            16,
+            49
+          ],
+          [
+            16,
+            61
+          ],
+          [
+            17,
+            43
+          ],
+          [
+            20,
+            21
+          ],
+          [
+            20,
+            29
+          ],
+          [
+            20,
+            33
+          ],
+          [
+            20,
+            34
+          ],
+          [
+            20,
+            36
+          ],
+          [
+            20,
+            38
+          ],
+          [
+            20,
+            43
+          ],
+          [
+            20,
+            49
+          ],
+          [
+            21,
+            29
+          ],
+          [
+            21,
+            33
+          ],
+          [
+            21,
+            34
+          ],
+          [
+            21,
+            35
+          ],
+          [
+            21,
+            36
+          ],
+          [
+            21,
+            38
+          ],
+          [
+            21,
+            43
+          ],
+          [
+            21,
+            49
+          ],
+          [
+            21,
+            87
+          ],
+          [
+            25,
+            33
+          ],
+          [
+            25,
+            38
+          ],
+          [
+            25,
+            49
+          ],
+          [
+            26,
+            33
+          ],
+          [
+            26,
+            34
+          ],
+          [
+            26,
+            36
+          ],
+          [
+            26,
+            50
+          ],
+          [
+            26,
+            61
+          ],
+          [
+            26,
+            69
+          ],
+          [
+            26,
+            93
+          ],
+          [
+            26,
+            118
+          ],
+          [
+            28,
+            166
+          ],
+          [
+            29,
+            33
+          ],
+          [
+            29,
+            34
+          ],
+          [
+            29,
+            36
+          ],
+          [
+            29,
+            37
+          ],
+          [
+            29,
+            38
+          ],
+          [
+            29,
+            43
+          ],
+          [
+            29,
+            49
+          ],
+          [
+            30,
+            34
+          ],
+          [
+            30,
+            168
+          ],
+          [
+            33,
+            34
+          ],
+          [
+            33,
+            36
+          ],
+          [
+            33,
+            38
+          ],
+          [
+            33,
+            43
+          ],
+          [
+            33,
+            49
+          ],
+          [
+            33,
+            61
+          ],
+          [
+            34,
+            38
+          ],
+          [
+            34,
+            43
+          ],
+          [
+            34,
+            49
+          ],
+          [
+            34,
+            61
+          ],
+          [
+            35,
+            38
+          ],
+          [
+            35,
+            49
+          ],
+          [
+            36,
+            38
+          ],
+          [
+            36,
+            49
+          ],
+          [
+            37,
+            49
+          ],
+          [
+            38,
+            49
+          ],
+          [
+            38,
+            165
+          ],
+          [
+            43,
+            49
+          ],
+          [
+            49,
+            61
+          ],
+          [
+            50,
+            77
+          ],
+          [
+            50,
+            93
+          ],
+          [
+            50,
+            106
+          ],
+          [
+            77,
+            106
+          ],
+          [
+            77,
+            133
+          ],
+          [
+            77,
+            163
+          ],
+          [
+            106,
+            167
+          ],
+          [
+            118,
+            167
+          ],
+          [
+            127,
+            164
+          ],
+          [
+            133,
+            144
+          ],
+          [
+            134,
+            169
+          ],
+          [
+            140,
+            154
+          ],
+          [
+            156,
+            160
+          ]
+        ],
+        "total_calls": 91,
+        "split_calls": 9,
+        "split_accepted": 7,
+        "merge_calls": 82,
+        "merge_ops": 19,
+        "blocked_by_cl": 2,
+        "total_tokens": 40220,
+        "prompt_tokens": 39730,
+        "completion_tokens": 490,
+        "shown_posts": 168,
+        "shown_pct": 1.926163723916533,
+        "n_init_frags": 182,
+        "n_final_clusters": 170,
+        "router_cpu_sec": 1.4688,
+        "api_wall_sec": 61.6406,
+        "llm_api_sec": 61.1647,
+        "total_wall_sec": 63.7816
+      },
+      "M_02": {
+        "ari": 92.87,
+        "nmi": 94.94,
+        "ami": 94.41,
+        "calls": 8,
+        "tokens": 2734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            8,
+            64
+          ],
+          [
+            14,
+            21
+          ],
+          [
+            14,
+            33
+          ],
+          [
+            14,
+            63
+          ],
+          [
+            15,
+            17
+          ],
+          [
+            16,
+            29
+          ]
+        ],
+        "total_calls": 8,
+        "split_calls": 3,
+        "split_accepted": 2,
+        "merge_calls": 5,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 2734,
+        "prompt_tokens": 2688,
+        "completion_tokens": 46,
+        "shown_posts": 31,
+        "shown_pct": 2.079141515761234,
+        "n_init_frags": 66,
+        "n_final_clusters": 65,
+        "router_cpu_sec": 0.0938,
+        "api_wall_sec": 0.0177,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.4444
+      },
+      "M_03": {
+        "ari": 95.99,
+        "nmi": 95.79,
+        "ami": 95.4,
+        "calls": 13,
+        "tokens": 4734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            55
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            7,
+            21
+          ],
+          [
+            7,
+            24
+          ],
+          [
+            7,
+            54
+          ],
+          [
+            8,
+            21
+          ],
+          [
+            8,
+            54
+          ],
+          [
+            10,
+            53
+          ],
+          [
+            16,
+            20
+          ],
+          [
+            21,
+            24
+          ],
+          [
+            22,
+            55
+          ],
+          [
+            30,
+            51
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 8,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 4734,
+        "prompt_tokens": 4663,
+        "completion_tokens": 71,
+        "shown_posts": 48,
+        "shown_pct": 2.6158038147138964,
+        "n_init_frags": 57,
+        "n_final_clusters": 56,
+        "router_cpu_sec": 0.1719,
+        "api_wall_sec": 0.0378,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.6482
+      },
+      "M_04": {
+        "ari": 58.68,
+        "nmi": 89.47,
+        "ami": 88.3,
+        "calls": 22,
+        "tokens": 7678,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            41
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            60
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            4,
+            58
+          ],
+          [
+            9,
+            57
+          ],
+          [
+            10,
+            56
+          ],
+          [
+            11,
+            21
+          ],
+          [
+            12,
+            60
+          ],
+          [
+            13,
+            58
+          ],
+          [
+            17,
+            55
+          ],
+          [
+            23,
+            26
+          ],
+          [
+            23,
+            30
+          ],
+          [
+            23,
+            59
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            30
+          ],
+          [
+            26,
+            31
+          ],
+          [
+            26,
+            33
+          ],
+          [
+            26,
+            36
+          ],
+          [
+            26,
+            59
+          ],
+          [
+            27,
+            30
+          ],
+          [
+            28,
+            30
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            28,
+            33
+          ],
+          [
+            28,
+            36
+          ],
+          [
+            30,
+            31
+          ],
+          [
+            30,
+            33
+          ],
+          [
+            30,
+            36
+          ],
+          [
+            30,
+            59
+          ],
+          [
+            33,
+            36
+          ],
+          [
+            33,
+            59
+          ],
+          [
+            36,
+            59
+          ],
+          [
+            40,
+            41
+          ],
+          [
+            40,
+            51
+          ],
+          [
+            41,
+            51
+          ]
+        ],
+        "total_calls": 22,
+        "split_calls": 7,
+        "split_accepted": 5,
+        "merge_calls": 15,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 7678,
+        "prompt_tokens": 7559,
+        "completion_tokens": 119,
+        "shown_posts": 71,
+        "shown_pct": 3.5323383084577116,
+        "n_init_frags": 61,
+        "n_final_clusters": 61,
+        "router_cpu_sec": 0.1562,
+        "api_wall_sec": 0.096,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.7332
+      },
+      "M_05": {
+        "ari": 86.41,
+        "nmi": 91.98,
+        "ami": 91.28,
+        "calls": 15,
+        "tokens": 5725,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            57
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            57
+          ],
+          [
+            5,
+            57
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            58
+          ],
+          [
+            7,
+            16
+          ],
+          [
+            7,
+            44
+          ],
+          [
+            7,
+            57
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            16,
+            57
+          ],
+          [
+            16,
+            59
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            29,
+            32
+          ],
+          [
+            29,
+            33
+          ],
+          [
+            29,
+            35
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            32,
+            35
+          ],
+          [
+            33,
+            35
+          ],
+          [
+            35,
+            45
+          ]
+        ],
+        "total_calls": 15,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 5725,
+        "prompt_tokens": 5639,
+        "completion_tokens": 86,
+        "shown_posts": 56,
+        "shown_pct": 3.053435114503817,
+        "n_init_frags": 62,
+        "n_final_clusters": 60,
+        "router_cpu_sec": 0.1875,
+        "api_wall_sec": 0.0645,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.5191
+      },
+      "M_06": {
+        "ari": 96.05,
+        "nmi": 95.39,
+        "ami": 94.7,
+        "calls": 13,
+        "tokens": 4895,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            8
+          ],
+          [
+            1,
+            46
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            46
+          ],
+          [
+            5,
+            47
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            8,
+            17
+          ],
+          [
+            8,
+            31
+          ],
+          [
+            8,
+            46
+          ],
+          [
+            13,
+            24
+          ],
+          [
+            15,
+            25
+          ],
+          [
+            17,
+            20
+          ],
+          [
+            17,
+            46
+          ],
+          [
+            20,
+            46
+          ],
+          [
+            29,
+            45
+          ],
+          [
+            31,
+            44
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 4,
+        "split_accepted": 4,
+        "merge_calls": 9,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 4895,
+        "prompt_tokens": 4822,
+        "completion_tokens": 73,
+        "shown_posts": 44,
+        "shown_pct": 3.4482758620689653,
+        "n_init_frags": 48,
+        "n_final_clusters": 48,
+        "router_cpu_sec": 0.1406,
+        "api_wall_sec": 0.0431,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.3679
+      },
+      "M_07": {
+        "ari": 24.39,
+        "nmi": 73.35,
+        "ami": 71.26,
+        "calls": 56,
+        "tokens": 23612,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            23
+          ],
+          [
+            1,
+            25
+          ],
+          [
+            1,
+            26
+          ],
+          [
+            1,
+            27
+          ],
+          [
+            1,
+            28
+          ],
+          [
+            1,
+            29
+          ],
+          [
+            1,
+            34
+          ],
+          [
+            1,
+            36
+          ],
+          [
+            1,
+            37
+          ],
+          [
+            1,
+            38
+          ],
+          [
+            1,
+            41
+          ],
+          [
+            1,
+            46
+          ],
+          [
+            1,
+            47
+          ],
+          [
+            1,
+            50
+          ],
+          [
+            1,
+            102
+          ],
+          [
+            1,
+            109
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            23
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            23
+          ],
+          [
+            3,
+            25
+          ],
+          [
+            3,
+            28
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            3,
+            36
+          ],
+          [
+            3,
+            41
+          ],
+          [
+            3,
+            46
+          ],
+          [
+            3,
+            109
+          ],
+          [
+            3,
+            112
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            72
+          ],
+          [
+            5,
+            15
+          ],
+          [
+            5,
+            17
+          ],
+          [
+            5,
+            68
+          ],
+          [
+            5,
+            71
+          ],
+          [
+            6,
+            15
+          ],
+          [
+            6,
+            23
+          ],
+          [
+            6,
+            25
+          ],
+          [
+            6,
+            28
+          ],
+          [
+            6,
+            34
+          ],
+          [
+            6,
+            36
+          ],
+          [
+            6,
+            106
+          ],
+          [
+            6,
+            108
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            11,
+            54
+          ],
+          [
+            13,
+            81
+          ],
+          [
+            15,
+            17
+          ],
+          [
+            15,
+            71
+          ],
+          [
+            17,
+            67
+          ],
+          [
+            17,
+            71
+          ],
+          [
+            17,
+            72
+          ],
+          [
+            22,
+            110
+          ],
+          [
+            23,
+            25
+          ],
+          [
+            23,
+            26
+          ],
+          [
+            23,
+            27
+          ],
+          [
+            23,
+            28
+          ],
+          [
+            23,
+            29
+          ],
+          [
+            23,
+            34
+          ],
+          [
+            23,
+            36
+          ],
+          [
+            23,
+            37
+          ],
+          [
+            23,
+            38
+          ],
+          [
+            23,
+            41
+          ],
+          [
+            23,
+            46
+          ],
+          [
+            23,
+            47
+          ],
+          [
+            23,
+            102
+          ],
+          [
+            23,
+            109
+          ],
+          [
+            25,
+            26
+          ],
+          [
+            25,
+            27
+          ],
+          [
+            25,
+            28
+          ],
+          [
+            25,
+            29
+          ],
+          [
+            25,
+            34
+          ],
+          [
+            25,
+            36
+          ],
+          [
+            25,
+            37
+          ],
+          [
+            25,
+            38
+          ],
+          [
+            25,
+            41
+          ],
+          [
+            25,
+            46
+          ],
+          [
+            25,
+            47
+          ],
+          [
+            25,
+            109
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            29
+          ],
+          [
+            26,
+            34
+          ],
+          [
+            26,
+            37
+          ],
+          [
+            26,
+            38
+          ],
+          [
+            26,
+            46
+          ],
+          [
+            27,
+            28
+          ],
+          [
+            27,
+            29
+          ],
+          [
+            27,
+            34
+          ],
+          [
+            27,
+            36
+          ],
+          [
+            27,
+            37
+          ],
+          [
+            27,
+            41
+          ],
+          [
+            27,
+            46
+          ],
+          [
+            27,
+            47
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            28,
+            34
+          ],
+          [
+            28,
+            36
+          ],
+          [
+            28,
+            37
+          ],
+          [
+            28,
+            38
+          ],
+          [
+            28,
+            46
+          ],
+          [
+            28,
+            47
+          ],
+          [
+            28,
+            106
+          ],
+          [
+            28,
+            109
+          ],
+          [
+            29,
+            34
+          ],
+          [
+            29,
+            37
+          ],
+          [
+            29,
+            38
+          ],
+          [
+            29,
+            46
+          ],
+          [
+            34,
+            36
+          ],
+          [
+            34,
+            37
+          ],
+          [
+            34,
+            38
+          ],
+          [
+            34,
+            46
+          ],
+          [
+            34,
+            47
+          ],
+          [
+            34,
+            109
+          ],
+          [
+            36,
+            37
+          ],
+          [
+            36,
+            38
+          ],
+          [
+            36,
+            46
+          ],
+          [
+            36,
+            47
+          ],
+          [
+            36,
+            102
+          ],
+          [
+            37,
+            38
+          ],
+          [
+            37,
+            46
+          ],
+          [
+            37,
+            47
+          ],
+          [
+            37,
+            102
+          ],
+          [
+            38,
+            46
+          ],
+          [
+            38,
+            105
+          ],
+          [
+            39,
+            109
+          ],
+          [
+            41,
+            50
+          ],
+          [
+            41,
+            102
+          ],
+          [
+            41,
+            109
+          ],
+          [
+            46,
+            47
+          ],
+          [
+            46,
+            109
+          ],
+          [
+            50,
+            102
+          ],
+          [
+            54,
+            107
+          ],
+          [
+            55,
+            103
+          ],
+          [
+            65,
+            101
+          ],
+          [
+            67,
+            71
+          ],
+          [
+            71,
+            104
+          ],
+          [
+            78,
+            105
+          ],
+          [
+            82,
+            111
+          ],
+          [
+            85,
+            87
+          ],
+          [
+            85,
+            89
+          ]
+        ],
+        "total_calls": 56,
+        "split_calls": 14,
+        "split_accepted": 12,
+        "merge_calls": 42,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 23612,
+        "prompt_tokens": 23323,
+        "completion_tokens": 289,
+        "shown_posts": 123,
+        "shown_pct": 2.330428192497158,
+        "n_init_frags": 106,
+        "n_final_clusters": 113,
+        "router_cpu_sec": 0.6875,
+        "api_wall_sec": 13.608,
+        "llm_api_sec": 13.141,
+        "total_wall_sec": 15.1664
+      },
+      "M_08": {
+        "ari": 91.35,
+        "nmi": 95.5,
+        "ami": 94.74,
+        "calls": 16,
+        "tokens": 5448,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            3,
+            11
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            12,
+            35
+          ],
+          [
+            17,
+            56
+          ],
+          [
+            22,
+            60
+          ],
+          [
+            24,
+            57
+          ],
+          [
+            31,
+            59
+          ],
+          [
+            42,
+            58
+          ],
+          [
+            44,
+            45
+          ],
+          [
+            44,
+            47
+          ],
+          [
+            44,
+            61
+          ],
+          [
+            45,
+            47
+          ],
+          [
+            45,
+            61
+          ],
+          [
+            47,
+            61
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 9,
+        "split_accepted": 6,
+        "merge_calls": 7,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 5448,
+        "prompt_tokens": 5362,
+        "completion_tokens": 86,
+        "shown_posts": 56,
+        "shown_pct": 3.58974358974359,
+        "n_init_frags": 59,
+        "n_final_clusters": 62,
+        "router_cpu_sec": 0.2031,
+        "api_wall_sec": 0.1484,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.6158
+      },
+      "M_09": {
+        "ari": 68.08,
+        "nmi": 91.85,
+        "ami": 90.61,
+        "calls": 20,
+        "tokens": 7003,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            7
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            3,
+            54
+          ],
+          [
+            4,
+            51
+          ],
+          [
+            5,
+            43
+          ],
+          [
+            6,
+            12
+          ],
+          [
+            6,
+            15
+          ],
+          [
+            6,
+            50
+          ],
+          [
+            6,
+            56
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            53
+          ],
+          [
+            10,
+            27
+          ],
+          [
+            11,
+            19
+          ],
+          [
+            12,
+            15
+          ],
+          [
+            12,
+            17
+          ],
+          [
+            12,
+            50
+          ],
+          [
+            12,
+            55
+          ],
+          [
+            12,
+            56
+          ],
+          [
+            15,
+            44
+          ],
+          [
+            15,
+            50
+          ],
+          [
+            16,
+            49
+          ],
+          [
+            18,
+            27
+          ],
+          [
+            19,
+            26
+          ],
+          [
+            21,
+            52
+          ],
+          [
+            24,
+            25
+          ]
+        ],
+        "total_calls": 20,
+        "split_calls": 8,
+        "split_accepted": 8,
+        "merge_calls": 12,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 7003,
+        "prompt_tokens": 6900,
+        "completion_tokens": 103,
+        "shown_posts": 70,
+        "shown_pct": 5.1357300073367576,
+        "n_init_frags": 52,
+        "n_final_clusters": 57,
+        "router_cpu_sec": 0.1562,
+        "api_wall_sec": 0.2285,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.6547
+      },
+      "M_10": {
+        "ari": 96.04,
+        "nmi": 95.8,
+        "ami": 95.24,
+        "calls": 10,
+        "tokens": 3959,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            8,
+            17
+          ],
+          [
+            8,
+            46
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            13,
+            15
+          ],
+          [
+            13,
+            16
+          ],
+          [
+            13,
+            48
+          ],
+          [
+            33,
+            47
+          ],
+          [
+            34,
+            47
+          ],
+          [
+            38,
+            46
+          ]
+        ],
+        "total_calls": 10,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 5,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 3959,
+        "prompt_tokens": 3904,
+        "completion_tokens": 55,
+        "shown_posts": 38,
+        "shown_pct": 3.4671532846715327,
+        "n_init_frags": 49,
+        "n_final_clusters": 49,
+        "router_cpu_sec": 0.0469,
+        "api_wall_sec": 0.1091,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.5367
+      },
+      "M_11": {
+        "ari": 68.06,
+        "nmi": 90.46,
+        "ami": 89.37,
+        "calls": 15,
+        "tokens": 5779,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            13
+          ],
+          [
+            1,
+            25
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            18
+          ],
+          [
+            3,
+            37
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            6,
+            9
+          ],
+          [
+            6,
+            18
+          ],
+          [
+            8,
+            18
+          ],
+          [
+            9,
+            18
+          ],
+          [
+            16,
+            25
+          ],
+          [
+            18,
+            26
+          ],
+          [
+            25,
+            38
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            28,
+            39
+          ],
+          [
+            31,
+            36
+          ]
+        ],
+        "total_calls": 15,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 8,
+        "blocked_by_cl": 1,
+        "total_tokens": 5779,
+        "prompt_tokens": 5685,
+        "completion_tokens": 94,
+        "shown_posts": 65,
+        "shown_pct": 5.275974025974026,
+        "n_init_frags": 45,
+        "n_final_clusters": 40,
+        "router_cpu_sec": 0.1719,
+        "api_wall_sec": 0.1522,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.5475
+      },
+      "M_12": {
+        "ari": 90.79,
+        "nmi": 93.27,
+        "ami": 92.7,
+        "calls": 22,
+        "tokens": 8007,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            10
+          ],
+          [
+            0,
+            37
+          ],
+          [
+            1,
+            44
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            18
+          ],
+          [
+            2,
+            25
+          ],
+          [
+            2,
+            85
+          ],
+          [
+            5,
+            17
+          ],
+          [
+            8,
+            81
+          ],
+          [
+            10,
+            25
+          ],
+          [
+            10,
+            85
+          ],
+          [
+            11,
+            66
+          ],
+          [
+            11,
+            86
+          ],
+          [
+            16,
+            17
+          ],
+          [
+            24,
+            26
+          ],
+          [
+            24,
+            28
+          ],
+          [
+            24,
+            29
+          ],
+          [
+            24,
+            31
+          ],
+          [
+            24,
+            34
+          ],
+          [
+            24,
+            48
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            31
+          ],
+          [
+            26,
+            34
+          ],
+          [
+            26,
+            48
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            28,
+            34
+          ],
+          [
+            28,
+            84
+          ],
+          [
+            31,
+            34
+          ],
+          [
+            52,
+            54
+          ],
+          [
+            52,
+            66
+          ],
+          [
+            54,
+            66
+          ],
+          [
+            54,
+            71
+          ],
+          [
+            54,
+            80
+          ],
+          [
+            54,
+            86
+          ],
+          [
+            66,
+            82
+          ],
+          [
+            71,
+            75
+          ],
+          [
+            71,
+            83
+          ]
+        ],
+        "total_calls": 22,
+        "split_calls": 8,
+        "split_accepted": 7,
+        "merge_calls": 14,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 8007,
+        "prompt_tokens": 7887,
+        "completion_tokens": 120,
+        "shown_posts": 77,
+        "shown_pct": 2.378745752239728,
+        "n_init_frags": 85,
+        "n_final_clusters": 87,
+        "router_cpu_sec": 0.2812,
+        "api_wall_sec": 1.2436,
+        "llm_api_sec": 1.1761,
+        "total_wall_sec": 1.7453
+      },
+      "M_13": {
+        "ari": 74.18,
+        "nmi": 88.04,
+        "ami": 86.81,
+        "calls": 13,
+        "tokens": 4796,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            9
+          ],
+          [
+            1,
+            31
+          ],
+          [
+            3,
+            21
+          ],
+          [
+            5,
+            38
+          ],
+          [
+            5,
+            43
+          ],
+          [
+            10,
+            12
+          ],
+          [
+            10,
+            47
+          ],
+          [
+            10,
+            67
+          ],
+          [
+            13,
+            17
+          ],
+          [
+            17,
+            18
+          ],
+          [
+            17,
+            19
+          ],
+          [
+            21,
+            68
+          ],
+          [
+            29,
+            51
+          ],
+          [
+            36,
+            42
+          ],
+          [
+            41,
+            67
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 3,
+        "split_accepted": 2,
+        "merge_calls": 10,
+        "merge_ops": 6,
+        "blocked_by_cl": 0,
+        "total_tokens": 4796,
+        "prompt_tokens": 4718,
+        "completion_tokens": 78,
+        "shown_posts": 64,
+        "shown_pct": 3.2454361054766734,
+        "n_init_frags": 73,
+        "n_final_clusters": 69,
+        "router_cpu_sec": 0.1406,
+        "api_wall_sec": 0.0113,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.2703
+      },
+      "M_14": {
+        "ari": 86.53,
+        "nmi": 91.85,
+        "ami": 91.19,
+        "calls": 16,
+        "tokens": 5732,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            15
+          ],
+          [
+            0,
+            21
+          ],
+          [
+            0,
+            34
+          ],
+          [
+            0,
+            79
+          ],
+          [
+            2,
+            78
+          ],
+          [
+            8,
+            15
+          ],
+          [
+            8,
+            34
+          ],
+          [
+            8,
+            70
+          ],
+          [
+            8,
+            79
+          ],
+          [
+            9,
+            80
+          ],
+          [
+            13,
+            14
+          ],
+          [
+            15,
+            79
+          ],
+          [
+            22,
+            76
+          ],
+          [
+            28,
+            77
+          ],
+          [
+            43,
+            58
+          ],
+          [
+            44,
+            45
+          ],
+          [
+            44,
+            49
+          ],
+          [
+            44,
+            68
+          ],
+          [
+            45,
+            68
+          ],
+          [
+            49,
+            68
+          ],
+          [
+            61,
+            62
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 7,
+        "split_accepted": 5,
+        "merge_calls": 9,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 5732,
+        "prompt_tokens": 5642,
+        "completion_tokens": 90,
+        "shown_posts": 67,
+        "shown_pct": 2.266576454668471,
+        "n_init_frags": 80,
+        "n_final_clusters": 81,
+        "router_cpu_sec": 0.1689,
+        "api_wall_sec": 1.2253,
+        "llm_api_sec": 1.2096,
+        "total_wall_sec": 1.3942
+      },
+      "M_15": {
+        "ari": 53.42,
+        "nmi": 82.06,
+        "ami": 80.24,
+        "calls": 27,
+        "tokens": 9460,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            7
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            12
+          ],
+          [
+            0,
+            75
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            2,
+            12
+          ],
+          [
+            2,
+            35
+          ],
+          [
+            2,
+            36
+          ],
+          [
+            2,
+            74
+          ],
+          [
+            2,
+            75
+          ],
+          [
+            4,
+            52
+          ],
+          [
+            4,
+            58
+          ],
+          [
+            4,
+            62
+          ],
+          [
+            6,
+            77
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            7,
+            12
+          ],
+          [
+            8,
+            11
+          ],
+          [
+            8,
+            12
+          ],
+          [
+            11,
+            12
+          ],
+          [
+            15,
+            22
+          ],
+          [
+            18,
+            25
+          ],
+          [
+            18,
+            29
+          ],
+          [
+            19,
+            20
+          ],
+          [
+            20,
+            32
+          ],
+          [
+            20,
+            72
+          ],
+          [
+            27,
+            35
+          ],
+          [
+            27,
+            36
+          ],
+          [
+            27,
+            74
+          ],
+          [
+            27,
+            76
+          ],
+          [
+            33,
+            73
+          ],
+          [
+            35,
+            36
+          ],
+          [
+            35,
+            74
+          ],
+          [
+            35,
+            76
+          ],
+          [
+            36,
+            74
+          ],
+          [
+            36,
+            76
+          ],
+          [
+            52,
+            58
+          ],
+          [
+            52,
+            62
+          ],
+          [
+            52,
+            71
+          ],
+          [
+            54,
+            70
+          ],
+          [
+            58,
+            62
+          ],
+          [
+            58,
+            70
+          ],
+          [
+            62,
+            71
+          ],
+          [
+            74,
+            76
+          ]
+        ],
+        "total_calls": 27,
+        "split_calls": 9,
+        "split_accepted": 8,
+        "merge_calls": 18,
+        "merge_ops": 7,
+        "blocked_by_cl": 0,
+        "total_tokens": 9460,
+        "prompt_tokens": 9309,
+        "completion_tokens": 151,
+        "shown_posts": 83,
+        "shown_pct": 3.2561788936837974,
+        "n_init_frags": 77,
+        "n_final_clusters": 78,
+        "router_cpu_sec": 0.2812,
+        "api_wall_sec": 0.0497,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.4445
+      },
+      "M_16": {
+        "ari": 92.44,
+        "nmi": 94.52,
+        "ami": 93.94,
+        "calls": 6,
+        "tokens": 2454,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            9
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            7,
+            33
+          ],
+          [
+            9,
+            12
+          ],
+          [
+            15,
+            20
+          ]
+        ],
+        "total_calls": 6,
+        "split_calls": 2,
+        "split_accepted": 1,
+        "merge_calls": 4,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 2454,
+        "prompt_tokens": 2412,
+        "completion_tokens": 42,
+        "shown_posts": 32,
+        "shown_pct": 3.5164835164835164,
+        "n_init_frags": 38,
+        "n_final_clusters": 34,
+        "router_cpu_sec": 0.0938,
+        "api_wall_sec": 0.0125,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.1335
+      },
+      "M_17": {
+        "ari": 84.07,
+        "nmi": 91.59,
+        "ami": 91.02,
+        "calls": 14,
+        "tokens": 4701,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            5,
+            8
+          ],
+          [
+            6,
+            66
+          ],
+          [
+            10,
+            65
+          ],
+          [
+            12,
+            64
+          ],
+          [
+            18,
+            19
+          ],
+          [
+            18,
+            21
+          ],
+          [
+            18,
+            22
+          ],
+          [
+            18,
+            49
+          ],
+          [
+            18,
+            53
+          ],
+          [
+            19,
+            21
+          ],
+          [
+            37,
+            39
+          ],
+          [
+            53,
+            57
+          ]
+        ],
+        "total_calls": 14,
+        "split_calls": 4,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 8,
+        "blocked_by_cl": 0,
+        "total_tokens": 4701,
+        "prompt_tokens": 4616,
+        "completion_tokens": 85,
+        "shown_posts": 58,
+        "shown_pct": 2.1674140508221225,
+        "n_init_frags": 72,
+        "n_final_clusters": 67,
+        "router_cpu_sec": 0.2344,
+        "api_wall_sec": 0.0444,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.4242
+      },
+      "M_18": {
+        "ari": 80.6,
+        "nmi": 89.89,
+        "ami": 88.97,
+        "calls": 16,
+        "tokens": 5337,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            4,
+            65
+          ],
+          [
+            8,
+            10
+          ],
+          [
+            8,
+            14
+          ],
+          [
+            10,
+            14
+          ],
+          [
+            10,
+            55
+          ],
+          [
+            16,
+            21
+          ],
+          [
+            16,
+            55
+          ],
+          [
+            16,
+            57
+          ],
+          [
+            16,
+            58
+          ],
+          [
+            16,
+            60
+          ],
+          [
+            21,
+            55
+          ],
+          [
+            21,
+            57
+          ],
+          [
+            21,
+            58
+          ],
+          [
+            22,
+            66
+          ],
+          [
+            23,
+            63
+          ],
+          [
+            42,
+            46
+          ],
+          [
+            42,
+            47
+          ],
+          [
+            42,
+            48
+          ],
+          [
+            42,
+            50
+          ],
+          [
+            42,
+            64
+          ],
+          [
+            45,
+            46
+          ],
+          [
+            46,
+            64
+          ],
+          [
+            47,
+            48
+          ],
+          [
+            47,
+            50
+          ],
+          [
+            47,
+            64
+          ],
+          [
+            48,
+            64
+          ],
+          [
+            55,
+            57
+          ],
+          [
+            55,
+            58
+          ],
+          [
+            57,
+            58
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 4,
+        "split_accepted": 4,
+        "merge_calls": 12,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 5337,
+        "prompt_tokens": 5254,
+        "completion_tokens": 83,
+        "shown_posts": 52,
+        "shown_pct": 2.755696873343932,
+        "n_init_frags": 66,
+        "n_final_clusters": 67,
+        "router_cpu_sec": 0.1875,
+        "api_wall_sec": 0.0715,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.3552
+      },
+      "M_19": {
+        "ari": 81.37,
+        "nmi": 90.54,
+        "ami": 89.61,
+        "calls": 16,
+        "tokens": 5332,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            9
+          ],
+          [
+            1,
+            13
+          ],
+          [
+            5,
+            14
+          ],
+          [
+            5,
+            42
+          ],
+          [
+            6,
+            12
+          ],
+          [
+            6,
+            48
+          ],
+          [
+            7,
+            23
+          ],
+          [
+            11,
+            46
+          ],
+          [
+            12,
+            43
+          ],
+          [
+            12,
+            48
+          ],
+          [
+            14,
+            42
+          ],
+          [
+            27,
+            34
+          ],
+          [
+            38,
+            39
+          ],
+          [
+            38,
+            40
+          ],
+          [
+            38,
+            47
+          ],
+          [
+            43,
+            48
+          ]
+        ],
+        "total_calls": 16,
+        "split_calls": 6,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 5332,
+        "prompt_tokens": 5244,
+        "completion_tokens": 88,
+        "shown_posts": 59,
+        "shown_pct": 4.2172980700500355,
+        "n_init_frags": 49,
+        "n_final_clusters": 49,
+        "router_cpu_sec": 0.1406,
+        "api_wall_sec": 0.0637,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.3283
+      },
+      "M_20": {
+        "ari": 62.42,
+        "nmi": 86.88,
+        "ami": 83.58,
+        "calls": 14,
+        "tokens": 5060,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            24
+          ],
+          [
+            2,
+            72
+          ],
+          [
+            2,
+            81
+          ],
+          [
+            3,
+            24
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            28
+          ],
+          [
+            4,
+            31
+          ],
+          [
+            4,
+            81
+          ],
+          [
+            6,
+            83
+          ],
+          [
+            7,
+            31
+          ],
+          [
+            9,
+            19
+          ],
+          [
+            9,
+            20
+          ],
+          [
+            9,
+            55
+          ],
+          [
+            17,
+            84
+          ],
+          [
+            19,
+            20
+          ],
+          [
+            19,
+            32
+          ],
+          [
+            19,
+            66
+          ],
+          [
+            19,
+            67
+          ],
+          [
+            20,
+            32
+          ],
+          [
+            20,
+            59
+          ],
+          [
+            22,
+            31
+          ],
+          [
+            27,
+            39
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            31,
+            81
+          ],
+          [
+            32,
+            66
+          ],
+          [
+            32,
+            67
+          ],
+          [
+            48,
+            82
+          ]
+        ],
+        "total_calls": 14,
+        "split_calls": 4,
+        "split_accepted": 4,
+        "merge_calls": 10,
+        "merge_ops": 0,
+        "blocked_by_cl": 0,
+        "total_tokens": 5060,
+        "prompt_tokens": 4990,
+        "completion_tokens": 70,
+        "shown_posts": 51,
+        "shown_pct": 5.711086226203808,
+        "n_init_frags": 81,
+        "n_final_clusters": 85,
+        "router_cpu_sec": 0.1094,
+        "api_wall_sec": 0.0437,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.2096
+      },
+      "M_21": {
+        "ari": 40.18,
+        "nmi": 78.85,
+        "ami": 76.87,
+        "calls": 33,
+        "tokens": 11715,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            10
+          ],
+          [
+            0,
+            11
+          ],
+          [
+            0,
+            15
+          ],
+          [
+            0,
+            17
+          ],
+          [
+            0,
+            54
+          ],
+          [
+            0,
+            88
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            86
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            2,
+            14
+          ],
+          [
+            2,
+            15
+          ],
+          [
+            2,
+            17
+          ],
+          [
+            2,
+            32
+          ],
+          [
+            2,
+            54
+          ],
+          [
+            2,
+            88
+          ],
+          [
+            4,
+            22
+          ],
+          [
+            4,
+            28
+          ],
+          [
+            6,
+            30
+          ],
+          [
+            7,
+            28
+          ],
+          [
+            7,
+            59
+          ],
+          [
+            10,
+            11
+          ],
+          [
+            10,
+            14
+          ],
+          [
+            10,
+            17
+          ],
+          [
+            10,
+            54
+          ],
+          [
+            11,
+            14
+          ],
+          [
+            11,
+            15
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            11,
+            32
+          ],
+          [
+            11,
+            54
+          ],
+          [
+            13,
+            30
+          ],
+          [
+            13,
+            31
+          ],
+          [
+            14,
+            61
+          ],
+          [
+            15,
+            17
+          ],
+          [
+            15,
+            54
+          ],
+          [
+            15,
+            86
+          ],
+          [
+            15,
+            87
+          ],
+          [
+            15,
+            88
+          ],
+          [
+            22,
+            28
+          ],
+          [
+            23,
+            29
+          ],
+          [
+            30,
+            81
+          ],
+          [
+            31,
+            82
+          ],
+          [
+            36,
+            65
+          ],
+          [
+            42,
+            72
+          ],
+          [
+            44,
+            83
+          ],
+          [
+            54,
+            87
+          ],
+          [
+            65,
+            71
+          ],
+          [
+            65,
+            85
+          ],
+          [
+            71,
+            84
+          ],
+          [
+            71,
+            85
+          ]
+        ],
+        "total_calls": 33,
+        "split_calls": 11,
+        "split_accepted": 8,
+        "merge_calls": 22,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 11715,
+        "prompt_tokens": 11540,
+        "completion_tokens": 175,
+        "shown_posts": 95,
+        "shown_pct": 3.9402737453338865,
+        "n_init_frags": 86,
+        "n_final_clusters": 89,
+        "router_cpu_sec": 0.2941,
+        "api_wall_sec": 0.0289,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.323
+      }
+    }
+  },
+  "ragsede_unbounded": {
+    "mean": {
+      "ari": 78.78,
+      "nmi": 89.02,
+      "ami": 88.12
+    },
+    "total_calls": 3960,
+    "total_tokens": 1686692,
+    "total_parse_errors": 124,
+    "per_block": {
+      "M_01": {
+        "ari": 12.06,
+        "nmi": 52.4,
+        "ami": 50.79,
+        "calls": 688,
+        "tokens": 319671,
+        "parse_errors": 90,
+        "total_calls": 688,
+        "n_anchors": 480,
+        "total_tokens": 319671,
+        "prompt_tokens": 281694,
+        "completion_tokens": 37977,
+        "shown_posts": 1022,
+        "shown_pct": 11.717495987158909,
+        "n_pred_clusters": 102,
+        "router_cpu_sec": 14.3125,
+        "api_wall_sec": 3000.4151,
+        "llm_api_sec": 2566.1116,
+        "total_wall_sec": 3038.9957
+      },
+      "M_02": {
+        "ari": 92.85,
+        "nmi": 95.28,
+        "ami": 94.82,
+        "calls": 143,
+        "tokens": 61586,
+        "parse_errors": 0,
+        "total_calls": 143,
+        "n_anchors": 87,
+        "total_tokens": 61586,
+        "prompt_tokens": 53750,
+        "completion_tokens": 7836,
+        "shown_posts": 167,
+        "shown_pct": 11.200536552649229,
+        "n_pred_clusters": 56,
+        "router_cpu_sec": 4.4531,
+        "api_wall_sec": 45.8637,
+        "llm_api_sec": 19.285,
+        "total_wall_sec": 85.5879
+      },
+      "M_03": {
+        "ari": 88.63,
+        "nmi": 93.47,
+        "ami": 92.95,
+        "calls": 127,
+        "tokens": 54032,
+        "parse_errors": 0,
+        "total_calls": 127,
+        "n_anchors": 83,
+        "total_tokens": 54032,
+        "prompt_tokens": 46965,
+        "completion_tokens": 7067,
+        "shown_posts": 178,
+        "shown_pct": 9.700272479564033,
+        "n_pred_clusters": 44,
+        "router_cpu_sec": 1.3594,
+        "api_wall_sec": 22.9078,
+        "llm_api_sec": 7.3381,
+        "total_wall_sec": 61.6121
+      },
+      "M_04": {
+        "ari": 89.6,
+        "nmi": 90.38,
+        "ami": 89.37,
+        "calls": 198,
+        "tokens": 81334,
+        "parse_errors": 0,
+        "total_calls": 198,
+        "n_anchors": 132,
+        "total_tokens": 81334,
+        "prompt_tokens": 71484,
+        "completion_tokens": 9850,
+        "shown_posts": 269,
+        "shown_pct": 13.383084577114428,
+        "n_pred_clusters": 62,
+        "router_cpu_sec": 2.1562,
+        "api_wall_sec": 149.8478,
+        "llm_api_sec": 79.1344,
+        "total_wall_sec": 189.6875
+      },
+      "M_05": {
+        "ari": 87.81,
+        "nmi": 92.21,
+        "ami": 91.61,
+        "calls": 139,
+        "tokens": 57557,
+        "parse_errors": 0,
+        "total_calls": 139,
+        "n_anchors": 90,
+        "total_tokens": 57557,
+        "prompt_tokens": 50419,
+        "completion_tokens": 7138,
+        "shown_posts": 188,
+        "shown_pct": 10.25081788440567,
+        "n_pred_clusters": 49,
+        "router_cpu_sec": 1.5781,
+        "api_wall_sec": 83.455,
+        "llm_api_sec": 35.9332,
+        "total_wall_sec": 122.9295
+      },
+      "M_06": {
+        "ari": 96.95,
+        "nmi": 96.58,
+        "ami": 96.1,
+        "calls": 116,
+        "tokens": 47785,
+        "parse_errors": 0,
+        "total_calls": 116,
+        "n_anchors": 67,
+        "total_tokens": 47785,
+        "prompt_tokens": 41045,
+        "completion_tokens": 6740,
+        "shown_posts": 154,
+        "shown_pct": 12.068965517241379,
+        "n_pred_clusters": 49,
+        "router_cpu_sec": 16.1562,
+        "api_wall_sec": 501.1728,
+        "llm_api_sec": 394.8117,
+        "total_wall_sec": 536.8522
+      },
+      "M_07": {
+        "ari": 32.02,
+        "nmi": 77.73,
+        "ami": 76.4,
+        "calls": 337,
+        "tokens": 150788,
+        "parse_errors": 0,
+        "total_calls": 337,
+        "n_anchors": 247,
+        "total_tokens": 150788,
+        "prompt_tokens": 132462,
+        "completion_tokens": 18326,
+        "shown_posts": 543,
+        "shown_pct": 10.287987874194771,
+        "n_pred_clusters": 81,
+        "router_cpu_sec": 6.0469,
+        "api_wall_sec": 1365.0473,
+        "llm_api_sec": 1192.0604,
+        "total_wall_sec": 1403.6949
+      },
+      "M_08": {
+        "ari": 87.39,
+        "nmi": 94.98,
+        "ami": 94.2,
+        "calls": 152,
+        "tokens": 65297,
+        "parse_errors": 1,
+        "total_calls": 152,
+        "n_anchors": 91,
+        "total_tokens": 65297,
+        "prompt_tokens": 56547,
+        "completion_tokens": 8750,
+        "shown_posts": 189,
+        "shown_pct": 12.115384615384615,
+        "n_pred_clusters": 60,
+        "router_cpu_sec": 2.3281,
+        "api_wall_sec": 658.3217,
+        "llm_api_sec": 525.0265,
+        "total_wall_sec": 694.4548
+      },
+      "M_09": {
+        "ari": 94.96,
+        "nmi": 95.56,
+        "ami": 95.04,
+        "calls": 128,
+        "tokens": 55385,
+        "parse_errors": 0,
+        "total_calls": 128,
+        "n_anchors": 87,
+        "total_tokens": 55385,
+        "prompt_tokens": 48227,
+        "completion_tokens": 7158,
+        "shown_posts": 187,
+        "shown_pct": 13.71973587674248,
+        "n_pred_clusters": 40,
+        "router_cpu_sec": 1.074,
+        "api_wall_sec": 534.7456,
+        "llm_api_sec": 429.4834,
+        "total_wall_sec": 535.8196
+      },
+      "M_10": {
+        "ari": 97.19,
+        "nmi": 96.98,
+        "ami": 96.6,
+        "calls": 106,
+        "tokens": 45247,
+        "parse_errors": 0,
+        "total_calls": 106,
+        "n_anchors": 64,
+        "total_tokens": 45247,
+        "prompt_tokens": 39110,
+        "completion_tokens": 6137,
+        "shown_posts": 144,
+        "shown_pct": 13.138686131386862,
+        "n_pred_clusters": 42,
+        "router_cpu_sec": 0.7978,
+        "api_wall_sec": 437.6707,
+        "llm_api_sec": 382.2289,
+        "total_wall_sec": 438.4685
+      },
+      "M_11": {
+        "ari": 96.07,
+        "nmi": 94.58,
+        "ami": 94.03,
+        "calls": 91,
+        "tokens": 37331,
+        "parse_errors": 0,
+        "total_calls": 91,
+        "n_anchors": 55,
+        "total_tokens": 37331,
+        "prompt_tokens": 32345,
+        "completion_tokens": 4986,
+        "shown_posts": 131,
+        "shown_pct": 10.633116883116884,
+        "n_pred_clusters": 36,
+        "router_cpu_sec": 0.6289,
+        "api_wall_sec": 326.0765,
+        "llm_api_sec": 316.9415,
+        "total_wall_sec": 326.7054
+      },
+      "M_12": {
+        "ari": 86.19,
+        "nmi": 92.03,
+        "ami": 91.46,
+        "calls": 223,
+        "tokens": 92893,
+        "parse_errors": 11,
+        "total_calls": 223,
+        "n_anchors": 147,
+        "total_tokens": 92893,
+        "prompt_tokens": 81326,
+        "completion_tokens": 11567,
+        "shown_posts": 308,
+        "shown_pct": 9.514983008958913,
+        "n_pred_clusters": 66,
+        "router_cpu_sec": 2.0565,
+        "api_wall_sec": 839.5199,
+        "llm_api_sec": 771.9018,
+        "total_wall_sec": 841.5765
+      },
+      "M_13": {
+        "ari": 80.01,
+        "nmi": 89.54,
+        "ami": 88.52,
+        "calls": 174,
+        "tokens": 71120,
+        "parse_errors": 0,
+        "total_calls": 174,
+        "n_anchors": 109,
+        "total_tokens": 71120,
+        "prompt_tokens": 61706,
+        "completion_tokens": 9414,
+        "shown_posts": 222,
+        "shown_pct": 11.257606490872211,
+        "n_pred_clusters": 64,
+        "router_cpu_sec": 1.5376,
+        "api_wall_sec": 706.595,
+        "llm_api_sec": 630.372,
+        "total_wall_sec": 708.1327
+      },
+      "M_14": {
+        "ari": 75.96,
+        "nmi": 88.71,
+        "ami": 87.91,
+        "calls": 228,
+        "tokens": 94144,
+        "parse_errors": 12,
+        "total_calls": 228,
+        "n_anchors": 143,
+        "total_tokens": 94144,
+        "prompt_tokens": 82519,
+        "completion_tokens": 11625,
+        "shown_posts": 291,
+        "shown_pct": 9.844384303112314,
+        "n_pred_clusters": 73,
+        "router_cpu_sec": 2.2636,
+        "api_wall_sec": 876.0356,
+        "llm_api_sec": 786.7831,
+        "total_wall_sec": 878.2992
+      },
+      "M_15": {
+        "ari": 96.1,
+        "nmi": 91.31,
+        "ami": 90.5,
+        "calls": 204,
+        "tokens": 82744,
+        "parse_errors": 10,
+        "total_calls": 204,
+        "n_anchors": 124,
+        "total_tokens": 82744,
+        "prompt_tokens": 72634,
+        "completion_tokens": 10110,
+        "shown_posts": 255,
+        "shown_pct": 10.003923107100825,
+        "n_pred_clusters": 70,
+        "router_cpu_sec": 1.874,
+        "api_wall_sec": 799.6115,
+        "llm_api_sec": 682.215,
+        "total_wall_sec": 801.4855
+      },
+      "M_16": {
+        "ari": 95.01,
+        "nmi": 94.87,
+        "ami": 94.38,
+        "calls": 76,
+        "tokens": 30851,
+        "parse_errors": 0,
+        "total_calls": 76,
+        "n_anchors": 47,
+        "total_tokens": 30851,
+        "prompt_tokens": 26567,
+        "completion_tokens": 4284,
+        "shown_posts": 106,
+        "shown_pct": 11.648351648351648,
+        "n_pred_clusters": 29,
+        "router_cpu_sec": 0.5833,
+        "api_wall_sec": 291.7673,
+        "llm_api_sec": 270.2364,
+        "total_wall_sec": 292.3507
+      },
+      "M_17": {
+        "ari": 97.69,
+        "nmi": 94.85,
+        "ami": 94.53,
+        "calls": 170,
+        "tokens": 72129,
+        "parse_errors": 0,
+        "total_calls": 170,
+        "n_anchors": 116,
+        "total_tokens": 72129,
+        "prompt_tokens": 63234,
+        "completion_tokens": 8895,
+        "shown_posts": 236,
+        "shown_pct": 8.819133034379671,
+        "n_pred_clusters": 52,
+        "router_cpu_sec": 1.3536,
+        "api_wall_sec": 707.153,
+        "llm_api_sec": 629.9586,
+        "total_wall_sec": 708.5066
+      },
+      "M_18": {
+        "ari": 66.95,
+        "nmi": 85.84,
+        "ami": 84.65,
+        "calls": 165,
+        "tokens": 65013,
+        "parse_errors": 0,
+        "total_calls": 165,
+        "n_anchors": 103,
+        "total_tokens": 65013,
+        "prompt_tokens": 56765,
+        "completion_tokens": 8248,
+        "shown_posts": 203,
+        "shown_pct": 10.757816640169581,
+        "n_pred_clusters": 62,
+        "router_cpu_sec": 1.286,
+        "api_wall_sec": 606.4996,
+        "llm_api_sec": 563.7559,
+        "total_wall_sec": 607.7856
+      },
+      "M_19": {
+        "ari": 76.53,
+        "nmi": 89.91,
+        "ami": 89.03,
+        "calls": 116,
+        "tokens": 44394,
+        "parse_errors": 0,
+        "total_calls": 116,
+        "n_anchors": 72,
+        "total_tokens": 44394,
+        "prompt_tokens": 38829,
+        "completion_tokens": 5565,
+        "shown_posts": 146,
+        "shown_pct": 10.43602573266619,
+        "n_pred_clusters": 44,
+        "router_cpu_sec": 0.8574,
+        "api_wall_sec": 442.6878,
+        "llm_api_sec": 388.5367,
+        "total_wall_sec": 443.5452
+      },
+      "M_20": {
+        "ari": 63.1,
+        "nmi": 85.9,
+        "ami": 82.97,
+        "calls": 166,
+        "tokens": 65379,
+        "parse_errors": 0,
+        "total_calls": 166,
+        "n_anchors": 103,
+        "total_tokens": 65379,
+        "prompt_tokens": 57137,
+        "completion_tokens": 8242,
+        "shown_posts": 187,
+        "shown_pct": 20.940649496080628,
+        "n_pred_clusters": 63,
+        "router_cpu_sec": 1.1392,
+        "api_wall_sec": 672.3194,
+        "llm_api_sec": 594.5112,
+        "total_wall_sec": 673.4586
+      },
+      "M_21": {
+        "ari": 41.28,
+        "nmi": 76.39,
+        "ami": 74.57,
+        "calls": 213,
+        "tokens": 92012,
+        "parse_errors": 0,
+        "total_calls": 213,
+        "n_anchors": 155,
+        "total_tokens": 92012,
+        "prompt_tokens": 80665,
+        "completion_tokens": 11347,
+        "shown_posts": 346,
+        "shown_pct": 14.350891746163418,
+        "n_pred_clusters": 55,
+        "router_cpu_sec": 1.505,
+        "api_wall_sec": 1075.7054,
+        "llm_api_sec": 820.1053,
+        "total_wall_sec": 1077.2103
+      }
+    }
+  },
+  "cobras_20k": {
+    "mean": {
+      "ari": 58.33,
+      "nmi": 74.6,
+      "ami": 73.2
+    },
+    "total_calls": 3981,
+    "total_tokens": 419026,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_01": {
+        "ari": -16.07,
+        "nmi": 8.38,
+        "ami": 7.5,
+        "calls": 199,
+        "tokens": 20006,
+        "parse_errors": 0,
+        "total_calls": 199,
+        "n_constraints": 199,
+        "total_tokens": 20006,
+        "prompt_tokens": 19802,
+        "completion_tokens": 204,
+        "shown_posts": 80,
+        "shown_pct": 0.9172208209126347,
+        "n_pred_clusters": 6,
+        "router_cpu_sec": 13.2719,
+        "api_wall_sec": 839.1253,
+        "llm_api_sec": 437.8552,
+        "total_wall_sec": 852.3973
+      },
+      "M_02": {
+        "ari": 86.92,
+        "nmi": 90.0,
+        "ami": 89.47,
+        "calls": 160,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "total_calls": 160,
+        "n_constraints": 160,
+        "total_tokens": 19975,
+        "prompt_tokens": 19815,
+        "completion_tokens": 160,
+        "shown_posts": 37,
+        "shown_pct": 2.481556002682763,
+        "n_pred_clusters": 15,
+        "router_cpu_sec": 3.5156,
+        "api_wall_sec": 0.571,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 6.1319
+      },
+      "M_03": {
+        "ari": 84.1,
+        "nmi": 87.3,
+        "ami": 86.69,
+        "calls": 174,
+        "tokens": 19917,
+        "parse_errors": 0,
+        "total_calls": 174,
+        "n_constraints": 174,
+        "total_tokens": 19917,
+        "prompt_tokens": 19741,
+        "completion_tokens": 176,
+        "shown_posts": 43,
+        "shown_pct": 2.343324250681199,
+        "n_pred_clusters": 16,
+        "router_cpu_sec": 3.5625,
+        "api_wall_sec": 0.5563,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 5.9791
+      },
+      "M_04": {
+        "ari": 41.88,
+        "nmi": 82.76,
+        "ami": 80.67,
+        "calls": 208,
+        "tokens": 19970,
+        "parse_errors": 0,
+        "total_calls": 208,
+        "n_constraints": 208,
+        "total_tokens": 19970,
+        "prompt_tokens": 19761,
+        "completion_tokens": 209,
+        "shown_posts": 71,
+        "shown_pct": 3.5323383084577116,
+        "n_pred_clusters": 47,
+        "router_cpu_sec": 5.3281,
+        "api_wall_sec": 0.2049,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 7.5952
+      },
+      "M_05": {
+        "ari": 79.42,
+        "nmi": 83.85,
+        "ami": 83.43,
+        "calls": 210,
+        "tokens": 19983,
+        "parse_errors": 0,
+        "total_calls": 210,
+        "n_constraints": 210,
+        "total_tokens": 19983,
+        "prompt_tokens": 19773,
+        "completion_tokens": 210,
+        "shown_posts": 37,
+        "shown_pct": 2.0174482006543077,
+        "n_pred_clusters": 9,
+        "router_cpu_sec": 3.4375,
+        "api_wall_sec": 0.8144,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 5.5897
+      },
+      "M_06": {
+        "ari": 74.42,
+        "nmi": 84.05,
+        "ami": 82.98,
+        "calls": 168,
+        "tokens": 19960,
+        "parse_errors": 0,
+        "total_calls": 168,
+        "n_constraints": 168,
+        "total_tokens": 19960,
+        "prompt_tokens": 19792,
+        "completion_tokens": 168,
+        "shown_posts": 36,
+        "shown_pct": 2.8213166144200628,
+        "n_pred_clusters": 12,
+        "router_cpu_sec": 1.7051,
+        "api_wall_sec": 758.6638,
+        "llm_api_sec": 391.9244,
+        "total_wall_sec": 760.3689
+      },
+      "M_07": {
+        "ari": 20.45,
+        "nmi": 54.52,
+        "ami": 53.46,
+        "calls": 175,
+        "tokens": 19944,
+        "parse_errors": 0,
+        "total_calls": 175,
+        "n_constraints": 175,
+        "total_tokens": 19944,
+        "prompt_tokens": 19764,
+        "completion_tokens": 180,
+        "shown_posts": 126,
+        "shown_pct": 2.387267904509284,
+        "n_pred_clusters": 11,
+        "router_cpu_sec": 8.8036,
+        "api_wall_sec": 775.9421,
+        "llm_api_sec": 407.6407,
+        "total_wall_sec": 784.7457
+      },
+      "M_08": {
+        "ari": 64.84,
+        "nmi": 82.71,
+        "ami": 81.42,
+        "calls": 169,
+        "tokens": 19919,
+        "parse_errors": 0,
+        "total_calls": 169,
+        "n_constraints": 169,
+        "total_tokens": 19919,
+        "prompt_tokens": 19750,
+        "completion_tokens": 169,
+        "shown_posts": 39,
+        "shown_pct": 2.5,
+        "n_pred_clusters": 15,
+        "router_cpu_sec": 1.5139,
+        "api_wall_sec": 726.4056,
+        "llm_api_sec": 385.6987,
+        "total_wall_sec": 727.9195
+      },
+      "M_09": {
+        "ari": 77.96,
+        "nmi": 83.95,
+        "ami": 83.06,
+        "calls": 195,
+        "tokens": 19985,
+        "parse_errors": 0,
+        "total_calls": 195,
+        "n_constraints": 195,
+        "total_tokens": 19985,
+        "prompt_tokens": 19788,
+        "completion_tokens": 197,
+        "shown_posts": 77,
+        "shown_pct": 5.649303008070433,
+        "n_pred_clusters": 11,
+        "router_cpu_sec": 1.6796,
+        "api_wall_sec": 829.4269,
+        "llm_api_sec": 438.1495,
+        "total_wall_sec": 831.1066
+      },
+      "M_10": {
+        "ari": 96.33,
+        "nmi": 94.67,
+        "ami": 94.14,
+        "calls": 169,
+        "tokens": 19866,
+        "parse_errors": 0,
+        "total_calls": 169,
+        "n_constraints": 169,
+        "total_tokens": 19866,
+        "prompt_tokens": 19696,
+        "completion_tokens": 170,
+        "shown_posts": 39,
+        "shown_pct": 3.5583941605839415,
+        "n_pred_clusters": 22,
+        "router_cpu_sec": 0.7854,
+        "api_wall_sec": 766.8118,
+        "llm_api_sec": 398.8097,
+        "total_wall_sec": 767.5972
+      },
+      "M_11": {
+        "ari": 57.84,
+        "nmi": 85.58,
+        "ami": 84.07,
+        "calls": 185,
+        "tokens": 19976,
+        "parse_errors": 0,
+        "total_calls": 185,
+        "n_constraints": 185,
+        "total_tokens": 19976,
+        "prompt_tokens": 19791,
+        "completion_tokens": 185,
+        "shown_posts": 38,
+        "shown_pct": 3.0844155844155843,
+        "n_pred_clusters": 27,
+        "router_cpu_sec": 1.0571,
+        "api_wall_sec": 383.9929,
+        "llm_api_sec": 321.809,
+        "total_wall_sec": 385.05
+      },
+      "M_12": {
+        "ari": 59.33,
+        "nmi": 78.77,
+        "ami": 78.1,
+        "calls": 202,
+        "tokens": 19925,
+        "parse_errors": 0,
+        "total_calls": 202,
+        "n_constraints": 202,
+        "total_tokens": 19925,
+        "prompt_tokens": 19722,
+        "completion_tokens": 203,
+        "shown_posts": 75,
+        "shown_pct": 2.3169601482854496,
+        "n_pred_clusters": 15,
+        "router_cpu_sec": 3.8821,
+        "api_wall_sec": 405.7988,
+        "llm_api_sec": 323.603,
+        "total_wall_sec": 409.6809
+      },
+      "M_13": {
+        "ari": 59.01,
+        "nmi": 61.35,
+        "ami": 60.63,
+        "calls": 180,
+        "tokens": 19947,
+        "parse_errors": 0,
+        "total_calls": 180,
+        "n_constraints": 180,
+        "total_tokens": 19947,
+        "prompt_tokens": 19765,
+        "completion_tokens": 182,
+        "shown_posts": 120,
+        "shown_pct": 6.085192697768763,
+        "n_pred_clusters": 4,
+        "router_cpu_sec": 8.2344,
+        "api_wall_sec": 371.8997,
+        "llm_api_sec": 293.331,
+        "total_wall_sec": 380.8133
+      },
+      "M_14": {
+        "ari": 74.23,
+        "nmi": 81.93,
+        "ami": 81.39,
+        "calls": 207,
+        "tokens": 19987,
+        "parse_errors": 0,
+        "total_calls": 207,
+        "n_constraints": 207,
+        "total_tokens": 19987,
+        "prompt_tokens": 19780,
+        "completion_tokens": 207,
+        "shown_posts": 117,
+        "shown_pct": 3.9580514208389714,
+        "n_pred_clusters": 12,
+        "router_cpu_sec": 30.9844,
+        "api_wall_sec": 386.8815,
+        "llm_api_sec": 307.5814,
+        "total_wall_sec": 427.2964
+      },
+      "M_15": {
+        "ari": 28.76,
+        "nmi": 62.98,
+        "ami": 52.95,
+        "calls": 221,
+        "tokens": 19952,
+        "parse_errors": 0,
+        "total_calls": 221,
+        "n_constraints": 221,
+        "total_tokens": 19952,
+        "prompt_tokens": 19729,
+        "completion_tokens": 223,
+        "shown_posts": 190,
+        "shown_pct": 7.4539034915653195,
+        "n_pred_clusters": 421,
+        "router_cpu_sec": 139.25,
+        "api_wall_sec": 349.8526,
+        "llm_api_sec": 285.0271,
+        "total_wall_sec": 507.3148
+      },
+      "M_16": {
+        "ari": 50.28,
+        "nmi": 68.56,
+        "ami": 67.74,
+        "calls": 166,
+        "tokens": 19977,
+        "parse_errors": 0,
+        "total_calls": 166,
+        "n_constraints": 166,
+        "total_tokens": 19977,
+        "prompt_tokens": 19811,
+        "completion_tokens": 166,
+        "shown_posts": 47,
+        "shown_pct": 5.164835164835165,
+        "n_pred_clusters": 4,
+        "router_cpu_sec": 1.3882,
+        "api_wall_sec": 315.7394,
+        "llm_api_sec": 237.9011,
+        "total_wall_sec": 317.1277
+      },
+      "M_17": {
+        "ari": 72.78,
+        "nmi": 78.93,
+        "ami": 78.39,
+        "calls": 203,
+        "tokens": 19995,
+        "parse_errors": 0,
+        "total_calls": 203,
+        "n_constraints": 203,
+        "total_tokens": 19995,
+        "prompt_tokens": 19789,
+        "completion_tokens": 206,
+        "shown_posts": 92,
+        "shown_pct": 3.43796711509716,
+        "n_pred_clusters": 10,
+        "router_cpu_sec": 5.5149,
+        "api_wall_sec": 194.3724,
+        "llm_api_sec": 188.6834,
+        "total_wall_sec": 199.8873
+      },
+      "M_18": {
+        "ari": 66.73,
+        "nmi": 80.96,
+        "ami": 80.28,
+        "calls": 219,
+        "tokens": 19956,
+        "parse_errors": 0,
+        "total_calls": 219,
+        "n_constraints": 219,
+        "total_tokens": 19956,
+        "prompt_tokens": 19737,
+        "completion_tokens": 219,
+        "shown_posts": 53,
+        "shown_pct": 2.808691043985162,
+        "n_pred_clusters": 12,
+        "router_cpu_sec": 1.7209,
+        "api_wall_sec": 256.5039,
+        "llm_api_sec": 251.8173,
+        "total_wall_sec": 258.2248
+      },
+      "M_19": {
+        "ari": 64.68,
+        "nmi": 82.03,
+        "ami": 80.94,
+        "calls": 172,
+        "tokens": 19983,
+        "parse_errors": 0,
+        "total_calls": 172,
+        "n_constraints": 172,
+        "total_tokens": 19983,
+        "prompt_tokens": 19810,
+        "completion_tokens": 173,
+        "shown_posts": 29,
+        "shown_pct": 2.0729092208720514,
+        "n_pred_clusters": 18,
+        "router_cpu_sec": 1.7442,
+        "api_wall_sec": 167.443,
+        "llm_api_sec": 163.1336,
+        "total_wall_sec": 169.1872
+      },
+      "M_20": {
+        "ari": 59.46,
+        "nmi": 78.42,
+        "ami": 76.21,
+        "calls": 186,
+        "tokens": 19888,
+        "parse_errors": 0,
+        "total_calls": 186,
+        "n_constraints": 186,
+        "total_tokens": 19888,
+        "prompt_tokens": 19702,
+        "completion_tokens": 186,
+        "shown_posts": 36,
+        "shown_pct": 4.031354983202688,
+        "n_pred_clusters": 15,
+        "router_cpu_sec": 0.775,
+        "api_wall_sec": 196.0206,
+        "llm_api_sec": 192.8507,
+        "total_wall_sec": 196.7956
+      },
+      "M_21": {
+        "ari": 21.5,
+        "nmi": 55.0,
+        "ami": 53.74,
+        "calls": 213,
+        "tokens": 19915,
+        "parse_errors": 0,
+        "total_calls": 213,
+        "n_constraints": 213,
+        "total_tokens": 19915,
+        "prompt_tokens": 19698,
+        "completion_tokens": 217,
+        "shown_posts": 119,
+        "shown_pct": 4.935711323102447,
+        "n_pred_clusters": 10,
+        "router_cpu_sec": 8.4278,
+        "api_wall_sec": 197.8807,
+        "llm_api_sec": 194.754,
+        "total_wall_sec": 206.3086
+      }
+    }
+  },
+  "cequel_20k_wcsc_oracleK": {
+    "mean": {
+      "ari": 45.44,
+      "nmi": 78.74,
+      "ami": 76.69
+    },
+    "total_calls": 427,
+    "total_tokens": 417877,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_01": {
+        "ari": 10.43,
+        "nmi": 46.58,
+        "ami": 44.91,
+        "calls": 20,
+        "tokens": 19959,
+        "parse_errors": 0,
+        "n_triangles_total": 2907,
+        "n_ml": 24,
+        "n_cl": 33,
+        "prompt_tokens": 19862,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 104.1315,
+        "total_wall_sec": 211.7933
+      },
+      "M_02": {
+        "ari": 61.73,
+        "nmi": 81.79,
+        "ami": 80.14,
+        "calls": 20,
+        "tokens": 19889,
+        "parse_errors": 0,
+        "n_triangles_total": 497,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19792,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 34.2444
+      },
+      "M_03": {
+        "ari": 59.96,
+        "nmi": 86.33,
+        "ami": 85.16,
+        "calls": 20,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 1,
+        "n_cl": 50,
+        "prompt_tokens": 19875,
+        "completion_tokens": 100,
+        "shown_posts": 33,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 49.8842
+      },
+      "M_04": {
+        "ari": 42.32,
+        "nmi": 82.06,
+        "ami": 80.16,
+        "calls": 20,
+        "tokens": 19869,
+        "parse_errors": 0,
+        "n_triangles_total": 670,
+        "n_ml": 9,
+        "n_cl": 48,
+        "prompt_tokens": 19773,
+        "completion_tokens": 96,
+        "shown_posts": 15,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 50.4028
+      },
+      "M_05": {
+        "ari": 64.44,
+        "nmi": 84.33,
+        "ami": 83.21,
+        "calls": 19,
+        "tokens": 19859,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19765,
+        "completion_tokens": 94,
+        "shown_posts": 37,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 46.1942
+      },
+      "M_06": {
+        "ari": 45.55,
+        "nmi": 82.19,
+        "ami": 78.96,
+        "calls": 22,
+        "tokens": 19858,
+        "parse_errors": 0,
+        "n_triangles_total": 425,
+        "n_ml": 0,
+        "n_cl": 66,
+        "prompt_tokens": 19749,
+        "completion_tokens": 109,
+        "shown_posts": 43,
+        "llm_api_sec": 217.5379,
+        "total_wall_sec": 452.9705
+      },
+      "M_07": {
+        "ari": 20.17,
+        "nmi": 69.08,
+        "ami": 66.88,
+        "calls": 19,
+        "tokens": 19825,
+        "parse_errors": 0,
+        "n_triangles_total": 1759,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19730,
+        "completion_tokens": 95,
+        "shown_posts": 37,
+        "llm_api_sec": 83.8035,
+        "total_wall_sec": 148.8511
+      },
+      "M_08": {
+        "ari": 63.8,
+        "nmi": 87.43,
+        "ami": 84.87,
+        "calls": 20,
+        "tokens": 19900,
+        "parse_errors": 0,
+        "n_triangles_total": 520,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19800,
+        "completion_tokens": 100,
+        "shown_posts": 31,
+        "llm_api_sec": 87.6975,
+        "total_wall_sec": 122.1304
+      },
+      "M_09": {
+        "ari": 42.33,
+        "nmi": 83.47,
+        "ami": 81.01,
+        "calls": 22,
+        "tokens": 19965,
+        "parse_errors": 0,
+        "n_triangles_total": 454,
+        "n_ml": 0,
+        "n_cl": 66,
+        "prompt_tokens": 19855,
+        "completion_tokens": 110,
+        "shown_posts": 43,
+        "llm_api_sec": 106.8354,
+        "total_wall_sec": 132.4527
+      },
+      "M_10": {
+        "ari": 54.97,
+        "nmi": 84.19,
+        "ami": 81.98,
+        "calls": 21,
+        "tokens": 19998,
+        "parse_errors": 0,
+        "n_triangles_total": 365,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19899,
+        "completion_tokens": 99,
+        "shown_posts": 31,
+        "llm_api_sec": 88.7615,
+        "total_wall_sec": 119.0046
+      },
+      "M_11": {
+        "ari": 42.65,
+        "nmi": 80.5,
+        "ami": 78.25,
+        "calls": 21,
+        "tokens": 19850,
+        "parse_errors": 0,
+        "n_triangles_total": 410,
+        "n_ml": 0,
+        "n_cl": 63,
+        "prompt_tokens": 19745,
+        "completion_tokens": 105,
+        "shown_posts": 33,
+        "llm_api_sec": 197.729,
+        "total_wall_sec": 376.0836
+      },
+      "M_12": {
+        "ari": 73.19,
+        "nmi": 86.78,
+        "ami": 85.81,
+        "calls": 20,
+        "tokens": 19937,
+        "parse_errors": 0,
+        "n_triangles_total": 1079,
+        "n_ml": 3,
+        "n_cl": 57,
+        "prompt_tokens": 19838,
+        "completion_tokens": 99,
+        "shown_posts": 39,
+        "llm_api_sec": 215.4807,
+        "total_wall_sec": 521.5627
+      },
+      "M_13": {
+        "ari": 22.45,
+        "nmi": 71.8,
+        "ami": 68.9,
+        "calls": 20,
+        "tokens": 19937,
+        "parse_errors": 0,
+        "n_triangles_total": 657,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19841,
+        "completion_tokens": 96,
+        "shown_posts": 37,
+        "llm_api_sec": 199.1296,
+        "total_wall_sec": 398.7082
+      },
+      "M_14": {
+        "ari": 48.39,
+        "nmi": 80.01,
+        "ami": 78.5,
+        "calls": 21,
+        "tokens": 19882,
+        "parse_errors": 0,
+        "n_triangles_total": 985,
+        "n_ml": 13,
+        "n_cl": 50,
+        "prompt_tokens": 19779,
+        "completion_tokens": 103,
+        "shown_posts": 33,
+        "llm_api_sec": 244.9998,
+        "total_wall_sec": 470.8563
+      },
+      "M_15": {
+        "ari": 21.64,
+        "nmi": 68.98,
+        "ami": 66.05,
+        "calls": 19,
+        "tokens": 19897,
+        "parse_errors": 0,
+        "n_triangles_total": 849,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19804,
+        "completion_tokens": 93,
+        "shown_posts": 37,
+        "llm_api_sec": 258.2803,
+        "total_wall_sec": 490.8676
+      },
+      "M_16": {
+        "ari": 43.97,
+        "nmi": 76.47,
+        "ami": 73.65,
+        "calls": 21,
+        "tokens": 19884,
+        "parse_errors": 0,
+        "n_triangles_total": 303,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19783,
+        "completion_tokens": 101,
+        "shown_posts": 39,
+        "llm_api_sec": 188.7955,
+        "total_wall_sec": 401.3738
+      },
+      "M_17": {
+        "ari": 42.55,
+        "nmi": 78.82,
+        "ami": 77.42,
+        "calls": 20,
+        "tokens": 19998,
+        "parse_errors": 0,
+        "n_triangles_total": 892,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19899,
+        "completion_tokens": 99,
+        "shown_posts": 39,
+        "llm_api_sec": 201.8636,
+        "total_wall_sec": 336.485
+      },
+      "M_18": {
+        "ari": 51.51,
+        "nmi": 80.81,
+        "ami": 79.32,
+        "calls": 20,
+        "tokens": 19866,
+        "parse_errors": 0,
+        "n_triangles_total": 629,
+        "n_ml": 4,
+        "n_cl": 53,
+        "prompt_tokens": 19769,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 184.6298,
+        "total_wall_sec": 336.8938
+      },
+      "M_19": {
+        "ari": 54.92,
+        "nmi": 84.42,
+        "ami": 83.06,
+        "calls": 22,
+        "tokens": 19847,
+        "parse_errors": 0,
+        "n_triangles_total": 466,
+        "n_ml": 0,
+        "n_cl": 63,
+        "prompt_tokens": 19741,
+        "completion_tokens": 106,
+        "shown_posts": 33,
+        "llm_api_sec": 202.2379,
+        "total_wall_sec": 322.7627
+      },
+      "M_20": {
+        "ari": 51.8,
+        "nmi": 82.99,
+        "ami": 79.67,
+        "calls": 20,
+        "tokens": 19850,
+        "parse_errors": 0,
+        "n_triangles_total": 297,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19753,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 175.2993,
+        "total_wall_sec": 249.207
+      },
+      "M_21": {
+        "ari": 35.56,
+        "nmi": 74.46,
+        "ami": 72.66,
+        "calls": 20,
+        "tokens": 19832,
+        "parse_errors": 0,
+        "n_triangles_total": 803,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19735,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 160.6158,
+        "total_wall_sec": 276.8679
+      }
+    }
+  },
+  "cequel_20k_wcsc_estK": {
+    "mean": {
+      "ari": 59.41,
+      "nmi": 81.26,
+      "ami": 79.99
+    },
+    "total_calls": 427,
+    "total_tokens": 417877,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_01": {
+        "ari": 29.26,
+        "nmi": 56.5,
+        "ami": 55.34,
+        "calls": 20,
+        "tokens": 19959,
+        "parse_errors": 0,
+        "n_triangles_total": 2907,
+        "n_ml": 24,
+        "n_cl": 33,
+        "prompt_tokens": 19862,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 104.1315,
+        "total_wall_sec": 211.7933
+      },
+      "M_02": {
+        "ari": 81.13,
+        "nmi": 86.1,
+        "ami": 85.54,
+        "calls": 20,
+        "tokens": 19889,
+        "parse_errors": 0,
+        "n_triangles_total": 497,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19792,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 34.2444
+      },
+      "M_03": {
+        "ari": 81.5,
+        "nmi": 90.42,
+        "ami": 89.78,
+        "calls": 20,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 1,
+        "n_cl": 50,
+        "prompt_tokens": 19875,
+        "completion_tokens": 100,
+        "shown_posts": 33,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 49.8842
+      },
+      "M_04": {
+        "ari": 50.04,
+        "nmi": 83.15,
+        "ami": 81.76,
+        "calls": 20,
+        "tokens": 19869,
+        "parse_errors": 0,
+        "n_triangles_total": 670,
+        "n_ml": 9,
+        "n_cl": 48,
+        "prompt_tokens": 19773,
+        "completion_tokens": 96,
+        "shown_posts": 15,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 50.4028
+      },
+      "M_05": {
+        "ari": 64.9,
+        "nmi": 84.74,
+        "ami": 83.67,
+        "calls": 19,
+        "tokens": 19859,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19765,
+        "completion_tokens": 94,
+        "shown_posts": 37,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 46.1942
+      },
+      "M_06": {
+        "ari": 89.12,
+        "nmi": 91.12,
+        "ami": 90.14,
+        "calls": 22,
+        "tokens": 19858,
+        "parse_errors": 0,
+        "n_triangles_total": 425,
+        "n_ml": 0,
+        "n_cl": 66,
+        "prompt_tokens": 19749,
+        "completion_tokens": 109,
+        "shown_posts": 43,
+        "llm_api_sec": 217.5379,
+        "total_wall_sec": 452.9705
+      },
+      "M_07": {
+        "ari": 54.81,
+        "nmi": 79.84,
+        "ami": 79.04,
+        "calls": 19,
+        "tokens": 19825,
+        "parse_errors": 0,
+        "n_triangles_total": 1759,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19730,
+        "completion_tokens": 95,
+        "shown_posts": 37,
+        "llm_api_sec": 83.8035,
+        "total_wall_sec": 148.8511
+      },
+      "M_08": {
+        "ari": 43.57,
+        "nmi": 80.07,
+        "ami": 78.56,
+        "calls": 20,
+        "tokens": 19900,
+        "parse_errors": 0,
+        "n_triangles_total": 520,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19800,
+        "completion_tokens": 100,
+        "shown_posts": 31,
+        "llm_api_sec": 87.6975,
+        "total_wall_sec": 122.1304
+      },
+      "M_09": {
+        "ari": 66.27,
+        "nmi": 88.35,
+        "ami": 87.16,
+        "calls": 22,
+        "tokens": 19965,
+        "parse_errors": 0,
+        "n_triangles_total": 454,
+        "n_ml": 0,
+        "n_cl": 66,
+        "prompt_tokens": 19855,
+        "completion_tokens": 110,
+        "shown_posts": 43,
+        "llm_api_sec": 106.8354,
+        "total_wall_sec": 132.4527
+      },
+      "M_10": {
+        "ari": 64.44,
+        "nmi": 85.36,
+        "ami": 83.85,
+        "calls": 21,
+        "tokens": 19998,
+        "parse_errors": 0,
+        "n_triangles_total": 365,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19899,
+        "completion_tokens": 99,
+        "shown_posts": 31,
+        "llm_api_sec": 88.7615,
+        "total_wall_sec": 119.0046
+      },
+      "M_11": {
+        "ari": 76.17,
+        "nmi": 83.86,
+        "ami": 82.74,
+        "calls": 21,
+        "tokens": 19850,
+        "parse_errors": 0,
+        "n_triangles_total": 410,
+        "n_ml": 0,
+        "n_cl": 63,
+        "prompt_tokens": 19745,
+        "completion_tokens": 105,
+        "shown_posts": 33,
+        "llm_api_sec": 197.729,
+        "total_wall_sec": 376.0836
+      },
+      "M_12": {
+        "ari": 85.56,
+        "nmi": 90.88,
+        "ami": 90.44,
+        "calls": 20,
+        "tokens": 19937,
+        "parse_errors": 0,
+        "n_triangles_total": 1079,
+        "n_ml": 3,
+        "n_cl": 57,
+        "prompt_tokens": 19838,
+        "completion_tokens": 99,
+        "shown_posts": 39,
+        "llm_api_sec": 215.4807,
+        "total_wall_sec": 521.5627
+      },
+      "M_13": {
+        "ari": 42.12,
+        "nmi": 75.8,
+        "ami": 73.81,
+        "calls": 20,
+        "tokens": 19937,
+        "parse_errors": 0,
+        "n_triangles_total": 657,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19841,
+        "completion_tokens": 96,
+        "shown_posts": 37,
+        "llm_api_sec": 199.1296,
+        "total_wall_sec": 398.7082
+      },
+      "M_14": {
+        "ari": 59.2,
+        "nmi": 83.12,
+        "ami": 82.04,
+        "calls": 21,
+        "tokens": 19882,
+        "parse_errors": 0,
+        "n_triangles_total": 985,
+        "n_ml": 13,
+        "n_cl": 50,
+        "prompt_tokens": 19779,
+        "completion_tokens": 103,
+        "shown_posts": 33,
+        "llm_api_sec": 244.9998,
+        "total_wall_sec": 470.8563
+      },
+      "M_15": {
+        "ari": 12.39,
+        "nmi": 65.48,
+        "ami": 61.52,
+        "calls": 19,
+        "tokens": 19897,
+        "parse_errors": 0,
+        "n_triangles_total": 849,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19804,
+        "completion_tokens": 93,
+        "shown_posts": 37,
+        "llm_api_sec": 258.2803,
+        "total_wall_sec": 490.8676
+      },
+      "M_16": {
+        "ari": 62.88,
+        "nmi": 79.03,
+        "ami": 77.46,
+        "calls": 21,
+        "tokens": 19884,
+        "parse_errors": 0,
+        "n_triangles_total": 303,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19783,
+        "completion_tokens": 101,
+        "shown_posts": 39,
+        "llm_api_sec": 188.7955,
+        "total_wall_sec": 401.3738
+      },
+      "M_17": {
+        "ari": 45.99,
+        "nmi": 80.29,
+        "ami": 79.15,
+        "calls": 20,
+        "tokens": 19998,
+        "parse_errors": 0,
+        "n_triangles_total": 892,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19899,
+        "completion_tokens": 99,
+        "shown_posts": 39,
+        "llm_api_sec": 201.8636,
+        "total_wall_sec": 336.485
+      },
+      "M_18": {
+        "ari": 58.71,
+        "nmi": 76.13,
+        "ami": 75.42,
+        "calls": 20,
+        "tokens": 19866,
+        "parse_errors": 0,
+        "n_triangles_total": 629,
+        "n_ml": 4,
+        "n_cl": 53,
+        "prompt_tokens": 19769,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 184.6298,
+        "total_wall_sec": 336.8938
+      },
+      "M_19": {
+        "ari": 56.74,
+        "nmi": 84.62,
+        "ami": 83.36,
+        "calls": 22,
+        "tokens": 19847,
+        "parse_errors": 0,
+        "n_triangles_total": 466,
+        "n_ml": 0,
+        "n_cl": 63,
+        "prompt_tokens": 19741,
+        "completion_tokens": 106,
+        "shown_posts": 33,
+        "llm_api_sec": 202.2379,
+        "total_wall_sec": 322.7627
+      },
+      "M_20": {
+        "ari": 71.42,
+        "nmi": 86.06,
+        "ami": 84.4,
+        "calls": 20,
+        "tokens": 19850,
+        "parse_errors": 0,
+        "n_triangles_total": 297,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19753,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 175.2993,
+        "total_wall_sec": 249.207
+      },
+      "M_21": {
+        "ari": 51.39,
+        "nmi": 75.56,
+        "ami": 74.7,
+        "calls": 20,
+        "tokens": 19832,
+        "parse_errors": 0,
+        "n_triangles_total": 803,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19735,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 160.6158,
+        "total_wall_sec": 276.8679
+      }
+    }
+  },
+  "cequel_20k_wckmeans_oracleK": {
+    "mean": {
+      "ari": 42.24,
+      "nmi": 77.19,
+      "ami": 75.12
+    },
+    "total_calls": 427,
+    "total_tokens": 417877,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_01": {
+        "ari": 2.88,
+        "nmi": 38.16,
+        "ami": 36.27,
+        "calls": 20,
+        "tokens": 19959,
+        "parse_errors": 0,
+        "n_triangles_total": 2907,
+        "n_ml": 24,
+        "n_cl": 33,
+        "prompt_tokens": 19862,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 104.1315,
+        "total_wall_sec": 211.7933
+      },
+      "M_02": {
+        "ari": 68.17,
+        "nmi": 84.86,
+        "ami": 83.6,
+        "calls": 20,
+        "tokens": 19889,
+        "parse_errors": 0,
+        "n_triangles_total": 497,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19792,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 34.2444
+      },
+      "M_03": {
+        "ari": 59.75,
+        "nmi": 84.64,
+        "ami": 83.36,
+        "calls": 20,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 1,
+        "n_cl": 50,
+        "prompt_tokens": 19875,
+        "completion_tokens": 100,
+        "shown_posts": 33,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 49.8842
+      },
+      "M_04": {
+        "ari": 33.29,
+        "nmi": 79.13,
+        "ami": 76.91,
+        "calls": 20,
+        "tokens": 19869,
+        "parse_errors": 0,
+        "n_triangles_total": 670,
+        "n_ml": 9,
+        "n_cl": 48,
+        "prompt_tokens": 19773,
+        "completion_tokens": 96,
+        "shown_posts": 15,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 50.4028
+      },
+      "M_05": {
+        "ari": 44.79,
+        "nmi": 79.22,
+        "ami": 77.75,
+        "calls": 19,
+        "tokens": 19859,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19765,
+        "completion_tokens": 94,
+        "shown_posts": 37,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 46.1942
+      },
+      "M_06": {
+        "ari": 50.14,
+        "nmi": 83.86,
+        "ami": 81.06,
+        "calls": 22,
+        "tokens": 19858,
+        "parse_errors": 0,
+        "n_triangles_total": 425,
+        "n_ml": 0,
+        "n_cl": 66,
+        "prompt_tokens": 19749,
+        "completion_tokens": 109,
+        "shown_posts": 43,
+        "llm_api_sec": 217.5379,
+        "total_wall_sec": 452.9705
+      },
+      "M_07": {
+        "ari": 7.9,
+        "nmi": 60.91,
+        "ami": 58.0,
+        "calls": 19,
+        "tokens": 19825,
+        "parse_errors": 0,
+        "n_triangles_total": 1759,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19730,
+        "completion_tokens": 95,
+        "shown_posts": 37,
+        "llm_api_sec": 83.8035,
+        "total_wall_sec": 148.8511
+      },
+      "M_08": {
+        "ari": 69.39,
+        "nmi": 88.78,
+        "ami": 86.63,
+        "calls": 20,
+        "tokens": 19900,
+        "parse_errors": 0,
+        "n_triangles_total": 520,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19800,
+        "completion_tokens": 100,
+        "shown_posts": 31,
+        "llm_api_sec": 87.6975,
+        "total_wall_sec": 122.1304
+      },
+      "M_09": {
+        "ari": 48.9,
+        "nmi": 84.4,
+        "ami": 82.19,
+        "calls": 22,
+        "tokens": 19965,
+        "parse_errors": 0,
+        "n_triangles_total": 454,
+        "n_ml": 0,
+        "n_cl": 66,
+        "prompt_tokens": 19855,
+        "completion_tokens": 110,
+        "shown_posts": 43,
+        "llm_api_sec": 106.8354,
+        "total_wall_sec": 132.4527
+      },
+      "M_10": {
+        "ari": 60.46,
+        "nmi": 86.55,
+        "ami": 84.71,
+        "calls": 21,
+        "tokens": 19998,
+        "parse_errors": 0,
+        "n_triangles_total": 365,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19899,
+        "completion_tokens": 99,
+        "shown_posts": 31,
+        "llm_api_sec": 88.7615,
+        "total_wall_sec": 119.0046
+      },
+      "M_11": {
+        "ari": 37.0,
+        "nmi": 79.4,
+        "ami": 77.11,
+        "calls": 21,
+        "tokens": 19850,
+        "parse_errors": 0,
+        "n_triangles_total": 410,
+        "n_ml": 0,
+        "n_cl": 63,
+        "prompt_tokens": 19745,
+        "completion_tokens": 105,
+        "shown_posts": 33,
+        "llm_api_sec": 197.729,
+        "total_wall_sec": 376.0836
+      },
+      "M_12": {
+        "ari": 67.91,
+        "nmi": 85.9,
+        "ami": 84.85,
+        "calls": 20,
+        "tokens": 19937,
+        "parse_errors": 0,
+        "n_triangles_total": 1079,
+        "n_ml": 3,
+        "n_cl": 57,
+        "prompt_tokens": 19838,
+        "completion_tokens": 99,
+        "shown_posts": 39,
+        "llm_api_sec": 215.4807,
+        "total_wall_sec": 521.5627
+      },
+      "M_13": {
+        "ari": 17.08,
+        "nmi": 70.57,
+        "ami": 67.52,
+        "calls": 20,
+        "tokens": 19937,
+        "parse_errors": 0,
+        "n_triangles_total": 657,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19841,
+        "completion_tokens": 96,
+        "shown_posts": 37,
+        "llm_api_sec": 199.1296,
+        "total_wall_sec": 398.7082
+      },
+      "M_14": {
+        "ari": 37.69,
+        "nmi": 75.11,
+        "ami": 73.21,
+        "calls": 21,
+        "tokens": 19882,
+        "parse_errors": 0,
+        "n_triangles_total": 985,
+        "n_ml": 13,
+        "n_cl": 50,
+        "prompt_tokens": 19779,
+        "completion_tokens": 103,
+        "shown_posts": 33,
+        "llm_api_sec": 244.9998,
+        "total_wall_sec": 470.8563
+      },
+      "M_15": {
+        "ari": 13.33,
+        "nmi": 65.71,
+        "ami": 62.48,
+        "calls": 19,
+        "tokens": 19897,
+        "parse_errors": 0,
+        "n_triangles_total": 849,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19804,
+        "completion_tokens": 93,
+        "shown_posts": 37,
+        "llm_api_sec": 258.2803,
+        "total_wall_sec": 490.8676
+      },
+      "M_16": {
+        "ari": 52.96,
+        "nmi": 79.05,
+        "ami": 76.61,
+        "calls": 21,
+        "tokens": 19884,
+        "parse_errors": 0,
+        "n_triangles_total": 303,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19783,
+        "completion_tokens": 101,
+        "shown_posts": 39,
+        "llm_api_sec": 188.7955,
+        "total_wall_sec": 401.3738
+      },
+      "M_17": {
+        "ari": 35.79,
+        "nmi": 77.62,
+        "ami": 76.15,
+        "calls": 20,
+        "tokens": 19998,
+        "parse_errors": 0,
+        "n_triangles_total": 892,
+        "n_ml": 0,
+        "n_cl": 60,
+        "prompt_tokens": 19899,
+        "completion_tokens": 99,
+        "shown_posts": 39,
+        "llm_api_sec": 201.8636,
+        "total_wall_sec": 336.485
+      },
+      "M_18": {
+        "ari": 47.32,
+        "nmi": 80.27,
+        "ami": 78.74,
+        "calls": 20,
+        "tokens": 19866,
+        "parse_errors": 0,
+        "n_triangles_total": 629,
+        "n_ml": 4,
+        "n_cl": 53,
+        "prompt_tokens": 19769,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 184.6298,
+        "total_wall_sec": 336.8938
+      },
+      "M_19": {
+        "ari": 52.07,
+        "nmi": 83.43,
+        "ami": 82.0,
+        "calls": 22,
+        "tokens": 19847,
+        "parse_errors": 0,
+        "n_triangles_total": 466,
+        "n_ml": 0,
+        "n_cl": 63,
+        "prompt_tokens": 19741,
+        "completion_tokens": 106,
+        "shown_posts": 33,
+        "llm_api_sec": 202.2379,
+        "total_wall_sec": 322.7627
+      },
+      "M_20": {
+        "ari": 56.14,
+        "nmi": 82.87,
+        "ami": 79.72,
+        "calls": 20,
+        "tokens": 19850,
+        "parse_errors": 0,
+        "n_triangles_total": 297,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19753,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 175.2993,
+        "total_wall_sec": 249.207
+      },
+      "M_21": {
+        "ari": 24.1,
+        "nmi": 70.65,
+        "ami": 68.59,
+        "calls": 20,
+        "tokens": 19832,
+        "parse_errors": 0,
+        "n_triangles_total": 803,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19735,
+        "completion_tokens": 97,
+        "shown_posts": 37,
+        "llm_api_sec": 160.6158,
+        "total_wall_sec": 276.8679
+      }
+    }
+  }
+}
