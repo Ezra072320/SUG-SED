@@ -19,6 +19,7 @@ from trackA_sug_sed.frag_sed import (
     deterministic_spherical_2means,
     run_frag_sed,
 )
+from trackA_sug_sed.star_meso import _summarize_members
 
 
 def _make_synthetic_dataset() -> Tuple[SocialDataset, np.ndarray, np.ndarray]:
@@ -214,9 +215,86 @@ def test_frag_sed_unbounded_vs_rho_cap() -> None:
     assert st_tight["split_calls"] == 0
 
 
+def test_medoid_dedup_tfidf_text_override_and_cannot_pairs() -> None:
+    ds, emb, labels_init = _make_synthetic_dataset()
+
+    # 1. Medoid text deduplication: top-3 posts share identical normalized RT text, 4th differs
+    texts_dup = list(ds.texts)
+    texts_dup[0] = "RT breaking news earthquake alert  "
+    texts_dup[1] = "rt BREAKING news earthquake alert"
+    texts_dup[2] = "rt breaking news   earthquake alert"
+    texts_dup[3] = "Distinct rescue team update on scene"
+    ds_dup = SocialDataset(
+        name="dup",
+        tweet_ids=ds.tweet_ids,
+        texts=texts_dup,
+        labels=ds.labels,
+        tokens_lemma=ds.tokens_lemma,
+        entities=ds.entities,
+        hashtags=ds.hashtags,
+        user_ids=ds.user_ids,
+        mentioned_users=ds.mentioned_users,
+        timestamps=ds.timestamps,
+        dates=ds.dates,
+    )
+    emb_dup = emb.copy()
+    emb_dup[0:3] = emb[0]
+    summ_dedup = _summarize_members(0, [0, 1, 2, 3], ds_dup, emb_dup, max_medoids=2, max_keywords=5)
+    assert len(summ_dedup.medoids) == 2
+    assert ds_dup.texts[summ_dedup.medoids[1]] == "Distinct rescue team update on scene"
+    # Identical-only cluster returns 1 deduplicated medoid instead of repeating duplicate text
+    summ_single_txt = _summarize_members(0, [0, 1, 2], ds_dup, emb_dup, max_medoids=2, max_keywords=5)
+    assert len(summ_single_txt.medoids) == 1
+
+    # 2. Step 1 TF-IDF keyword ranking: generic ubiquitous entity repeated across all clusters loses to rare event term
+    ents_tfidf = [list(e) + ["CommonGlobal", "CommonGlobal", "CommonGlobal"] for e in ds.entities]
+    for i in range(20, 24):
+        ents_tfidf[i] = ["RareCyclone", "Gamma", "CommonGlobal", "CommonGlobal", "CommonGlobal"]
+    ds_tfidf = SocialDataset(
+        name="tfidf",
+        tweet_ids=ds.tweet_ids,
+        texts=ds.texts,
+        labels=ds.labels,
+        tokens_lemma=ds.tokens_lemma,
+        entities=ents_tfidf,
+        hashtags=ds.hashtags,
+        user_ids=ds.user_ids,
+        mentioned_users=ds.mentioned_users,
+        timestamps=ds.timestamps,
+        dates=ds.dates,
+    )
+
+    # 3. text_override forwarding in both Step 1 & Step 2 + relabeled cannot_pairs export in Step 3
+    override_map = {i: f"[ANON_{i}] {ds_tfidf.texts[i]}" for i in range(len(ds_tfidf))}
+    cli = _MockClient(fail_first_merge=False)
+    y_hat, _shown, st = run_frag_sed(
+        block_id=2,
+        ds=ds_tfidf,
+        embeddings=emb,
+        labels_init=labels_init,
+        client=cli,
+        bucket=None,
+        tau_lo=0.40,
+        text_override=override_map,
+    )
+    split_reqs = [u for qt, u in cli.requests if qt == "frag_split"]
+    merge_reqs = [u for qt, u in cli.requests if qt == "frag_merge"]
+    assert split_reqs
+    cand_sec = split_reqs[0].lower().split("candidate [1]")[1]
+    assert "rarecyclone" in cand_sec
+    if "commonglobal" in cand_sec:
+        assert cand_sec.find("rarecyclone") < cand_sec.find("commonglobal")
+    assert all("[ANON_" in u for _, u in cli.requests) and merge_reqs
+
+    cl_pair = (min(int(y_hat[12]), int(y_hat[20])), max(int(y_hat[12]), int(y_hat[20])))
+    assert "cannot_pairs" in st and cl_pair in st["cannot_pairs"]
+    assert all(0 <= a < b <= int(y_hat.max()) for a, b in st["cannot_pairs"])
+
+
 if __name__ == "__main__":
     test_clean_dsu_remapping_and_cl_priority()
     test_spherical_2means_deterministic()
     test_frag_sed_end_to_end_and_error_isolation()
     test_frag_sed_unbounded_vs_rho_cap()
+    test_medoid_dedup_tfidf_text_override_and_cannot_pairs()
     print("ALL test_frag_sed.py CHECKS PASSED!")

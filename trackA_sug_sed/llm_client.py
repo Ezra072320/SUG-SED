@@ -202,6 +202,79 @@ class BudgetedLLMClient:
                 raise
         raise last_exc  # type: ignore[misc]
 
+    def _call_http_multi(
+        self,
+        messages: List[Dict[str, str]],
+        n_completions: int = 1,
+        max_retries: int = 10,
+        max_tokens_override: Optional[int] = None,
+        temperature_override: Optional[float] = None,
+        top_p_override: Optional[float] = None,
+    ) -> Tuple[List[str], int, int, float, str, bool]:
+        url = f"{self.base_url}/chat/completions"
+        eff_max_tokens = self.max_tokens if max_tokens_override is None else int(max_tokens_override)
+        eff_temp = self.temperature if temperature_override is None else float(temperature_override)
+        payload: Dict[str, Any] = {
+            "model": self.model,
+            "messages": messages,
+            "temperature": eff_temp,
+            "max_tokens": eff_max_tokens,
+            "n": max(1, int(n_completions)),
+        }
+        if top_p_override is not None:
+            payload["top_p"] = float(top_p_override)
+        if self.enable_thinking is not None:
+            payload["enable_thinking"] = self.enable_thinking
+
+        headers = {"Content-Type": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+
+        pace_key = f"{self.base_url}|{self.model}"
+        last_exc: Optional[Exception] = None
+        for attempt in range(max_retries + 1):
+            _pace_acquire(pace_key, default_interval=self.min_pace_sec)
+            data = json.dumps(payload).encode("utf-8")
+            req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+            t0 = time.time()
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout_sec) as resp:
+                    body = json.loads(resp.read().decode("utf-8"))
+                latency = time.time() - t0
+                _pace_on_success(pace_key, min_interval=max(0.05, self.min_pace_sec))
+                if "choices" not in body:
+                    raise ValueError(f"Unexpected multi-choice schema keys: {list(body.keys())}")
+                choices = body.get("choices") or []
+                texts = [(c.get("message", {}).get("content") or "").strip() for c in choices]
+                finish_reason = str(choices[0].get("finish_reason", "")) if choices else ""
+                usage = body.get("usage", {})
+                pt = int(usage.get("prompt_tokens", 0) or 0)
+                ct = int(usage.get("completion_tokens", 0) or 0)
+                usage_missing = (pt == 0) or (any(bool(t) for t in texts) and ct == 0)
+                return texts, pt, ct, latency, finish_reason, usage_missing
+            except urllib.error.HTTPError as he:
+                last_exc = he
+                if he.code in {429, 500, 502, 503, 504} and attempt < max_retries:
+                    retry_after = he.headers.get("Retry-After") if he.headers else None
+                    base_wait = (
+                        float(retry_after)
+                        if (retry_after and retry_after.replace(".", "", 1).isdigit())
+                        else min(45.0, 3.0 * (1.8**attempt))
+                    )
+                    wait_s = max(1.0, base_wait + random.uniform(0.5, 2.5))
+                    if he.code == 429:
+                        _pace_on_rate_limit(pace_key, min(12.0, wait_s * 0.5))
+                    time.sleep(wait_s)
+                    continue
+                raise
+            except Exception as exc:
+                last_exc = exc
+                if attempt < max_retries:
+                    time.sleep(min(20.0, 2.0 * (attempt + 1)) + random.uniform(0.5, 2.0))
+                    continue
+                raise
+        raise last_exc  # type: ignore[misc]
+
     def call_json(
         self,
         request_id: str,
@@ -216,6 +289,7 @@ class BudgetedLLMClient:
         temperature_override: Optional[float] = None,
         top_p_override: Optional[float] = None,
         cache_salt: Optional[str] = None,
+        use_json_mode_override: Optional[bool] = None,
     ) -> Optional[Tuple[Dict[str, Any], int, int, float, str]]:
         """Execute one cached/live JSON LLM call under optional budget enforcement.
 
@@ -228,11 +302,12 @@ class BudgetedLLMClient:
 
         eff_max_tokens = self.max_tokens if max_tokens_override is None else int(max_tokens_override)
         eff_temp = self.temperature if temperature_override is None else float(temperature_override)
+        eff_json = self.use_json_mode if use_json_mode_override is None else bool(use_json_mode_override)
         req_payload: Dict[str, Any] = {
             "model": self.model,
             "temperature": eff_temp,
             "max_tokens": eff_max_tokens,
-            "response_format": {"type": "json_object"} if self.use_json_mode else None,
+            "response_format": {"type": "json_object"} if eff_json else None,
             "enable_thinking": self.enable_thinking,
             "messages": [
                 {"role": "system", "content": sys_msg},
@@ -252,6 +327,7 @@ class BudgetedLLMClient:
                 and temperature_override is None
                 and top_p_override is None
                 and cache_salt is None
+                and use_json_mode_override is None
                 and self.max_tokens == 384
                 and self.use_json_mode
                 and self.enable_thinking == default_thinking
@@ -292,7 +368,7 @@ class BudgetedLLMClient:
             usage_missing = False
             try:
                 http_kw: Dict[str, Any] = {
-                    "use_json_mode": self.use_json_mode,
+                    "use_json_mode": eff_json,
                     "max_tokens_override": eff_max_tokens,
                 }
                 if temperature_override is not None:
@@ -461,6 +537,197 @@ class BudgetedLLMClient:
             bucket.record_spend(pt, ct)
 
         return out_text, pt, ct, latency, status
+
+    def call_text_n(
+        self,
+        request_id: str,
+        block_id: int,
+        strategy: str,
+        query_type: str,
+        sys_msg: str,
+        user_msg: str,
+        n_completions: int = 5,
+        bucket: Optional[Any] = None,
+        est_completion_tokens: int = 5,
+        max_tokens_override: Optional[int] = 1,
+        temperature_override: Optional[float] = 1.0,
+        top_p_override: Optional[float] = None,
+        cache_salt: Optional[str] = None,
+    ) -> Optional[Tuple[List[str], int, int, float, str]]:
+        """Execute one cached/live multi-sample plain-text LLM call (`n` completions) with sequential fallback."""
+        n_req = int(n_completions)
+        if n_req <= 1:
+            single = self.call_text(
+                request_id=request_id,
+                block_id=block_id,
+                strategy=strategy,
+                query_type=query_type,
+                sys_msg=sys_msg,
+                user_msg=user_msg,
+                bucket=bucket,
+                est_completion_tokens=est_completion_tokens,
+                max_tokens_override=max_tokens_override,
+                temperature_override=temperature_override,
+                top_p_override=top_p_override,
+                cache_salt=cache_salt,
+            )
+            if single is None:
+                return None
+            txt_s, pt_s, ct_s, lat_s, st_s = single
+            return [txt_s], pt_s, ct_s, lat_s, st_s
+
+        est_tokens = estimate_tokens(sys_msg, user_msg, est_completion_tokens)
+        if bucket is not None and not bucket.can_spend(est_tokens):
+            return None
+
+        eff_max_tokens = self.max_tokens if max_tokens_override is None else int(max_tokens_override)
+        eff_temp = self.temperature if temperature_override is None else float(temperature_override)
+        messages = (
+            [{"role": "system", "content": sys_msg}, {"role": "user", "content": user_msg}]
+            if sys_msg
+            else [{"role": "user", "content": user_msg}]
+        )
+        req_payload: Dict[str, Any] = {
+            "model": self.model,
+            "temperature": eff_temp,
+            "max_tokens": eff_max_tokens,
+            "n": n_req,
+            "response_format": None,
+            "enable_thinking": self.enable_thinking,
+            "messages": messages,
+        }
+        if top_p_override is not None:
+            req_payload["top_p"] = float(top_p_override)
+        if cache_salt is not None:
+            req_payload["cache_salt"] = str(cache_salt)
+        req_hash = canonical_request_hash(req_payload)
+        cached = self.ledger.lookup_cache(req_hash)
+
+        if cached is not None:
+            resp_obj = cached["response"]
+            if isinstance(resp_obj, dict) and isinstance(resp_obj.get("texts"), list):
+                texts = [str(x).strip() for x in resp_obj["texts"]]
+            else:
+                texts = [str(resp_obj)]
+            pt = int(cached["prompt_tokens"])
+            ct = int(cached["completion_tokens"])
+            usage_missing = bool(cached.get("usage_missing", False))
+            latency = 0.0
+            status = "CACHED_REPLAY|USAGE_MISSING" if usage_missing else "CACHED_REPLAY"
+            self.ledger.log_call(
+                request_id=request_id,
+                block_id=block_id,
+                strategy=strategy,
+                query_type=query_type,
+                model=self.model,
+                request_hash=req_hash,
+                prompt_tokens=pt,
+                completion_tokens=ct,
+                latency_sec=0.0,
+                status=status,
+                response_payload={"texts": texts},
+                from_cache=True,
+                usage_missing=usage_missing,
+            )
+            if bucket is not None:
+                bucket.record_spend(pt, ct)
+            return texts, pt, ct, latency, status
+
+        pt_http, ct_http, lat_http = 0, 0, 0.0
+        pt_sub, ct_sub, lat_sub = 0, 0, 0.0
+        usage_missing = False
+        texts: List[str] = []
+        need_fallback = False
+        status = "OK"
+        payload_store: Dict[str, Any] = {}
+
+        try:
+            http_kw: Dict[str, Any] = {
+                "n_completions": n_req,
+                "max_tokens_override": eff_max_tokens,
+                "temperature_override": eff_temp,
+            }
+            if top_p_override is not None:
+                http_kw["top_p_override"] = top_p_override
+            texts, pt_http, ct_http, lat_http, _finish_reason, usage_missing = self._call_http_multi(
+                messages,
+                **http_kw,
+            )
+            if pt_http == 0:
+                pt_http = max(1, int((len(sys_msg) + len(user_msg)) / EST_CHARS_PER_TOKEN))
+            if ct_http == 0 and any(texts):
+                ct_http = max(1, int(sum(len(t) for t in texts) / EST_CHARS_PER_TOKEN))
+            if bucket is not None:
+                bucket.record_spend(pt_http, ct_http)
+            if len(texts) < n_req:
+                need_fallback = True
+            status = "OK|USAGE_MISSING" if usage_missing else "OK"
+        except urllib.error.HTTPError as he:
+            if he.code == 400:
+                need_fallback = True
+                status = "OK_FALLBACK_N"
+            else:
+                payload_store = {"error": str(he)}
+                status = f"HTTP_ERROR:{type(he).__name__}"
+        except Exception as http_exc:
+            payload_store = {"error": str(http_exc)}
+            status = f"HTTP_ERROR:{type(http_exc).__name__}"
+
+        if need_fallback:
+            salt_base = cache_salt or "n"
+            per_est = max(1, est_completion_tokens // n_req)
+            for idx in range(len(texts), n_req):
+                sub = self.call_text(
+                    request_id=f"{request_id}_s{idx}",
+                    block_id=block_id,
+                    strategy=strategy,
+                    query_type=f"{query_type}_sub",
+                    sys_msg=sys_msg,
+                    user_msg=user_msg,
+                    bucket=bucket,
+                    est_completion_tokens=per_est,
+                    max_tokens_override=eff_max_tokens,
+                    temperature_override=eff_temp,
+                    top_p_override=top_p_override,
+                    cache_salt=f"{salt_base}_s{idx}",
+                )
+                if sub is None:
+                    break
+                sub_txt, s_pt, s_ct, s_lat, s_st = sub
+                pt_sub += s_pt
+                ct_sub += s_ct
+                lat_sub += s_lat
+                if s_st.startswith("HTTP_ERROR"):
+                    continue
+                texts.append(sub_txt)
+
+        pt_total = pt_http + pt_sub
+        ct_total = ct_http + ct_sub
+        lat_total = lat_http + lat_sub
+        if not payload_store:
+            payload_store = {"texts": texts}
+            if usage_missing:
+                payload_store["usage_missing"] = True
+            if need_fallback and texts:
+                status = "OK_FALLBACK_N"
+
+        self.ledger.log_call(
+            request_id=request_id,
+            block_id=block_id,
+            strategy=strategy,
+            query_type=query_type,
+            model=self.model,
+            request_hash=req_hash,
+            prompt_tokens=pt_total,
+            completion_tokens=ct_total,
+            latency_sec=lat_total,
+            status=status,
+            response_payload=payload_store,
+            from_cache=False,
+            usage_missing=usage_missing,
+        )
+
+        return texts, pt_total, ct_total, lat_total, status
 
 
 # ---------------------------------------------------------------------------

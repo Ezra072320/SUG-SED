@@ -7,8 +7,10 @@ import os
 for _env_k in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
     os.environ.setdefault(_env_k, "1")
 
+import inspect
 import sys
 import tempfile
+import urllib.error
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -21,6 +23,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from core_shared.data_loader import SocialDataset, _extract_raw_entities, _normalize_entities
+from core_shared.token_ledger import CausalUniformBucket, TokenLedger
 from trackA_sug_sed.baselines_official import (
     _RAGSEDE_DETECTOR_SYS_TMPL,
     _RAGSEDE_EVALUATOR_SYS,
@@ -31,6 +34,8 @@ from trackA_sug_sed.baselines_official import (
     build_lsed_official_prompt,
     cequel_wcsc,
     cequel_weighted_pckmeans,
+    preprocess_for_dataset,
+    preprocess_french_sentence,
     preprocess_social_sentence,
     run_cequel_official,
     run_cobras_official,
@@ -41,6 +46,7 @@ from trackA_sug_sed.baselines_official import (
     train_lsed_hyperbolic_encoder,
 )
 from trackA_sug_sed.embed_cache import load_or_extract_block_embeddings
+from trackA_sug_sed.llm_client import BudgetedLLMClient
 
 
 def _make_synthetic_ds(
@@ -139,9 +145,16 @@ def test_sbert_kmeans_and_hisevent_raw_attributes() -> None:
     assert st_raw["n_attr_edges"] > st_filt["n_attr_edges"], "Raw attributes must preserve DATE & unified user links"
     assert len(lbl_raw) == 4
 
+    fr_sample = "L'Algérie va réexaminer @user https://t.co/xyz #Event"
+    assert "é" in preprocess_french_sentence(fr_sample)
+    assert "é" in preprocess_for_dataset(fr_sample, "Event2018")
+    assert "é" not in preprocess_for_dataset(fr_sample, "Event2012")
+
 
 def test_ragsede_official_contract(monkeypatch_encode: bool = True) -> None:
     import trackA_sug_sed.baselines_official as bo
+
+    assert inspect.signature(run_ragsede_official).parameters["max_retries"].default == 10
 
     # Mock encode_texts_hf so test runs fast & offline without downloading any model
     orig_encode = bo.encode_texts_hf
@@ -198,6 +211,7 @@ def test_ragsede_official_contract(monkeypatch_encode: bool = True) -> None:
                 temperature_override=None,
                 top_p_override=None,
                 cache_salt=None,
+                use_json_mode_override=None,
             ):
                 self.calls.append(
                     {
@@ -208,6 +222,7 @@ def test_ragsede_official_contract(monkeypatch_encode: bool = True) -> None:
                         "max_tokens_override": max_tokens_override,
                         "temperature_override": temperature_override,
                         "top_p_override": top_p_override,
+                        "use_json_mode_override": use_json_mode_override,
                     }
                 )
                 if query_type == "ragsede_kb_update":
@@ -242,6 +257,7 @@ def test_ragsede_official_contract(monkeypatch_encode: bool = True) -> None:
         assert kb_calls[0]["sys_msg"] == _RAGSEDE_EVALUATOR_SYS
         assert "Here is the knowledge base:" in det_calls[0]["sys_msg"]
         assert all(c["max_tokens_override"] == 512 and c["top_p_override"] == 0.3 for c in client.calls)
+        assert all(c["use_json_mode_override"] is False for c in client.calls)
         # Verify retry happened for the invalid event anchor with temperature_override=0.2
         noise_retries = [c for c in det_calls if "Random unrelated" in c["user_msg"]]
         assert len(noise_retries) == 2 and noise_retries[1]["temperature_override"] == 0.2
@@ -316,6 +332,7 @@ def test_cequel_weights_wcsc_wckmeans_and_prompt() -> None:
     assert min(ml_sc.values()) >= 0.5 - 1e-9 and max(ml_sc.values()) <= 1.5 + 1e-9
     assert min(cl_sc.values()) >= 0.5 - 1e-9 and max(cl_sc.values()) <= 1.5 + 1e-9
 
+    assert inspect.signature(cequel_weighted_pckmeans).parameters["init"].default == "random"
     lbl_wk = cequel_weighted_pckmeans(emb, 3, ml, cl, weight_method="log_degree_ratio", seed=5)
     lbl_sc = cequel_wcsc(emb, 3, ml, cl, weight_method="log_degree_ratio", seed=5)
     assert adjusted_rand_score(ds.labels, lbl_wk) >= 0.90
@@ -361,6 +378,85 @@ def test_cequel_weights_wcsc_wckmeans_and_prompt() -> None:
     assert "wckmeans_oracleK" in st and len(lbl_o) == len(ds) and len(lbl_e) == len(ds)
 
 
+def test_cequel_5vote_majority_and_call_text_n() -> None:
+    ds, emb = _make_synthetic_ds(n_clusters=2, per_cluster=3, dim=8, seed=17)
+
+    class _MockVoteClient:
+        def __init__(self) -> None:
+            self.calls: List[Dict[str, Any]] = []
+            self.attempt_by_req: Dict[str, int] = {}
+
+        def call_text_n(
+            self,
+            request_id: str,
+            block_id: int,
+            strategy: str,
+            query_type: str,
+            sys_msg: str,
+            user_msg: str,
+            n_completions: int = 5,
+            bucket=None,
+            est_completion_tokens: int = 5,
+            max_tokens_override=None,
+            temperature_override=None,
+            cache_salt=None,
+            **kw,
+        ):
+            base_id = request_id.split("_r")[0]
+            att = self.attempt_by_req.get(base_id, 0)
+            self.attempt_by_req[base_id] = att + 1
+            self.calls.append(
+                {
+                    "n_completions": n_completions,
+                    "max_tokens_override": max_tokens_override,
+                    "temperature_override": temperature_override,
+                    "attempt": att,
+                }
+            )
+            if att == 0:
+                # Only 1 valid vote (<= 2.5) -> must trigger retry
+                return ["invalid", "b", "foo", "bar", "baz"], 20, 5, 0.01, "OK"
+            # 4 valid votes (> 2.5) with majority "c" (ONLY #1 and #3 are Same Event)
+            return ["c", "c", "b", "?", "c"], 20, 5, 0.01, "OK"
+
+    vcli = _MockVoteClient()
+    _lo, _le, _sh, st = run_cequel_official(
+        1, ds, emb, k_oracle=2, k_est=2, client=vcli, clustering_method="wckmeans"  # type: ignore[arg-type]
+    )
+    assert len(vcli.calls) >= 2
+    assert vcli.calls[0]["attempt"] == 0 and vcli.calls[1]["attempt"] == 1
+    assert all(
+        c["n_completions"] == 5 and c["max_tokens_override"] == 1 and c["temperature_override"] == 1.0
+        for c in vcli.calls
+    )
+    assert st["n_ml"] >= 1 and st["n_cl"] >= 2
+
+    # Test BudgetedLLMClient.call_text_n direct n=5 + HTTP 400 fallback without double-charging bucket
+    with tempfile.TemporaryDirectory() as tmpd:
+        ledger = TokenLedger(Path(tmpd) / "l1", shared_cache_file=Path(tmpd) / "shared.jsonl")
+        cli = BudgetedLLMClient(model="Qwen/Qwen3-8B", ledger=ledger, api_key="k", min_pace_sec=0.0)
+        bkt = CausalUniformBucket(tokens_per_block=500, allow_carryover=False)
+        bkt.start_block()
+
+        cli._call_http_multi = lambda msgs, **kw: (["a", "b", "a", "a", "e"], 15, 5, 0.01, "stop", False)  # type: ignore[method-assign]
+        res1 = cli.call_text_n("r1", 1, "s", "q", "", "hi", n_completions=5, bucket=bkt)
+        assert res1 is not None and res1[0] == ["a", "b", "a", "a", "e"] and bkt.current_block_spent == 20
+        res1_cached = cli.call_text_n("r1_c", 1, "s", "q", "", "hi", n_completions=5, bucket=bkt)
+        assert res1_cached is not None and "CACHED_REPLAY" in res1_cached[4] and bkt.current_block_spent == 40
+
+        # HTTP 400 on n > 1 must fall back to 5 sequential call_text calls charged once (5 * 11 = 55)
+        def _raise_400(msgs, **kw):
+            raise urllib.error.HTTPError("http://x", 400, "Bad Request", None, None)  # type: ignore[arg-type]
+
+        bkt2 = CausalUniformBucket(tokens_per_block=500, allow_carryover=False)
+        bkt2.start_block()
+        cli._call_http_multi = _raise_400  # type: ignore[method-assign]
+        cli._call_http = lambda msgs, **kw: ("d", 10, 1, 0.01, "stop", False)  # type: ignore[method-assign]
+        res2 = cli.call_text_n("r2", 1, "s", "q", "", "hi_fb", n_completions=5, bucket=bkt2)
+        assert res2 is not None and res2[0] == ["d"] * 5 and res2[4] == "OK_FALLBACK_N"
+        assert res2[1] == 50 and res2[2] == 5 and bkt2.current_block_spent == 55
+
+
 def test_lsed_hgcn_poincare_and_ole() -> None:
     _, usr = build_lsed_official_prompt("hello UP")
     assert usr == "Summarize the following sentences:hello UP. If you come across some abbreviations, expand them. Please respond in English"
@@ -396,8 +492,14 @@ def test_lsed_hgcn_poincare_and_ole() -> None:
             1, ds, emb, model, dev, k_oracle=4, k_est=4, client=_FakeLsedCli()  # type: ignore[arg-type]
         )
         assert adjusted_rand_score(ds.labels, lbl_o) >= 0.85
-        assert st["supervised_update"] is False
+        assert st["open_set_window"] == "infty"
         assert 0.05 < st["mean_hyp_norm"] < 0.99
+        raised = False
+        try:
+            run_lsed_official(1, ds, emb, model, dev, k_oracle=4, k_est=4, client=_FakeLsedCli(), window_size=1)  # type: ignore[arg-type]
+        except NotImplementedError:
+            raised = True
+        assert raised, "Positive window_size must raise NotImplementedError"
 
 
 def test_embed_cache_max_length_isolation() -> None:
@@ -424,14 +526,29 @@ def test_embed_cache_max_length_isolation() -> None:
         ec.encode_texts_hf = orig_encode
 
 
+def test_ragsede_french_accent_tokenizer() -> None:
+    from trackA_sug_sed.baselines_official import _tokenize_kw_tf, preprocess_for_dataset
+
+    cleaned = preprocess_for_dataset("La sortie de prison d'Algérie & vidéo @user #Rennes https://t.co/abc", "Event2018")
+    assert "algérie" in cleaned.lower() and "vidéo" in cleaned.lower()
+    tf = _tokenize_kw_tf("Président algérie vidéo événement")
+    assert tf["président"] == 1
+    assert tf["algérie"] == 1
+    assert tf["vidéo"] == 1
+    assert tf["événement"] == 1
+    assert "alg" not in tf and "rie" not in tf
+
+
 def main() -> None:
     tests = [
         test_data_loader_raw_entities,
         test_embed_cache_max_length_isolation,
         test_sbert_kmeans_and_hisevent_raw_attributes,
         test_ragsede_official_contract,
+        test_ragsede_french_accent_tokenizer,
         test_cobras_binary_oracle,
         test_cequel_weights_wcsc_wckmeans_and_prompt,
+        test_cequel_5vote_majority_and_call_text_n,
         test_lsed_hgcn_poincare_and_ole,
     ]
     for fn in tests:

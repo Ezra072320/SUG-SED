@@ -3,19 +3,77 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import threading
 import time
 import warnings
 from pathlib import Path
-from typing import Any, Dict, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 EMBED_CACHE_DIR = ROOT / "cache" / "embeddings"
 
-_HF_MODEL_CACHE: Dict[Tuple[str, str], Tuple[Any, Any]] = {}
+_HF_MODEL_CACHE: Dict[Tuple[str, str], Tuple[Any, Any, Optional[Any]]] = {}
 _HF_ENCODE_LOCK = threading.Lock()
+
+
+def _load_st_dense_head(model_name: str, device: str) -> Optional[Any]:
+    """Load Sentence-Transformers Dense projection layers (e.g. 2_Dense in distiluse) if present."""
+    import torch
+    from huggingface_hub import hf_hub_download
+
+    try:
+        modules_path = hf_hub_download(model_name, "modules.json")
+    except Exception:
+        return None
+
+    try:
+        modules = json.loads(Path(modules_path).read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+    dense_mods = [m for m in modules if m.get("type") == "sentence_transformers.models.Dense"]
+    if not dense_mods:
+        return None
+
+    layers: List[Any] = []
+    for mod in dense_mods:
+        sub_path = str(mod.get("path", "")).strip("/")
+        prefix = f"{sub_path}/" if sub_path else ""
+        cfg_path = hf_hub_download(model_name, f"{prefix}config.json")
+        cfg = json.loads(Path(cfg_path).read_text(encoding="utf-8"))
+        in_features = int(cfg["in_features"])
+        out_features = int(cfg["out_features"])
+        bias = bool(cfg.get("bias", True))
+        act_name = str(cfg.get("activation_function", ""))
+
+        lin = torch.nn.Linear(in_features, out_features, bias=bias)
+        state = None
+        try:
+            sf_path = hf_hub_download(model_name, f"{prefix}model.safetensors")
+            from safetensors.torch import load_file as load_safetensors
+
+            state = load_safetensors(sf_path, device="cpu")
+        except Exception:
+            pt_path = hf_hub_download(model_name, f"{prefix}pytorch_model.bin")
+            state = torch.load(pt_path, map_location="cpu", weights_only=True)
+
+        mapped_state = {
+            (k[len("linear.") :] if k.startswith("linear.") else k): v
+            for k, v in state.items()
+        }
+        lin.load_state_dict(mapped_state)
+        layers.append(lin)
+        if "tanh" in act_name.lower():
+            layers.append(torch.nn.Tanh())
+        elif "relu" in act_name.lower():
+            layers.append(torch.nn.ReLU())
+
+    head = torch.nn.Sequential(*layers)
+    head.eval().to(device)
+    return head
 
 
 def encode_texts_hf(
@@ -43,8 +101,9 @@ def encode_texts_hf(
             tok = AutoTokenizer.from_pretrained(model_name)
             mdl = AutoModel.from_pretrained(model_name)
             mdl.eval().to(device)
-            _HF_MODEL_CACHE[cache_key] = (tok, mdl)
-        tok, mdl = _HF_MODEL_CACHE[cache_key]
+            dense_head = _load_st_dense_head(model_name, device)
+            _HF_MODEL_CACHE[cache_key] = (tok, mdl, dense_head)
+        tok, mdl, dense_head = _HF_MODEL_CACHE[cache_key]
 
         with torch.no_grad():
             for start in range(0, len(texts_list), batch_size):
@@ -59,6 +118,8 @@ def encode_texts_hf(
                 out = mdl(**enc)
                 mask = enc["attention_mask"].unsqueeze(-1).float()
                 pooled = (out.last_hidden_state * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1e-9)
+                if dense_head is not None:
+                    pooled = dense_head(pooled)
                 pooled = torch.nn.functional.normalize(pooled, p=2, dim=-1)
                 out_chunks.append(pooled.cpu().numpy().astype(np.float32))
     return np.vstack(out_chunks)

@@ -1,0 +1,1370 @@
+{
+  "sbert_kmeans": {
+    "mean": {
+      "ari": 62.55,
+      "nmi": 85.78,
+      "ami": 84.5
+    },
+    "total_calls": 0,
+    "total_tokens": 0,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 73.36,
+        "nmi": 86.86,
+        "ami": 85.68,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.495,
+        "n_pred_clusters": 30
+      },
+      "M_03": {
+        "ari": 65.71,
+        "nmi": 87.57,
+        "ami": 86.5,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.571,
+        "n_pred_clusters": 33
+      },
+      "M_04": {
+        "ari": 38.32,
+        "nmi": 81.26,
+        "ami": 79.29,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.772,
+        "n_pred_clusters": 38
+      },
+      "M_05": {
+        "ari": 72.82,
+        "nmi": 87.42,
+        "ami": 86.52,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.539,
+        "n_pred_clusters": 30
+      }
+    }
+  },
+  "hisevent_official": {
+    "mean": {
+      "ari": 67.53,
+      "nmi": 86.18,
+      "ami": 85.33
+    },
+    "total_calls": 0,
+    "total_tokens": 0,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 77.43,
+        "nmi": 81.49,
+        "ami": 80.74,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.05,
+        "first_stable_k": 119,
+        "n_edges": 153664,
+        "n_attr_edges": 90760,
+        "n_pred_clusters": 11
+      },
+      "M_03": {
+        "ari": 81.57,
+        "nmi": 92.2,
+        "ami": 91.7,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.882,
+        "first_stable_k": 19,
+        "n_edges": 66992,
+        "n_attr_edges": 52235,
+        "n_pred_clusters": 24
+      },
+      "M_04": {
+        "ari": 49.15,
+        "nmi": 85.0,
+        "ami": 83.79,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 1.149,
+        "first_stable_k": 25,
+        "n_edges": 81909,
+        "n_attr_edges": 60239,
+        "n_pred_clusters": 28
+      },
+      "M_05": {
+        "ari": 61.96,
+        "nmi": 86.04,
+        "ami": 85.07,
+        "calls": 0,
+        "tokens": 0,
+        "parse_errors": 0,
+        "runtime_sec": 0.774,
+        "first_stable_k": 14,
+        "n_edges": 50127,
+        "n_attr_edges": 38855,
+        "n_pred_clusters": 29
+      }
+    }
+  },
+  "ragsede_unbounded": {
+    "mean": {
+      "ari": 89.7,
+      "nmi": 92.87,
+      "ami": 92.23
+    },
+    "total_calls": 639,
+    "total_tokens": 251203,
+    "total_parse_errors": 41,
+    "per_block": {
+      "M_02": {
+        "ari": 92.85,
+        "nmi": 95.3,
+        "ami": 94.84,
+        "calls": 152,
+        "tokens": 61178,
+        "parse_errors": 11,
+        "total_calls": 152,
+        "n_anchors": 87,
+        "total_tokens": 61178,
+        "prompt_tokens": 53417,
+        "completion_tokens": 7761,
+        "shown_posts": 167,
+        "shown_pct": 11.200536552649229,
+        "n_pred_clusters": 55,
+        "router_cpu_sec": 13.0938,
+        "api_wall_sec": 2233.0058,
+        "llm_api_sec": 413.613,
+        "total_wall_sec": 2253.3629
+      },
+      "M_03": {
+        "ari": 88.65,
+        "nmi": 93.52,
+        "ami": 93.0,
+        "calls": 136,
+        "tokens": 53504,
+        "parse_errors": 10,
+        "total_calls": 136,
+        "n_anchors": 83,
+        "total_tokens": 53504,
+        "prompt_tokens": 46486,
+        "completion_tokens": 7018,
+        "shown_posts": 178,
+        "shown_pct": 9.700272479564033,
+        "n_pred_clusters": 45,
+        "router_cpu_sec": 1.9375,
+        "api_wall_sec": 2184.2476,
+        "llm_api_sec": 363.9342,
+        "total_wall_sec": 2204.7087
+      },
+      "M_04": {
+        "ari": 89.62,
+        "nmi": 90.5,
+        "ami": 89.53,
+        "calls": 203,
+        "tokens": 79492,
+        "parse_errors": 10,
+        "total_calls": 203,
+        "n_anchors": 132,
+        "total_tokens": 79492,
+        "prompt_tokens": 69937,
+        "completion_tokens": 9555,
+        "shown_posts": 269,
+        "shown_pct": 13.383084577114428,
+        "n_pred_clusters": 59,
+        "router_cpu_sec": 2.3594,
+        "api_wall_sec": 2338.1745,
+        "llm_api_sec": 516.6585,
+        "total_wall_sec": 2359.2653
+      },
+      "M_05": {
+        "ari": 87.67,
+        "nmi": 92.15,
+        "ami": 91.54,
+        "calls": 148,
+        "tokens": 57029,
+        "parse_errors": 10,
+        "total_calls": 148,
+        "n_anchors": 90,
+        "total_tokens": 57029,
+        "prompt_tokens": 49943,
+        "completion_tokens": 7086,
+        "shown_posts": 188,
+        "shown_pct": 10.25081788440567,
+        "n_pred_clusters": 50,
+        "router_cpu_sec": 2.0469,
+        "api_wall_sec": 2202.5754,
+        "llm_api_sec": 385.7721,
+        "total_wall_sec": 2223.2275
+      }
+    }
+  },
+  "cobras_20k": {
+    "mean": {
+      "ari": 73.08,
+      "nmi": 85.98,
+      "ami": 85.06
+    },
+    "total_calls": 752,
+    "total_tokens": 79845,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 86.92,
+        "nmi": 90.0,
+        "ami": 89.47,
+        "calls": 160,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "total_calls": 160,
+        "n_constraints": 160,
+        "total_tokens": 19975,
+        "prompt_tokens": 19815,
+        "completion_tokens": 160,
+        "shown_posts": 37,
+        "shown_pct": 2.481556002682763,
+        "n_pred_clusters": 15,
+        "router_cpu_sec": 1.1256,
+        "api_wall_sec": 163.7719,
+        "llm_api_sec": 158.9188,
+        "total_wall_sec": 164.8975
+      },
+      "M_03": {
+        "ari": 84.1,
+        "nmi": 87.3,
+        "ami": 86.69,
+        "calls": 174,
+        "tokens": 19917,
+        "parse_errors": 0,
+        "total_calls": 174,
+        "n_constraints": 174,
+        "total_tokens": 19917,
+        "prompt_tokens": 19741,
+        "completion_tokens": 176,
+        "shown_posts": 43,
+        "shown_pct": 2.343324250681199,
+        "n_pred_clusters": 16,
+        "router_cpu_sec": 1.1461,
+        "api_wall_sec": 171.5928,
+        "llm_api_sec": 167.5219,
+        "total_wall_sec": 172.7388
+      },
+      "M_04": {
+        "ari": 41.88,
+        "nmi": 82.76,
+        "ami": 80.67,
+        "calls": 208,
+        "tokens": 19970,
+        "parse_errors": 0,
+        "total_calls": 208,
+        "n_constraints": 208,
+        "total_tokens": 19970,
+        "prompt_tokens": 19761,
+        "completion_tokens": 209,
+        "shown_posts": 71,
+        "shown_pct": 3.5323383084577116,
+        "n_pred_clusters": 47,
+        "router_cpu_sec": 1.9065,
+        "api_wall_sec": 201.9112,
+        "llm_api_sec": 197.3761,
+        "total_wall_sec": 203.8177
+      },
+      "M_05": {
+        "ari": 79.42,
+        "nmi": 83.85,
+        "ami": 83.43,
+        "calls": 210,
+        "tokens": 19983,
+        "parse_errors": 0,
+        "total_calls": 210,
+        "n_constraints": 210,
+        "total_tokens": 19983,
+        "prompt_tokens": 19773,
+        "completion_tokens": 210,
+        "shown_posts": 37,
+        "shown_pct": 2.0174482006543077,
+        "n_pred_clusters": 9,
+        "router_cpu_sec": 1.0809,
+        "api_wall_sec": 208.4333,
+        "llm_api_sec": 202.653,
+        "total_wall_sec": 209.5142
+      }
+    }
+  },
+  "cequel_20k_wcsc_oracleK": {
+    "mean": {
+      "ari": 57.11,
+      "nmi": 83.63,
+      "ami": 82.17
+    },
+    "total_calls": 79,
+    "total_tokens": 79592,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 61.73,
+        "nmi": 81.79,
+        "ami": 80.14,
+        "calls": 20,
+        "tokens": 19889,
+        "parse_errors": 0,
+        "n_triangles_total": 497,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19792,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 95.6498,
+        "total_wall_sec": 117.1025
+      },
+      "M_03": {
+        "ari": 59.96,
+        "nmi": 86.33,
+        "ami": 85.16,
+        "calls": 20,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 1,
+        "n_cl": 50,
+        "prompt_tokens": 19875,
+        "completion_tokens": 100,
+        "shown_posts": 33,
+        "llm_api_sec": 102.5556,
+        "total_wall_sec": 133.1586
+      },
+      "M_04": {
+        "ari": 42.32,
+        "nmi": 82.06,
+        "ami": 80.16,
+        "calls": 20,
+        "tokens": 19869,
+        "parse_errors": 0,
+        "n_triangles_total": 670,
+        "n_ml": 9,
+        "n_cl": 48,
+        "prompt_tokens": 19773,
+        "completion_tokens": 96,
+        "shown_posts": 15,
+        "llm_api_sec": 97.9935,
+        "total_wall_sec": 135.0621
+      },
+      "M_05": {
+        "ari": 64.44,
+        "nmi": 84.33,
+        "ami": 83.21,
+        "calls": 19,
+        "tokens": 19859,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19765,
+        "completion_tokens": 94,
+        "shown_posts": 37,
+        "llm_api_sec": 88.9689,
+        "total_wall_sec": 111.2551
+      }
+    }
+  },
+  "cequel_20k_wcsc_estK": {
+    "mean": {
+      "ari": 69.39,
+      "nmi": 86.1,
+      "ami": 85.19
+    },
+    "total_calls": 79,
+    "total_tokens": 79592,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 81.13,
+        "nmi": 86.1,
+        "ami": 85.54,
+        "calls": 20,
+        "tokens": 19889,
+        "parse_errors": 0,
+        "n_triangles_total": 497,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19792,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 95.6498,
+        "total_wall_sec": 117.1025
+      },
+      "M_03": {
+        "ari": 81.5,
+        "nmi": 90.42,
+        "ami": 89.78,
+        "calls": 20,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 1,
+        "n_cl": 50,
+        "prompt_tokens": 19875,
+        "completion_tokens": 100,
+        "shown_posts": 33,
+        "llm_api_sec": 102.5556,
+        "total_wall_sec": 133.1586
+      },
+      "M_04": {
+        "ari": 50.04,
+        "nmi": 83.15,
+        "ami": 81.76,
+        "calls": 20,
+        "tokens": 19869,
+        "parse_errors": 0,
+        "n_triangles_total": 670,
+        "n_ml": 9,
+        "n_cl": 48,
+        "prompt_tokens": 19773,
+        "completion_tokens": 96,
+        "shown_posts": 15,
+        "llm_api_sec": 97.9935,
+        "total_wall_sec": 135.0621
+      },
+      "M_05": {
+        "ari": 64.9,
+        "nmi": 84.74,
+        "ami": 83.67,
+        "calls": 19,
+        "tokens": 19859,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19765,
+        "completion_tokens": 94,
+        "shown_posts": 37,
+        "llm_api_sec": 88.9689,
+        "total_wall_sec": 111.2551
+      }
+    }
+  },
+  "cequel_20k_wckmeans_oracleK": {
+    "mean": {
+      "ari": 51.5,
+      "nmi": 81.96,
+      "ami": 80.41
+    },
+    "total_calls": 79,
+    "total_tokens": 79592,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 68.17,
+        "nmi": 84.86,
+        "ami": 83.6,
+        "calls": 20,
+        "tokens": 19889,
+        "parse_errors": 0,
+        "n_triangles_total": 497,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19792,
+        "completion_tokens": 97,
+        "shown_posts": 29,
+        "llm_api_sec": 95.6498,
+        "total_wall_sec": 117.1025
+      },
+      "M_03": {
+        "ari": 59.75,
+        "nmi": 84.64,
+        "ami": 83.36,
+        "calls": 20,
+        "tokens": 19975,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 1,
+        "n_cl": 50,
+        "prompt_tokens": 19875,
+        "completion_tokens": 100,
+        "shown_posts": 33,
+        "llm_api_sec": 102.5556,
+        "total_wall_sec": 133.1586
+      },
+      "M_04": {
+        "ari": 33.29,
+        "nmi": 79.13,
+        "ami": 76.91,
+        "calls": 20,
+        "tokens": 19869,
+        "parse_errors": 0,
+        "n_triangles_total": 670,
+        "n_ml": 9,
+        "n_cl": 48,
+        "prompt_tokens": 19773,
+        "completion_tokens": 96,
+        "shown_posts": 15,
+        "llm_api_sec": 97.9935,
+        "total_wall_sec": 135.0621
+      },
+      "M_05": {
+        "ari": 44.79,
+        "nmi": 79.22,
+        "ami": 77.75,
+        "calls": 19,
+        "tokens": 19859,
+        "parse_errors": 0,
+        "n_triangles_total": 611,
+        "n_ml": 0,
+        "n_cl": 57,
+        "prompt_tokens": 19765,
+        "completion_tokens": 94,
+        "shown_posts": 37,
+        "llm_api_sec": 88.9689,
+        "total_wall_sec": 111.2551
+      }
+    }
+  },
+  "frag_sed_20k": {
+    "mean": {
+      "ari": 83.49,
+      "nmi": 93.05,
+      "ami": 92.35
+    },
+    "total_calls": 58,
+    "total_tokens": 20871,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 92.87,
+        "nmi": 94.94,
+        "ami": 94.41,
+        "calls": 8,
+        "tokens": 2734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            8,
+            64
+          ],
+          [
+            14,
+            21
+          ],
+          [
+            14,
+            33
+          ],
+          [
+            14,
+            63
+          ],
+          [
+            15,
+            17
+          ],
+          [
+            16,
+            29
+          ]
+        ],
+        "total_calls": 8,
+        "split_calls": 3,
+        "split_accepted": 2,
+        "merge_calls": 5,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 2734,
+        "prompt_tokens": 2688,
+        "completion_tokens": 46,
+        "shown_posts": 31,
+        "shown_pct": 2.079141515761234,
+        "n_init_frags": 66,
+        "n_final_clusters": 65,
+        "router_cpu_sec": 0.1406,
+        "api_wall_sec": 12.5635,
+        "llm_api_sec": 12.4938,
+        "total_wall_sec": 12.7163
+      },
+      "M_03": {
+        "ari": 95.99,
+        "nmi": 95.79,
+        "ami": 95.4,
+        "calls": 13,
+        "tokens": 4734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            55
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            7,
+            21
+          ],
+          [
+            7,
+            24
+          ],
+          [
+            7,
+            54
+          ],
+          [
+            8,
+            21
+          ],
+          [
+            8,
+            54
+          ],
+          [
+            10,
+            53
+          ],
+          [
+            16,
+            20
+          ],
+          [
+            21,
+            24
+          ],
+          [
+            22,
+            55
+          ],
+          [
+            30,
+            51
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 8,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 4734,
+        "prompt_tokens": 4663,
+        "completion_tokens": 71,
+        "shown_posts": 48,
+        "shown_pct": 2.6158038147138964,
+        "n_init_frags": 57,
+        "n_final_clusters": 56,
+        "router_cpu_sec": 0.0938,
+        "api_wall_sec": 15.868,
+        "llm_api_sec": 15.4353,
+        "total_wall_sec": 16.0599
+      },
+      "M_04": {
+        "ari": 58.68,
+        "nmi": 89.47,
+        "ami": 88.3,
+        "calls": 22,
+        "tokens": 7678,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            41
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            60
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            4,
+            58
+          ],
+          [
+            9,
+            57
+          ],
+          [
+            10,
+            56
+          ],
+          [
+            11,
+            21
+          ],
+          [
+            12,
+            60
+          ],
+          [
+            13,
+            58
+          ],
+          [
+            17,
+            55
+          ],
+          [
+            23,
+            26
+          ],
+          [
+            23,
+            30
+          ],
+          [
+            23,
+            59
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            30
+          ],
+          [
+            26,
+            31
+          ],
+          [
+            26,
+            33
+          ],
+          [
+            26,
+            36
+          ],
+          [
+            26,
+            59
+          ],
+          [
+            27,
+            30
+          ],
+          [
+            28,
+            30
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            28,
+            33
+          ],
+          [
+            28,
+            36
+          ],
+          [
+            30,
+            31
+          ],
+          [
+            30,
+            33
+          ],
+          [
+            30,
+            36
+          ],
+          [
+            30,
+            59
+          ],
+          [
+            33,
+            36
+          ],
+          [
+            33,
+            59
+          ],
+          [
+            36,
+            59
+          ],
+          [
+            40,
+            41
+          ],
+          [
+            40,
+            51
+          ],
+          [
+            41,
+            51
+          ]
+        ],
+        "total_calls": 22,
+        "split_calls": 7,
+        "split_accepted": 5,
+        "merge_calls": 15,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 7678,
+        "prompt_tokens": 7559,
+        "completion_tokens": 119,
+        "shown_posts": 71,
+        "shown_pct": 3.5323383084577116,
+        "n_init_frags": 61,
+        "n_final_clusters": 61,
+        "router_cpu_sec": 0.2089,
+        "api_wall_sec": 27.2126,
+        "llm_api_sec": 26.2641,
+        "total_wall_sec": 27.4215
+      },
+      "M_05": {
+        "ari": 86.41,
+        "nmi": 91.98,
+        "ami": 91.28,
+        "calls": 15,
+        "tokens": 5725,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            57
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            57
+          ],
+          [
+            5,
+            57
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            58
+          ],
+          [
+            7,
+            16
+          ],
+          [
+            7,
+            44
+          ],
+          [
+            7,
+            57
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            16,
+            57
+          ],
+          [
+            16,
+            59
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            29,
+            32
+          ],
+          [
+            29,
+            33
+          ],
+          [
+            29,
+            35
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            32,
+            35
+          ],
+          [
+            33,
+            35
+          ],
+          [
+            35,
+            45
+          ]
+        ],
+        "total_calls": 15,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 5725,
+        "prompt_tokens": 5639,
+        "completion_tokens": 86,
+        "shown_posts": 56,
+        "shown_pct": 3.053435114503817,
+        "n_init_frags": 62,
+        "n_final_clusters": 60,
+        "router_cpu_sec": 0.1406,
+        "api_wall_sec": 20.6047,
+        "llm_api_sec": 19.7069,
+        "total_wall_sec": 20.7995
+      }
+    }
+  },
+  "frag_sed_unbounded": {
+    "mean": {
+      "ari": 83.49,
+      "nmi": 93.05,
+      "ami": 92.35
+    },
+    "total_calls": 58,
+    "total_tokens": 20871,
+    "total_parse_errors": 0,
+    "per_block": {
+      "M_02": {
+        "ari": 92.87,
+        "nmi": 94.94,
+        "ami": 94.41,
+        "calls": 8,
+        "tokens": 2734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            8,
+            64
+          ],
+          [
+            14,
+            21
+          ],
+          [
+            14,
+            33
+          ],
+          [
+            14,
+            63
+          ],
+          [
+            15,
+            17
+          ],
+          [
+            16,
+            29
+          ]
+        ],
+        "total_calls": 8,
+        "split_calls": 3,
+        "split_accepted": 2,
+        "merge_calls": 5,
+        "merge_ops": 3,
+        "blocked_by_cl": 0,
+        "total_tokens": 2734,
+        "prompt_tokens": 2688,
+        "completion_tokens": 46,
+        "shown_posts": 31,
+        "shown_pct": 2.079141515761234,
+        "n_init_frags": 66,
+        "n_final_clusters": 65,
+        "router_cpu_sec": 0.0781,
+        "api_wall_sec": 0.0114,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.1735
+      },
+      "M_03": {
+        "ari": 95.99,
+        "nmi": 95.79,
+        "ami": 95.4,
+        "calls": 13,
+        "tokens": 4734,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            55
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            7,
+            21
+          ],
+          [
+            7,
+            24
+          ],
+          [
+            7,
+            54
+          ],
+          [
+            8,
+            21
+          ],
+          [
+            8,
+            54
+          ],
+          [
+            10,
+            53
+          ],
+          [
+            16,
+            20
+          ],
+          [
+            21,
+            24
+          ],
+          [
+            22,
+            55
+          ],
+          [
+            30,
+            51
+          ]
+        ],
+        "total_calls": 13,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 8,
+        "merge_ops": 4,
+        "blocked_by_cl": 0,
+        "total_tokens": 4734,
+        "prompt_tokens": 4663,
+        "completion_tokens": 71,
+        "shown_posts": 48,
+        "shown_pct": 2.6158038147138964,
+        "n_init_frags": 57,
+        "n_final_clusters": 56,
+        "router_cpu_sec": 0.0781,
+        "api_wall_sec": 0.0331,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.2864
+      },
+      "M_04": {
+        "ari": 58.68,
+        "nmi": 89.47,
+        "ami": 88.3,
+        "calls": 22,
+        "tokens": 7678,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            41
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            60
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            4,
+            58
+          ],
+          [
+            9,
+            57
+          ],
+          [
+            10,
+            56
+          ],
+          [
+            11,
+            21
+          ],
+          [
+            12,
+            60
+          ],
+          [
+            13,
+            58
+          ],
+          [
+            17,
+            55
+          ],
+          [
+            23,
+            26
+          ],
+          [
+            23,
+            30
+          ],
+          [
+            23,
+            59
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            26,
+            28
+          ],
+          [
+            26,
+            30
+          ],
+          [
+            26,
+            31
+          ],
+          [
+            26,
+            33
+          ],
+          [
+            26,
+            36
+          ],
+          [
+            26,
+            59
+          ],
+          [
+            27,
+            30
+          ],
+          [
+            28,
+            30
+          ],
+          [
+            28,
+            31
+          ],
+          [
+            28,
+            33
+          ],
+          [
+            28,
+            36
+          ],
+          [
+            30,
+            31
+          ],
+          [
+            30,
+            33
+          ],
+          [
+            30,
+            36
+          ],
+          [
+            30,
+            59
+          ],
+          [
+            33,
+            36
+          ],
+          [
+            33,
+            59
+          ],
+          [
+            36,
+            59
+          ],
+          [
+            40,
+            41
+          ],
+          [
+            40,
+            51
+          ],
+          [
+            41,
+            51
+          ]
+        ],
+        "total_calls": 22,
+        "split_calls": 7,
+        "split_accepted": 5,
+        "merge_calls": 15,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 7678,
+        "prompt_tokens": 7559,
+        "completion_tokens": 119,
+        "shown_posts": 71,
+        "shown_pct": 3.5323383084577116,
+        "n_init_frags": 61,
+        "n_final_clusters": 61,
+        "router_cpu_sec": 0.1094,
+        "api_wall_sec": 0.0448,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.3598
+      },
+      "M_05": {
+        "ari": 86.41,
+        "nmi": 91.98,
+        "ami": 91.28,
+        "calls": 15,
+        "tokens": 5725,
+        "parse_errors": 0,
+        "cannot_pairs": [
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            57
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            57
+          ],
+          [
+            5,
+            57
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            58
+          ],
+          [
+            7,
+            16
+          ],
+          [
+            7,
+            44
+          ],
+          [
+            7,
+            57
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            16,
+            57
+          ],
+          [
+            16,
+            59
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            29,
+            32
+          ],
+          [
+            29,
+            33
+          ],
+          [
+            29,
+            35
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            32,
+            35
+          ],
+          [
+            33,
+            35
+          ],
+          [
+            35,
+            45
+          ]
+        ],
+        "total_calls": 15,
+        "split_calls": 5,
+        "split_accepted": 3,
+        "merge_calls": 10,
+        "merge_ops": 5,
+        "blocked_by_cl": 0,
+        "total_tokens": 5725,
+        "prompt_tokens": 5639,
+        "completion_tokens": 86,
+        "shown_posts": 56,
+        "shown_pct": 3.053435114503817,
+        "n_init_frags": 62,
+        "n_final_clusters": 60,
+        "router_cpu_sec": 0.0938,
+        "api_wall_sec": 0.0457,
+        "llm_api_sec": 0.0,
+        "total_wall_sec": 0.3286
+      }
+    }
+  }
+}

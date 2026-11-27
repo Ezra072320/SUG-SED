@@ -5,26 +5,26 @@ Active 3-Category Benchmark Structure:
     1. SBERT*    (Reimers & Gurevych, EMNLP 2019): preprocessed text + KMeans(K*).
                  (`run_sbert_agglom_dev` kept only for backward compatibility.)
     2. HISEvent  (Cao et al., AAAI 2024 — SELGroup/HISEvent):
-                 - exact `preprocess_social_sentence` + SBERT(max_length=256) + Pearson corr
+                 - language-specific official preprocessing (English `preprocess_social_sentence` / French keeps accents) + SBERT(256) + Pearson corr
                  - unfiltered raw unified attributes (`user_id`, `mentioned_users`, `hashtags.lower()`, raw entities)
-                 - 1D-SE first stable point (max_num_neighbors=200) + hierarchical mini-batch 2D-SE (n_sub=400/300)
+                 - 1D-SE first stable point (max_num_neighbors=200) + hierarchical mini-batch 2D-SE (`eps=0.0`, n_sub=400/300)
   Group 2 — Unbounded LLM-SED Original (Original Protocol, Token Cost Reported):
     3. RagSEDE   (Liu et al., WWW 2026 — SELGroup/RagSEDE):
                  - exact text preprocessing + Agglom(0.40/0.30) anchors + MMR top-3 sampling (lambda=0.7)
                  - in-memory hybrid Event KB indexed without template words, retrieved by Enc("INPUT: " + a_k[:200])
-                 - verbatim Evaluator/Detector prompts, max_tokens=512, top_p=0.3, retry & "Confusion" fallback
+                 - verbatim Evaluator/Detector prompts, `max_tokens=512`, `top_p=0.3`, `use_json_mode=False`, `max_retries=10`, "Confusion" fallback
     4. LSED      (Qiu et al., ACL 2025 — 2025.acl-long.233):
                  - exact verbatim summarization prompt + SBERT(max_length=256) + OLE 2D TIME (386-d)
-                 - genuine 3-layer HGCN Poincare hyperbolic MLP (HypLinear + HypAct, hidden_dim=64, c=1.0)
-                 - trained on M_00 (summarized when available), inferred via KMeans (w=infty) using HISEvent Est-K
+                 - genuine 3-layer HGCN Poincare hyperbolic MLP (HypLinear + HypAct, hidden_dim=64, c=1.0, numerical `tan_reg=0.02`)
+                 - trained on summarized M_00, inferred via KMeans (Fig. 6 open-set `w=infty`) using Oracle-K / HISEvent Est-K
   Group 3 — Budgeted LLM Baselines (20k Tokens / Block):
     5. COBRAS    (Van Craenendonck et al., IDA 2018 — ML-KULeuven/cobras):
                  - exact COBRAS_kmeans top-down 2-means splitting (n_init=10) + bottom-up pairwise merging
                  - concise binary Yes/No ML/CL LLM oracle prompt (`build_cobras_binary_prompt`), stops at 20k budget
     6. Cequel    (Wang et al., CIKM 2025 — HKBU-LAGAS/Cequel):
-                 - exact TriangleExploreConsolidate + uncapped 5-option triangle prompt, stops at 20k budget
-                 - `cequel_wcsc` (WCSC / CSCK, primary method on Tweet, Q weights in [0.5, 1.5])
-                 - `cequel_weighted_pckmeans` (WCKMeans, ML in [0.01, 0.1], CL in [0.0, 0.01], empty-cluster fix)
+                 - exact TriangleExploreConsolidate + uncapped 5-option triangle prompt + official 5-sample majority vote (`n=5, temp=1.0, max_tokens=1`), stops at 20k budget
+                 - `cequel_wcsc` (WCSC / CSCK, primary method on Tweet, Q in float64 `[0.5, 1.5]`)
+                 - `cequel_weighted_pckmeans` (WCKMeans, `init="random"`, ML in [0.01, 0.1], CL in [0.0, 0.01], empty-cluster fix)
 """
 
 from __future__ import annotations
@@ -76,6 +76,27 @@ def preprocess_social_sentence(s: str) -> str:
     s = re.sub(r"@[^\s]+|RT @[^\s]+", "", s)
     s = re.sub(r"\n", "", s)
     return s.strip()
+
+
+def preprocess_french_sentence(s: str) -> str:
+    """Exact French tweet regex preprocessing from SELGroup/HISEvent/utils.py:45-46 (keeps French accents)."""
+    s = re.sub(r"((www\.[^\s]+)|(https?://[^\s]+))", "url", s)
+    s = re.sub(r"#([^\s]+)", r"\1", s)
+    s = re.sub(r"(!)\1+", "!", s)
+    s = re.sub(r"(\?)\1+", "?", s)
+    s = re.sub(
+        r":\)|;\)|:-\)|\(-:|:-D|=D|:P|xD|X-p|\^\^|:-*|\^\.\^|\^\-\^|\^\_\^|\,-\)|\)-:|:\'\(|:\(|:-\(|:\S|T\.T|\.\_\.|:<|:-\S|:-<|\*\-\*|:O|=O|=\-O|O\.o|XO|O\_O|:-\@|=/|:/|X\-\(|>\.<|>=\(|D:",
+        "",
+        s,
+    )
+    s = re.sub(r"@[^\s]+|RT @[^\s]+", "", s)
+    s = re.sub(r"\n", "", s)
+    return s.strip()
+
+
+def preprocess_for_dataset(s: str, dataset_name: str = "Event2012") -> str:
+    """Select dataset-specific official preprocessing (`Event2018` preserves French accented characters)."""
+    return preprocess_french_sentence(s) if "2018" in dataset_name else preprocess_social_sentence(s)
 
 
 _ragsede_preprocess_sentence = preprocess_social_sentence
@@ -193,7 +214,7 @@ def run_hisevent_official(
             if "2018" in dataset_name
             else "sentence-transformers/all-MiniLM-L6-v2"
         )
-        prep_texts = [preprocess_social_sentence(t) for t in ds.texts]
+        prep_texts = [preprocess_for_dataset(t, dataset_name) for t in ds.texts]
         if block_id is not None:
             embeddings = load_or_extract_block_embeddings(
                 f"{dataset_name}_hisevent_prep",
@@ -322,7 +343,7 @@ def run_hisevent_official(
             sub_arr = np.asarray(sub_nodes, dtype=np.int64)
             sub_adj = adj[sub_arr][:, sub_arr]
             merged_lbl, _ = minimize_2d_se_agglomerative(
-                sub_adj, initial_labels=np.asarray(init_lbl, dtype=np.int64)
+                sub_adj, initial_labels=np.asarray(init_lbl, dtype=np.int64), eps=0.0
             )
             grouped: Dict[int, List[int]] = defaultdict(list)
             for pos_i, c_out in enumerate(merged_lbl.tolist()):
@@ -400,7 +421,7 @@ _RAGSEDE_DETECTOR_SYS_TMPL = (
 
 
 def _tokenize_kw_tf(text: str) -> Counter[str]:
-    return Counter(w for w in re.findall(r"[a-zA-Z0-9_]{2,}", text.lower()))
+    return Counter(w for w in re.findall(r"[^\W_]{2,}", text.lower()))
 
 
 def run_ragsede_official(
@@ -420,7 +441,7 @@ def run_ragsede_official(
     detector_similarity_threshold: float = 0.0,
     top_n_kb: int = 8,
     kw_sim_weight: float = 0.5,
-    max_retries: int = 3,
+    max_retries: int = 10,
     strategy_tag: str = "ragsede_official",
 ) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """Faithful in-memory reproduction of SELGroup/RagSEDE (WWW 2026)."""
@@ -440,7 +461,7 @@ def run_ragsede_official(
     if embeddings_prep is not None:
         emb = _ensure_l2_normalized(embeddings_prep)
     else:
-        prep_texts = [preprocess_social_sentence(t) for t in ds.texts]
+        prep_texts = [preprocess_for_dataset(t, dataset_name) for t in ds.texts]
         emb = load_or_extract_block_embeddings(
             f"{dataset_name}_ragsede_prep",
             block_id,
@@ -553,6 +574,7 @@ def run_ragsede_official(
                 temperature_override=temp_ov,
                 top_p_override=0.3,
                 cache_salt=salt,
+                use_json_mode_override=False,
             )
             api_wall_sec += time.perf_counter() - t_api0
             if res is None:
@@ -668,6 +690,7 @@ def run_ragsede_official(
                 temperature_override=temp_ov,
                 top_p_override=0.3,
                 cache_salt=salt,
+                use_json_mode_override=False,
             )
             api_wall_sec += time.perf_counter() - t_api0
             if res is None:
@@ -1264,7 +1287,7 @@ def cequel_weighted_pckmeans(
     ml: Sequence[Tuple[int, int]],
     cl: Sequence[Tuple[int, int]],
     weight_method: str = "log_degree_ratio",
-    init: str = "k-means++",
+    init: str = "random",
     max_iter: int = 100,
     seed: int = 42,
 ) -> np.ndarray:
@@ -1486,7 +1509,10 @@ def run_cequel_official(
     precomputed_responses: Optional[Dict[str, Dict[str, Any]]] = None,
     clustering_method: str = "wcsc",
     include_wckmeans: bool = True,
-    num_votes: int = 1,
+    num_votes: int = 5,
+    vote_temperature: float = 1.0,
+    max_vote_retries: int = 5,
+    vote_max_tokens: int = 1,
     seed: int = 42,
     strategy_tag: str = "cequel_official",
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict[str, Any]]:
@@ -1511,7 +1537,7 @@ def run_cequel_official(
             pt = int(rec.get("prompt_tokens", int((len(sys_msg) + len(user_msg)) / 3.4)))
             ct = int(rec.get("completion_tokens", 2))
             if bucket is not None:
-                est = int((len(sys_msg) + len(user_msg)) / 3.4) + 16
+                est = int((len(sys_msg) + len(user_msg)) / 3.4) + max(16, int(vote_max_tokens))
                 if not bucket.can_spend(est):
                     break
                 bucket.record_spend(pt, ct)
@@ -1522,40 +1548,85 @@ def run_cequel_official(
             choice = _parse_cequel_choice(raw_text)
         else:
             assert client is not None
-            votes: List[str] = []
-            stopped_here = False
             n_v = max(1, int(num_votes))
-            for v_idx in range(n_v):
-                temp_ov = None if n_v == 1 else 1.0
-                salt = None if n_v == 1 else f"v{v_idx}"
-                res = client.call_text(
-                    request_id=req_id if n_v == 1 else f"{req_id}_v{v_idx}",
-                    block_id=block_id,
-                    strategy=strategy_tag,
-                    query_type="cequel_triangle",
-                    sys_msg=sys_msg,
-                    user_msg=user_msg,
-                    bucket=bucket,
-                    est_completion_tokens=16,
-                    max_tokens_override=16,
-                    temperature_override=temp_ov,
-                    cache_salt=salt,
-                )
-                if res is None:
-                    stopped_here = True
+            v_tok = max(1, int(vote_max_tokens))
+            if n_v > 1 and hasattr(client, "call_text_n"):
+                valid_votes: List[str] = []
+                stopped_here = False
+                for att in range(max(1, int(max_vote_retries))):
+                    res_n = client.call_text_n(
+                        request_id=req_id if att == 0 else f"{req_id}_r{att}",
+                        block_id=block_id,
+                        strategy=strategy_tag,
+                        query_type="cequel_triangle",
+                        sys_msg=sys_msg,
+                        user_msg=user_msg,
+                        n_completions=n_v,
+                        bucket=bucket,
+                        est_completion_tokens=n_v * v_tok,
+                        max_tokens_override=v_tok,
+                        temperature_override=float(vote_temperature),
+                        cache_salt=None if att == 0 else f"r{att}",
+                    )
+                    if res_n is None:
+                        stopped_here = True
+                        break
+                    raw_texts, pt, ct, lat, status = res_n
+                    pt_sum += pt
+                    ct_sum += ct
+                    llm_sec += lat
+                    calls += 1
+                    if status.startswith("HTTP_ERROR"):
+                        continue
+                    cur_votes = [ch_v for rt in raw_texts if (ch_v := _parse_cequel_choice(rt)) is not None]
+                    valid_votes = cur_votes
+                    if len(cur_votes) > n_v / 2.0:
+                        break
+                if stopped_here:
                     break
-                raw_text, pt, ct, lat, status = res
-                pt_sum += pt
-                ct_sum += ct
-                llm_sec += lat
-                calls += 1
-                if not status.startswith("HTTP_ERROR"):
-                    ch_v = _parse_cequel_choice(raw_text)
-                    if ch_v is not None:
-                        votes.append(ch_v)
-            if stopped_here:
-                break
-            choice = Counter(votes).most_common(1)[0][0] if votes else None
+                choice = (
+                    max(["a", "b", "c", "d", "e"], key=lambda ch: valid_votes.count(ch))
+                    if valid_votes
+                    else None
+                )
+            else:
+                votes: List[str] = []
+                stopped_here = False
+                for v_idx in range(n_v):
+                    temp_ov = None if n_v == 1 else float(vote_temperature)
+                    salt = None if n_v == 1 else f"v{v_idx}"
+                    res = client.call_text(
+                        request_id=req_id if n_v == 1 else f"{req_id}_v{v_idx}",
+                        block_id=block_id,
+                        strategy=strategy_tag,
+                        query_type="cequel_triangle",
+                        sys_msg=sys_msg,
+                        user_msg=user_msg,
+                        bucket=bucket,
+                        est_completion_tokens=v_tok,
+                        max_tokens_override=v_tok,
+                        temperature_override=temp_ov,
+                        cache_salt=salt,
+                    )
+                    if res is None:
+                        stopped_here = True
+                        break
+                    raw_text, pt, ct, lat, status = res
+                    pt_sum += pt
+                    ct_sum += ct
+                    llm_sec += lat
+                    calls += 1
+                    if not status.startswith("HTTP_ERROR"):
+                        ch_v = _parse_cequel_choice(raw_text)
+                        if ch_v is not None:
+                            votes.append(ch_v)
+                if stopped_here:
+                    break
+                choice = (
+                    max(["a", "b", "c", "d", "e"], key=lambda ch: votes.count(ch))
+                    if votes
+                    else None
+                )
 
         all_shown[i] = True
         all_shown[j] = True
@@ -1984,9 +2055,12 @@ def run_lsed_official(
         hyp_e = hyp_model.encode_hyperbolic(x_t).cpu().numpy().astype(np.float64)
         mean_hyp_norm = float(np.linalg.norm(hyp_e, axis=1).mean()) if len(hyp_e) else 0.0
 
-    # Paper Fig. 6 w=infty default: unsupervised KMeans on hyperbolic embeddings
-    # (Optional supervised w mode per Algorithm 1 lines 6-14 is disabled by default to prevent GT leakage.)
-    supervised_used = bool(window_size is not None and window_size > 0 and block_id % int(window_size) == 0)
+    # Paper Fig. 6 w=infty open-set default: unsupervised KMeans on hyperbolic embeddings
+    if window_size is not None and int(window_size) > 0:
+        raise NotImplementedError(
+            "Supervised periodic retraining (window_size > 0) is disabled to prevent GT leakage; "
+            "LSED runs under the Paper Fig. 6 open-set setting (w=infty)."
+        )
     lbl_oracle = KMeans(n_clusters=max(1, min(k_oracle, n)), random_state=seed, n_init=10).fit_predict(hyp_e)
     lbl_est = KMeans(n_clusters=max(1, min(k_est, n)), random_state=seed, n_init=10).fit_predict(hyp_e)
 
@@ -1999,7 +2073,7 @@ def run_lsed_official(
         "shown_posts": int(all_shown.sum()),
         "parse_errors": errs,
         "mean_hyp_norm": round(mean_hyp_norm, 4),
-        "supervised_update": supervised_used,
+        "open_set_window": "infty",
         "llm_api_sec": round(llm_sec, 4),
         "total_wall_sec": round(time.perf_counter() - t0, 4),
     }

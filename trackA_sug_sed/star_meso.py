@@ -102,6 +102,7 @@ def _summarize_members(
     term_idf: Optional[Dict[str, float]] = None,
     max_medoids: int = 3,
     max_keywords: int = 5,
+    text_override: Optional[Dict[int, str]] = None,
 ) -> ClusterSummary:
     """Build or refresh a ClusterSummary from a member index list using TF-IDF keywords."""
     idx = np.asarray(members, dtype=np.int64)
@@ -112,8 +113,21 @@ def _summarize_members(
         proto = proto / norm
 
     sims = sub_emb @ proto
-    top_local = np.argsort(-sims)[:max_medoids]
-    medoids = [int(idx[k]) for k in top_local]
+    ranked_local = np.argsort(-sims)
+    medoids: List[int] = []
+    seen_texts: Set[str] = set()
+    for k in ranked_local:
+        mi = int(idx[int(k)])
+        raw_txt = text_override.get(mi, ds.texts[mi]) if text_override is not None else ds.texts[mi]
+        norm_txt = " ".join(raw_txt.strip().lower().split())
+        if norm_txt in seen_texts:
+            continue
+        seen_texts.add(norm_txt)
+        medoids.append(mi)
+        if len(medoids) >= max_medoids:
+            break
+    if not medoids and len(ranked_local) > 0:
+        medoids = [int(idx[int(ranked_local[0])])]
 
     kw_counts: Dict[str, int] = defaultdict(int)
     for m in members:

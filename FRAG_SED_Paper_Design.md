@@ -184,7 +184,7 @@ flowchart TD
 对于任意碎片 $C \subseteq \{1, \dots, N_t\}$，定义其三元组摘要 $\mathrm{Summ}(C) = \bigl(|C|,\ \mathrm{medoids}_{[:2]}(C),\ \mathrm{kw}_{[:5]}(C)\bigr)$：
 - **精确原型**：令 $\mathbf{v}_C = \sum_{i \in C} \mathbf{e}_i$，单位原型为 $\boldsymbol{\mu}_C = \mathbf{v}_C / \|\mathbf{v}_C\|_2$；
 - **规模 $|C|$**：向 LLM 提供簇体量语境；
-- **2 条中心代表帖 $\mathrm{medoids}_{[:2]}(C)$**：按与原型余弦 $\mathbf{e}_i^\top \boldsymbol{\mu}_C$ 从高到低选取的至多 2 条去重代表帖文本；
+- **2 条中心代表帖 $\mathrm{medoids}_{[:2]}(C)$**：按与原型余弦 $\mathbf{e}_i^\top \boldsymbol{\mu}_C$ 从高到低选取的至多 2 条去重代表帖文本（向 LLM 展示时统一清理换行并截断至前 `140` 字符）；
 - **5 个区分性关键词 $\mathrm{kw}_{[:5]}(C)$**：基于当前块内活跃碎片集合（总数为 $K_{\text{act}}$）计算的簇级 TF-IDF 得分 $(1 + \ln \mathrm{tf})\cdot(\ln\frac{1 + K_{\text{act}}}{1 + \mathrm{df}} + 1)$ 排序取前 5 词，其中 $\mathrm{tf}$ 为词项在碎片 $C$ 内的加权词频（实体与 `#hashtag` 赋双倍权重，长度 $\ge 3$ 的词形还原词元赋单倍权重），$\mathrm{df}$ 为包含该词项的活跃碎片数（实现中可在进入 Step 2 时基于初始碎片集合预计算一次块级 IDF，使每次合并后的在线摘要重建保持 $O(|C_{r_{\text{new}}}|)$ 线性开销）。
 
 #### 统一选择算子 $\mathcal{Q}$
@@ -371,31 +371,31 @@ Output: Intra-block partition labels y_hat_t, prompt exposure mask all_shown
 
 ### 7.2 固定模型与严格因果预算审计配置
 
-- **冻结句向量编码器**（`384` 维均值池化、严格单位 $L_2$ 归一化、`max_length=128`、全程零微调）：
-  - `Event2012`（英文）：`sentence-transformers/all-MiniLM-L6-v2`；
-  - `Event2018`（法文）：`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`。
+- **冻结句向量编码器**（严格单位 $L_2$ 归一化、`max_length=256`、`float32` 存储、全程零微调）：
+  - `Event2012`（英文）：`sentence-transformers/all-MiniLM-L6-v2`（`384` 维）；
+  - `Event2018`（法文）：`FRAG-SED`、`COBRAS 20k`、`Cequel 20k` 使用 `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`（`384` 维）；`SBERT*`、`HISEvent Official` 与 `RagSEDE Official` 严格使用各自原版指定的 `sentence-transformers/distiluse-base-multilingual-cased-v1`（含 Sentence-Transformers `2_Dense` $768\to 512$ + $\tanh$ 投影头）；`LSED Official` 对 `"Please respond in English"` 生成的英文改写文本使用 `all-MiniLM-L6-v2`。
 - **大语言模型与确定性解码**：
   - 主模型：`Qwen/Qwen3-8B`；
   - 跨模型泛化验证：`Qwen/Qwen2.5-7B-Instruct`；
-  - 统一推理配置：`temperature=0.0`、`enable_thinking=False`、`max_tokens=384`、严格 JSON 模式 `response_format={"type": "json_object"}`（OpenAI 兼容接口）。
+  - 统一推理配置：`temperature=0.0`、`enable_thinking=False`、`max_tokens=384`、严格 JSON 模式 `response_format={"type": "json_object"}`（OpenAI 兼容接口；`RagSEDE` 按原设关闭强制 JSON Mode 并解析响应，`Cequel` 按原设使用 `temp=1.0, n=5, max_tokens=1` 多数投票）。
 - **因果预算控制器与账本**：
-  - 全部预算受限方法共享同一 `CausalUniformBucket(tokens_per_block=10000, allow_carryover=False)`（预算曲线实验同步扫描 `1k, 2k, 5k, 10k, 20k`）；
+  - 全部预算受限方法共享同一 `CausalUniformBucket(tokens_per_block=B, allow_carryover=False)`（Dev 主对比采用 `20k` tokens/块；后续因果预算曲线实验同步扫描 `1k, 2k, 5k, 10k, 20k`）；
   - 调用前统一执行 `int((len(sys_msg) + len(user_msg)) / 3.4) + est_completion_tokens` 前检门控，调用后按 API 真实计费扣减并写入只追加 `TokenLedger`（缓存命中同样全额计费；先导 `v2.0` 审计证实该门控在 `10k` 下的实测最大单块溢出仅为 `+0.35%`，即 `10,035` tokens）。
 
 ### 7.3 锁定三类基线对比矩阵
 
-为严格对齐各基线论文原设置并在统一 LLM 底座（`Qwen/Qwen3-8B`、`temperature=0.0`、`enable_thinking=False`）与有限 Token 预算前提下进行公平对照，系统评测矩阵锁定为以下**三类基线 + 内部消融**：
+为严格对齐各基线论文原设置并在统一 LLM 底座（`Qwen/Qwen3-8B`、`enable_thinking=False`）与有限 Token 预算前提下进行公平对照，系统评测矩阵锁定为以下**三类基线 + 内部消融**：
 
 | 组别 | 基线名称（出处） | 运行口径与说明 | 实现/集成状态 |
 |---|---|---|---|
-| **Group 1：0-LLM 原版基线（0 Tokens）** | `SBERT*`（Reimers & Gurevych, EMNLP-IJCNLP 2019） | 预处理文本 + 冻结 SBERT(`max_length=256`, `float32`) + `KMeans(Oracle-K)` | **已对齐实现并验证**（`baselines_official.py`） |
-| | `HISEvent Official`（Cao et al., AAAI 2024） | 原版文本清洗 + `SBERT(256)` + Pearson 相关图 + 未过滤原始属性（`user_id`/`mentioned_users`/`hashtags.lower()`/raw entities）+ 1D/2D-SE（并输出无监督 `Est-K`） | **已对齐实现并验证**（`baselines_official.py`） |
-| **Group 2：不限预算 LLM-SED 原版（按原设置运行并统计总 Token）** | `RagSEDE Official`（Liu et al., WWW 2026） | 严格原版文本清洗 + Agglom(0.40/0.30) 锚簇 + MMR top-3 采样（$\lambda=0.7$）+ 内存混合 Event KB（去模板词检索）+ 原文 Evaluator/Detector Prompt，全程统计实际消耗 Token | **已对齐实现**（`baselines_official.py`），待在线全量评测 |
-| | `LSED Official`（Qiu et al., ACL 2025, `w=∞`） | 全量 `N` 条推文原版改写 Prompt（Colab GPU 批推理）+ `SBERT(256)` + OLE 2D TIME（386-d）+ 三层 HGCN Poincaré 双曲 MLP（`M_00` 训练），`Oracle-K` 与 `HISEvent Est-K` 双口径 `KMeans` 聚类，全程统计总 Token | **已对齐实现**（`baselines_official.py` / `colab_batch_qwen3_8b.ipynb`），待全量推理评测 |
-| **Group 3：限预算 LLM 基线（20k Tokens / 块）** | `COBRAS Official`（Van Craenendonck et al., IDA 2018） | 原版 `COBRAS_kmeans` 自顶向下 2-means 拆分与自底向上成对合并，二元 `Yes/No` LLM 神谕，受 `20k` 因果 Token 预算严格门控 | **已对齐实现**（`baselines_official.py`），待 20k 全量评测 |
-| | `Cequel Official`（Wang et al., CIKM 2025） | 原版 `TriangleExploreConsolidate` + 不截断推文五选一三元组 Prompt，受 `20k` 因果 Token 预算门控；运行主算法 `WCSC`（`Oracle-K` / `HISEvent Est-K`）及 `WCKMeans` 对照 | **已对齐实现**（`baselines_official.py`），待 20k 全量评测 |
-| **Group 4：本文方法与内部消融** | `FRAG-SED (20k Budget/Blk & Unbounded)` | 3 步统一精简框架（Step 1 成对边界检验 → Step 2 多簇星形锚点介观重分配 → Step 3 跨簇边界合并） | **已实现并验证**（`frag_sed.py`） |
-| | 内部消融（待运行）：`Fragment Random Order`、`0-Token Cosine Heuristic`、`FRAG-SED (k=1 Pairwise)`、`w/o Split Verification`、`Oracle-Answered Upper Bound`、`Plug-and-Play Backbones` | 在确定 `M_01..M_05` 主验证对照后补充完整消融与留出集全量扫描 | **规划就绪，待执行** |
+| **Group 1：0-LLM 原版基线（0 Tokens）** | `SBERT*`（Reimers & Gurevych, EMNLP-IJCNLP 2019） | 分语种预处理文本 + 官方冻结 SBERT（EN `all-MiniLM-L6-v2` / FR `distiluse` `512`-d，`max_length=256`, `float32`）+ `KMeans(Oracle-K)` | **已完成 EN/FR Dev (`M_02..M_05`) 评测**（`baselines_official.py`） |
+| | `HISEvent Official`（Cao et al., AAAI 2024） | 分语种原版清洗（英文去非 ASCII、法文保留变音符）+ 官方编码器 + Pearson 相关图 + 未过滤原始属性 + `n_sub=400/300` + `eps=0.0` 1D/2D-SE（并输出无监督 `Est-K`） | **已完成 EN/FR Dev (`M_02..M_05`) 评测**（`baselines_official.py`） |
+| **Group 2：不限预算 LLM-SED 原版（按原设置运行并统计总 Token）** | `RagSEDE Official`（Liu et al., WWW 2026） | 分语种原版清洗 + 官方编码器 Agglom(`0.40/0.30`) 锚簇 + MMR top-3（$\lambda=0.7$）+ 内存混合 Event KB（Unicode 法语分词 + 去模板词）+ 原文 Prompt（`max_retries=10`, 非强制 JSON Mode），全程统计 Token | **已完成 EN/FR Dev (`M_02..M_05`) 在线评测**（`results/dev*_benchmark/`） |
+| | `LSED Official`（Qiu et al., ACL 2025, `w=∞` Fig. 6） | 训练集 `M_00` 与测试块全量 `N` 条推文同步执行 `"Please respond in English"` 原版改写（Colab GPU 批推理）+ `all-MiniLM-L6-v2` + OLE 2D TIME（386-d）+ 三层 HGCN Poincaré 双曲 MLP（`tan_reg=0.02`），`Oracle-K` 与 `HISEvent Est-K` 双口径聚类 | **已导出 EN/FR Dev Colab Prompt**（待 Colab GPU 批推理回填） |
+| **Group 3：限预算 LLM 基线（20k Tokens / 块）** | `COBRAS Official`（Van Craenendonck et al., IDA 2018） | 原版 `COBRAS_kmeans` 自顶向下 2-means 拆分与自底向上成对合并，二元 `Yes/No` LLM 神谕，受 `20k` 因果 Token 预算严格门控 | **已完成 EN/FR Dev (`M_02..M_05`) 20k 评测** |
+| | `Cequel Official`（Wang et al., CIKM 2025） | 原版 `TriangleExploreConsolidate` + 不截断推文五选一三元组 Prompt + 官方 5 次多数投票（`n=5, temp=1.0, max_tokens=1`），受 `20k` 因果 Token 预算门控；运行主算法 `WCSC`（`Q∈float64`, `Oracle-K` / `HISEvent Est-K`）及 `WCKMeans(init='random')` 对照 | **已完成 EN/FR Dev (`M_02..M_05`) 20k 评测** |
+| **Group 4：本文方法与内部消融** | `FRAG-SED (20k Budget/Blk & Unbounded)` | Step 0 2D-SE 基础分区 → Step 1 球面 2-means 拆分验证 → Step 2 效用引导 $k$-way 合并验证（`CleanConstraintDSU`） → Step 3 输出 | **已完成 EN/FR Dev (`M_02..M_05`) 评测**（`frag_sed.py`） |
+| | 内部消融（待运行）：`Fragment Random Order`、`0-Token Cosine Heuristic`、`FRAG-SED (k=1 Pairwise)`、`w/o Split Verification`、`Oracle-Answered Upper Bound`、`Plug-and-Play Backbones` | 在补齐 `LSED` Dev 并完成 6 超参调优锁定 `protocol_v3.json` 后补充完整消融与留出集全量扫描 | **规划就绪，待执行** |
 
 ### 7.4 评测指标体系与统计检验
 
@@ -458,19 +458,19 @@ Output: Intra-block partition labels y_hat_t, prompt exposure mask all_shown
 
 | 类别 | 具体条目 | 当前真实状态 |
 |---|---|---|
-| **A. 已完成代码对齐、单元测试与局部验证的模块** | 精简版 `FRAG-SED` 核心实现（`trackA_sug_sed/frag_sed.py`、`star_meso.py`）及 4 项单元测试（`tests/test_frag_sed.py`） | **已完成并通过** |
-| | 6 篇基线严格对齐实现（`trackA_sug_sed/baselines_official.py`）与 7 项对齐契约单测（`tests/test_baselines_official.py`） | **已完成并通过** |
-| | `Event2012 (M_01..M_05)` 上 0-LLM 原版基线（`SBERT*`、`HISEvent Official`）及 `FRAG-SED (20k / Unbounded)` 基准结果 | **已运行核验并落盘**（`results/val_m01_m05_benchmark/`） |
-| | 三类基线统一评测入口（`run_val_benchmark.py`）与 `LSED` Colab GPU 批推理 Notebook（`colab_batch_qwen3_8b.ipynb`） | **已锁定并就绪**（无监督 `Est-K` 统一接入 `HISEvent Official`） |
-| | 历史 `SUG-SED v2.0/v2.1` 冲突代码、旧实验目录与对齐前旧账本/报告快照 | **已隔离至 `_deprecated_to_delete/`**（附 `MANIFEST.md` 待用户确认删除） |
-| **B. 待执行的正式对比与全流扩展实验（当前报告中标为 `*Pending Run*`）** | `RagSEDE Official`（无约束，含 Token 统计）与 `LSED Official (w=∞)`（Colab 全量推理 + HGCN 训练评测，含 Token 统计）在 `M_01..M_05` 上重跑 | **待在线/GPU 运行** |
-| | `COBRAS Official`（20k/块）与 `Cequel Official`（20k/块，`WCSC` + `WCKMeans`）在 `M_01..M_05` 上重跑 | **待在线运行** |
-| | 留出集全量块（`Event2012 M_06..M_21`、`Event2018 M_01..M_16`）、内部消融、因果预算曲线与跨模型/脱敏扩展验证 | **待下一阶段执行** |
+| **A. 已完成代码对齐、单元测试与 Dev (`M_02..M_05`) 评测的模块** | 精简版 `FRAG-SED` 核心实现（`trackA_sug_sed/frag_sed.py`、`star_meso.py`）及 4 项单元测试（`tests/test_frag_sed.py`） | **已完成并通过**（`4/4 PASS`） |
+| | 6 篇基线严格对齐实现（`trackA_sug_sed/baselines_official.py`）、`embed_cache.py`（含 `distiluse` `2_Dense` 投影头）与 9 项对齐契约单测（`tests/test_baselines_official.py`） | **已完成并通过**（`9/9 PASS`） |
+| | **Event2012 Dev（`M_02..M_05`）** 7 个就绪方法实测（`SBERT*` `62.55/85.78/84.50`、`HISEvent` `67.53/86.18/85.33`、`RagSEDE` `89.70/92.87/92.23` @ `251k` tok、`COBRAS 20k` `73.08/85.98/85.06`、`Cequel WCSC 20k` `57.11/83.63/82.17` [`Est-K` `69.39/86.10/85.19`]、`FRAG-SED 20k & Unb` **`83.49 / 93.05 / 92.35`** @ `20,871` tok） | **已运行核验并落盘**（`results/dev_m02_m05_benchmark/`） |
+| | **Event2018 Dev（`M_02..M_05`）** 7 个就绪方法实测（`SBERT*` `34.17/66.81/66.00`、`HISEvent` `55.87/77.28/76.70`、`RagSEDE` `61.02/74.05/73.02` @ `596k` tok、`COBRAS 20k` `40.72/59.15/58.53`、`Cequel WCSC 20k` `54.62/71.55/70.83` [`Est-K` `41.81/68.76/67.91`]、`FRAG-SED 20k` **`59.83 / 74.48 / 73.65`** @ `72,704` tok、`Unb` `59.84/74.50/73.67` @ `83,361` tok） | **已运行核验并落盘**（`results/dev_event2018_m02_m05_benchmark/`） |
+| | 历史 `SUG-SED v2.0/v2.1` 冲突代码与旧记录隔离 | **已隔离至 `_deprecated_to_delete/`**（附 `MANIFEST.md`） |
+| **B. 待执行的评测与全流扩展实验（报告中 `LSED` 标为 `*Pending Run*`）** | `LSED Official (w=∞)` 双语 Dev（`EN M_00+M_02..M_05`: `20,254 + 7,170` 条；`FR M_00+M_02..M_05`: `14,328 + 11,671` 条）Colab GPU 批推理及 HGCN 回填 | **Prompt 已导出，待 Colab GPU 执行与回填** |
+| | Gate 1（`M_02..M_05`）6 超参敏感性曲线 + 编码器/初始构图对比消融 + `protocol_v3.json` 冻结 | **待补齐 `LSED` 后执行** |
+| | 留出集全量块（`Event2012 M_06..M_21`、`Event2018 M_06..M_16` / 全流 `M_01+`）、因果预算曲线（1k–20k）、三级脱敏（`anonymizer.py`）与跨天流式链接（`cross_day.py`） | **待 Gate 1 冻结后执行** |
 
 #### 表 8-2：当前锁定协议后的后续实验执行路线图
 
 | 阶段 | 核心工程与实验任务 | 涉及模块与产物 | 验收门控 |
 |---|---|---|---|
-| **Phase 1：代码对齐与仓库清理（当前已完成）** | 1. 锁定三类对比基线与 `FRAG-SED`，清理 `baselines_official.py`、`run_val_benchmark.py` 与 `colab_batch_qwen3_8b.ipynb`；<br>2. 将过时 `v2.0/v2.1` 代码、冲突实验目录与对齐前日志隔离至 `_deprecated_to_delete/`；<br>3. 通过 `test_frag_sed.py`、`test_baselines_official.py` 与 `run_val_benchmark.py --dry-run`。 | `frag_sed.py`、`baselines_official.py`、`run_val_benchmark.py`、`test_*.py` | 单元测试 100% PASS；报告无过时冲突记录 |
-| **Phase 2：`M_01..M_05` 验证集三类基线全量重跑** | 1. Colab GPU 运行 `colab_batch_qwen3_8b.ipynb` 完成 `LSED` 推文改写，回传结果并评测 `LSED Official (w=∞)`；<br>2. 在线运行 `RagSEDE Official`（记录完整 Token 成本）及 20k 预算版 `COBRAS Official`、`Cequel Official`；<br>3. 更新 `results/val_m01_m05_benchmark/val_benchmark_report.md`。 | `colab_inputs/lsed_*.jsonl`、`val_benchmark_results.json`、`val_benchmark_report.md` | 4 组结果均带完整 `TokenLedger` 成本审计 |
-| **Phase 3：全流扩展、消融与成稿** | 1. 扩展至 `Event2012 (M_06..M_21)` 与 `Event2018 (M_01..M_16)`，补充内部消融、因果预算曲线（1k–20k）、三级脱敏（`anonymizer.py`）与跨天流式链接（`cross_day.py`）；<br>2. 产出 Wilcoxon / Holm–Bonferroni 显著性检验表与出版级图表，完成论文 LaTeX 定稿。 | `results/full_stream/`、论文 LaTeX 与图表 | 全部主/副表数据可由只追加账本一键复现 |
+| **Phase 1：代码对齐与仓库清理（已完成）** | 1. 锁定三类对比基线与 `FRAG-SED`，按各基线官方设定制订专属实现（含 `Event2018` `distiluse` `2_Dense` 投影与法语预处理/Unicode 分词）；<br>2. 隔离过时 `v2.0/v2.1` 冲突文件至 `_deprecated_to_delete/`；<br>3. 通过 `test_frag_sed.py`（4/4）与 `test_baselines_official.py`（9/9）。 | `frag_sed.py`、`baselines_official.py`、`embed_cache.py`、`run_val_benchmark.py`、`test_*.py` | 单元测试 100% PASS |
+| **Phase 2：双语 Dev (`M_02..M_05`) 评测（已完成 7/8，仅余 `LSED` Colab 回填）** | 1. **已完成** `Event2012 Dev` 与 `Event2018 Dev` 上 0-LLM、`RagSEDE Official`、`COBRAS 20k`、`Cequel 20k` 与 `FRAG-SED (20k / Unbounded)` 全量实测；<br>2. **待收尾**：Colab GPU 运行 `colab_batch_qwen3_8b.ipynb` 完成双语 `LSED (M_00 + M_02..M_05)` 改写并回填报告；<br>3. 完成 6 超参 1D 敏感性复核并冻结 `protocol_v3.json`。 | `results/dev_m02_m05_benchmark/`、`results/dev_event2018_m02_m05_benchmark/`、`colab_inputs/lsed_*.jsonl` | 8 组方法均带完整 `TokenLedger` 成本审计；锁定 `protocol_v3.json` |
+| **Phase 3：留出集全流扩展、消融与成稿** | 1. 扩展至 `Event2012 (M_06..M_21)` 与 `Event2018 (M_06..M_16)`（及 `M_01+` 全流对照），补充内部消融、因果预算曲线（1k–20k）、三级脱敏（`anonymizer.py`）与跨天流式链接（`cross_day.py`）；<br>2. 产出 Wilcoxon / Holm–Bonferroni 显著性检验表与出版级图表，完成论文 LaTeX 定稿。 | `results/full_stream/`、论文 LaTeX 与图表 | 全部主/副表数据可由只追加账本一键复现 |

@@ -16,7 +16,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 21.343,
+        "runtime_sec": 19.31,
         "first_stable_k": 130,
         "n_edges": 4016685,
         "n_attr_edges": 3544934,
@@ -29,7 +29,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 1.146,
+        "runtime_sec": 1.08,
         "first_stable_k": 119,
         "n_edges": 153664,
         "n_attr_edges": 90760,
@@ -42,7 +42,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 0.982,
+        "runtime_sec": 0.847,
         "first_stable_k": 19,
         "n_edges": 66992,
         "n_attr_edges": 52235,
@@ -55,7 +55,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 1.433,
+        "runtime_sec": 1.127,
         "first_stable_k": 25,
         "n_edges": 81909,
         "n_attr_edges": 60239,
@@ -68,7 +68,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 0.919,
+        "runtime_sec": 0.85,
         "first_stable_k": 14,
         "n_edges": 50127,
         "n_attr_edges": 38855,
@@ -367,7 +367,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 5.518,
+        "runtime_sec": 4.954,
         "n_pred_clusters": 41
       },
       "M_02": {
@@ -377,7 +377,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 0.494,
+        "runtime_sec": 0.397,
         "n_pred_clusters": 30
       },
       "M_03": {
@@ -387,7 +387,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 0.788,
+        "runtime_sec": 0.579,
         "n_pred_clusters": 33
       },
       "M_04": {
@@ -397,7 +397,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 1.045,
+        "runtime_sec": 0.709,
         "n_pred_clusters": 38
       },
       "M_05": {
@@ -407,7 +407,7 @@
         "calls": 0,
         "tokens": 0,
         "parse_errors": 0,
-        "runtime_sec": 0.663,
+        "runtime_sec": 0.549,
         "n_pred_clusters": 30
       }
     }

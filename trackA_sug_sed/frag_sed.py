@@ -233,6 +233,7 @@ def run_frag_sed(
     rho: float = 0.30,
     max_iters: int = 2000,
     strategy_tag: str = "frag_sed",
+    text_override: Optional[Dict[int, str]] = None,
 ) -> Tuple[np.ndarray, np.ndarray, Dict[str, Any]]:
     """Run simplified 3-step FRAG-SED over an initial base partition `labels_init`."""
     t0 = time.perf_counter()
@@ -284,11 +285,16 @@ def run_frag_sed(
     initial_cl: List[Tuple[int, int]] = []
     split_calls = split_accepted = 0
     split_cap = int(rho * bucket.current_block_cap) if bucket is not None else None
+    term_idf0 = _compute_cluster_idf(ds, frag_to_members)
 
     for _sc, cid, r_idx, p_idx in split_candidates:
-        r_summ = _summarize_members(cid, r_idx, ds, emb, max_medoids=2, max_keywords=5)
-        p_summ = _summarize_members(next_fid, p_idx, ds, emb, max_medoids=2, max_keywords=5)
-        sys_msg, user_msg = build_frag_select_prompt(r_summ, [p_summ], ds)
+        r_summ = _summarize_members(
+            cid, r_idx, ds, emb, term_idf=term_idf0, max_medoids=2, max_keywords=5, text_override=text_override
+        )
+        p_summ = _summarize_members(
+            next_fid, p_idx, ds, emb, term_idf=term_idf0, max_medoids=2, max_keywords=5, text_override=text_override
+        )
+        sys_msg, user_msg = build_frag_select_prompt(r_summ, [p_summ], ds, text_override=text_override)
         est_tok = estimate_tokens(sys_msg, user_msg, est_completion_tokens=64)
         if split_cap is not None and (bucket.current_block_spent + est_tok > split_cap):
             break
@@ -333,7 +339,14 @@ def run_frag_sed(
     cid_to_pos = {c: i for i, c in enumerate(all_cids)}
     summs: Dict[int, ClusterSummary] = {
         c: _summarize_members(
-            c, dsu.comp_members_post[c], ds, emb, term_idf=term_idf, max_medoids=2, max_keywords=5
+            c,
+            dsu.comp_members_post[c],
+            ds,
+            emb,
+            term_idf=term_idf,
+            max_medoids=2,
+            max_keywords=5,
+            text_override=text_override,
         )
         for c in all_cids
     }
@@ -387,7 +400,7 @@ def run_frag_sed(
 
         a_summ = summs[best_a]
         c_summs = [summs[c] for c in best_pack]
-        sys_msg, user_msg = build_frag_select_prompt(a_summ, c_summs, ds)
+        sys_msg, user_msg = build_frag_select_prompt(a_summ, c_summs, ds, text_override=text_override)
         t_api0 = time.perf_counter()
         res = client.call_json(
             request_id=f"fragsed_merge_M{block_id:02d}_it{merge_calls}_a{best_a}",
@@ -451,6 +464,7 @@ def run_frag_sed(
                 term_idf=term_idf,
                 max_medoids=2,
                 max_keywords=5,
+                text_override=text_override,
             )
             p_new = cid_to_pos[r_new]
             p_old = cid_to_pos[r_old]
@@ -472,11 +486,21 @@ def run_frag_sed(
     for r in dsu.active_roots:
         for post_i in dsu.comp_members_post[r]:
             raw_out[post_i] = r
-    _, clean_labels = np.unique(raw_out, return_inverse=True)
+    uniq_roots, clean_labels = np.unique(raw_out, return_inverse=True)
+    root_to_final = {int(r): int(cid) for cid, r in enumerate(uniq_roots.tolist())}
+    final_cannot_pairs = sorted(
+        {
+            (min(root_to_final[r1], root_to_final[r2]), max(root_to_final[r1], root_to_final[r2]))
+            for r1 in dsu.active_roots
+            for r2 in dsu.N_CL[r1]
+            if r2 in root_to_final and root_to_final[r1] != root_to_final[r2]
+        }
+    )
 
     total_wall = time.perf_counter() - t0
     router_cpu = min(max(0.0, total_wall - api_wall_sec), max(0.0, time.thread_time() - t_thread0))
     return clean_labels.astype(np.int64), all_shown, {
+        "cannot_pairs": final_cannot_pairs,
         "total_calls": calls,
         "split_calls": split_calls,
         "split_accepted": split_accepted,
